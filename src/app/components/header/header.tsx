@@ -6,7 +6,7 @@ export default function Header() {
   return (
     <div>
       {/* header */}
-      <Box background="orange.300" p="3">
+      <Box background="orange" p="3">
         <Heading textColor="white">
           Favorite Restaurants App
         </Heading>

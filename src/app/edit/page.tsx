@@ -5,6 +5,7 @@ import Header from '../components/header/header'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCirclePlus, faEnvelope, faHouse, faImage, faLocationDot, faPlus } from '@fortawesome/free-solid-svg-icons';
 import { useRouter } from 'next/navigation';
+import Sidebar from '../components/sidebar/sidebar';
 
 export default function Edit() {
 
@@ -14,65 +15,28 @@ export default function Edit() {
     router.push("/top");
   }
 
+  const linkToMap = () => {
+    router.push("/map");
+  }
+
   return (
     <div>
       <Header />
 
       <Flex>
-      <Box width="20%" height="100%" ml="10%" mt="5">
-        <Flex direction="column">
-
-          {/* アカウント表示 */}
-          <Flex alignItems="center" m="3">
-            <Wrap>
-              <WrapItem>
-                <Avatar name="Tarou" size="md" src="https://bit.ly/dan-abramov"></Avatar>
-              </WrapItem>
-            </Wrap>
-            <Text fontSize="2xl" ml="3">アカウント名</Text>
-          </Flex>
-          {/* アカウント表示 */}
-
-          {/* ホームボタン */}
-          <Button ml="1" mr="3" mb="1" onClick={linkToTop}>
-              <FontAwesomeIcon icon={faHouse} size="lg" color="#fe9611"/>
-              <Text ml="5">ホーム</Text>
-          </Button>
-          {/* ホームボタン */}
-
-          {/* メッセージボタン */}
-          <Button ml="1" mr="3" mb="1">
-            <FontAwesomeIcon icon={faEnvelope} size="lg" color="#fe9611"/>
-            <Text ml="5">メッセージ</Text>
-          </Button>
-          {/* メッセージボタン */}
-
-          {/* マップボタン */}
-          <Button ml="1" mr="3" mb="3">
-            <FontAwesomeIcon icon={faLocationDot} size="lg" color="#fe9611"/>
-            <Text ml="5">マップ</Text>
-          </Button>
-          {/* マップボタン */}
-
-          {/* 投稿ボタン */}
-          <Button ml="1" mr="3" mb="1" borderRadius="50">
-            <Flex justify="start">
-            <FontAwesomeIcon icon={faPlus} size="lg" color="#fe9611"/>
-            <Text ml="5">投稿</Text>
-            </Flex>
-          </Button>
-          {/* 投稿ボタン */}
-          
-        </Flex>
-      </Box>
+        {/* Sidebar */}
+        <Box width="20%" height="100%" ml="10%" mt="5">
+          <Sidebar />
+        </Box> 
+        {/* Sidebar */}
 
       {/* Create */}
       <Box width="60%" height="300" borderRadius="20" border="2px" borderColor="orange.500" mr="10%" mt="5">
         <Flex>
 
           {/* 写真 */}
-          <Box width="50%" height="250" background="yellow" ml="5" mr="5" mt="5" display='flex' justifyContent='center' alignItems='center'>
-            <FontAwesomeIcon icon={faImage} size="lg" color="blue"/>
+          <Box width="50%" height="250" background="#FEFCBF" ml="5" mr="5" mt="5" display='flex' justifyContent='center' alignItems='center'>
+            <FontAwesomeIcon icon={faImage} size="lg" color="#4299E1"/>
             <Text ml="1">クリックしたら画像を変更できる</Text>
           </Box>
           {/* 写真 */}
@@ -112,7 +76,7 @@ export default function Edit() {
               <Flex alignItems="center" justifyContent="space-between">
                 {/* マップボタン */}
                 <Box height="6" display="flex" alignItems="center" ml="1" mr="1" mt="1">
-                  <FontAwesomeIcon icon={faLocationDot} size="lg"/>
+                  <FontAwesomeIcon icon={faLocationDot} size="lg" color="#4299E1"/>
                   <Text ml="1">ミスタードーナツ</Text>
                 </Box>
                 {/* マップボタン */}

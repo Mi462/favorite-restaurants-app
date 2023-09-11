@@ -5,6 +5,7 @@ import Header from '../components/header/header'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faComment, faEnvelope, faHeart, faHouse, faLocationDot, faPenToSquare, faPlus, faReply, faTrashCan } from '@fortawesome/free-solid-svg-icons';
 import { useRouter } from 'next/navigation';
+import Sidebar from '../components/sidebar/sidebar';
 
 export default function Comment() {
 
@@ -31,61 +32,20 @@ export default function Comment() {
       <Header />
 
       <Flex>
-      <Box width="20%" height="100%" ml="10%" mt="5">
-        <Flex direction="column">
-
-          {/* アカウント表示 */}
-          <Flex alignItems="center" m="3">
-            <Wrap>
-              <WrapItem>
-                <Avatar name="Tarou" size="md" src="https://bit.ly/dan-abramov"></Avatar>
-              </WrapItem>
-            </Wrap>
-            <Text fontSize="2xl" ml="3">アカウント名</Text>
-          </Flex>
-          {/* アカウント表示 */}
-
-          {/* ホームボタン */}
-          <Button ml="1" mr="3" mb="1" onClick={linkToTop}>
-              <FontAwesomeIcon icon={faHouse} size="lg" color="#fe9611"/>
-              <Text ml="5">ホーム</Text>
-          </Button>
-          {/* ホームボタン */}
-
-          {/* メッセージボタン */}
-          <Button ml="1" mr="3" mb="1">
-            <FontAwesomeIcon icon={faEnvelope} size="lg" color="#fe9611"/>
-            <Text ml="5">メッセージ</Text>
-          </Button>
-          {/* メッセージボタン */}
-
-          {/* マップボタン */}
-          <Button ml="1" mr="3" mb="3">
-            <FontAwesomeIcon icon={faLocationDot} size="lg" color="#fe9611"/>
-            <Text ml="5">マップ</Text>
-          </Button>
-          {/* マップボタン */}
-
-          {/* 投稿ボタン */}
-          <Button ml="1" mr="3" mb="1" borderRadius="50" onClick={linkToCreate}>
-            <Flex justify="start">
-            <FontAwesomeIcon icon={faPlus} size="lg" color="#fe9611"/>
-            <Text ml="5">投稿</Text>
-            </Flex>
-          </Button>
-          {/* 投稿ボタン */}
-          
-        </Flex>
-      </Box>
+        {/* Sidebar */}
+        <Box width="20%" height="100%" ml="10%" mt="5">
+          <Sidebar />
+        </Box> 
+        {/* Sidebar */}
 
       {/* Posts */}
       <Box width="60%" height="1000">
       <Flex direction="column">
-      <Box height="300" borderRadius="20" background="orange" border="2px" borderColor="orange.500" mt="5">
+      <Box height="300" borderRadius="20" background="orange.200" border="2px" borderColor="orange.500" mt="5">
         <Flex>
 
           {/* 写真 */}
-          <Box width="50%" height="250" background="yellow" ml="5" mr="5" mt="5"></Box>
+          <Box width="50%" height="250" background="#FEFCBF" ml="5" mr="5" mt="5"></Box>
           {/* 写真 */}
 
           {/* 写真横のアカウント・コメント・ボタンなど */}
@@ -120,13 +80,13 @@ export default function Comment() {
 
               {/* ボタン */}
               <Box height="6" display="flex" alignItems="center" justifyContent="space-between" ml="1" mr="1" mt="1">
-                <FontAwesomeIcon icon={faComment} size="lg" color="blue"/>
-                <FontAwesomeIcon icon={faHeart} size="lg" color="blue"/>
-                <FontAwesomeIcon icon={faLocationDot} size="lg" color="blue"/>
+                <FontAwesomeIcon icon={faComment} size="lg" color="#4299E1"/>
+                <FontAwesomeIcon icon={faHeart} size="lg" color="#4299E1"/>
+                <FontAwesomeIcon icon={faLocationDot} size="lg" color="#4299E1"/>
                 <button onClick={linkToEdit}>
-                  <FontAwesomeIcon icon={faPenToSquare} size="lg" color="blue"/>
+                  <FontAwesomeIcon icon={faPenToSquare} size="lg" color="#4299E1"/>
                 </button>
-                <FontAwesomeIcon icon={faTrashCan} size="lg" color="blue"/>
+                <FontAwesomeIcon icon={faTrashCan} size="lg" color="#4299E1"/>
               </Box>
               {/* ボタン */}
 
@@ -139,7 +99,7 @@ export default function Comment() {
       {/* Posts */}
 
       {/* Comment1 */}
-      <Box width="95%" height="200" borderRadius="20" background="orange" border="2px" borderColor="orange.500" mt="5" ml="5">
+      <Box width="95%" height="200" borderRadius="20" background="orange.100" border="2px" borderColor="orange.500" mt="5" ml="5">
         <Flex>
 
           {/* 写真横のアカウント・コメント・ボタンなど */}
@@ -174,11 +134,11 @@ export default function Comment() {
 
               {/* ボタン */}
               <Box height="6" display="flex" alignItems="center" justifyContent="space-between" ml="10" mr="10" mt="1">
-                <FontAwesomeIcon icon={faReply} size="lg" color="blue"/>
-                <FontAwesomeIcon icon={faHeart} size="lg" color="blue"/>
-                <FontAwesomeIcon icon={faLocationDot} size="lg" color="blue"/>
+                <FontAwesomeIcon icon={faReply} size="lg" color="#4299E1"/>
+                <FontAwesomeIcon icon={faHeart} size="lg" color="#4299E1"/>
+                <FontAwesomeIcon icon={faLocationDot} size="lg" color="#4299E1"/>
                 <button onClick={linkToCommentEdit}>
-                  <FontAwesomeIcon icon={faPenToSquare} size="lg" color="blue"/>
+                  <FontAwesomeIcon icon={faPenToSquare} size="lg" color="#4299E1"/>
                 </button>
               </Box>
               {/* ボタン */}
@@ -192,7 +152,7 @@ export default function Comment() {
       {/* Comment1 */}
 
       {/* Comment2 */}
-      <Box width="95%" height="200" borderRadius="20" background="orange" border="2px" borderColor="orange.500" mt="5" ml="5">
+      <Box width="95%" height="200" borderRadius="20" background="orange.100" border="2px" borderColor="orange.500" mt="5" ml="5">
         <Flex>
 
           {/* 写真横のアカウント・コメント・ボタンなど */}
@@ -227,11 +187,11 @@ export default function Comment() {
 
               {/* ボタン */}
               <Box height="6" display="flex" alignItems="center" justifyContent="space-between" ml="10" mr="10" mt="1">
-              <FontAwesomeIcon icon={faReply} size="lg" color="blue"/>
-                <FontAwesomeIcon icon={faHeart} size="lg" color="blue"/>
-                <FontAwesomeIcon icon={faLocationDot} size="lg" color="blue"/>
+              <FontAwesomeIcon icon={faReply} size="lg" color="#4299E1"/>
+                <FontAwesomeIcon icon={faHeart} size="lg" color="#4299E1"/>
+                <FontAwesomeIcon icon={faLocationDot} size="lg" color="#4299E1"/>
                 <button onClick={linkToCommentEdit}>
-                  <FontAwesomeIcon icon={faPenToSquare} size="lg" color="blue"/>
+                  <FontAwesomeIcon icon={faPenToSquare} size="lg" color="#4299E1"/>
                 </button>
               </Box>
               {/* ボタン */}

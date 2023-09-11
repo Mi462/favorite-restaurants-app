@@ -2,8 +2,16 @@
 
 import { Button, Flex, Heading, Input, Link, Text } from '@chakra-ui/react'
 import Header from '../components/header/header'
+import { useRouter } from 'next/navigation'
 
 export default function Login() {
+
+  const router = useRouter();
+
+  const linkToTop = () => {
+    router.push("/top");
+  }
+
   return (
     <div>
       {/* header */}
@@ -18,7 +26,7 @@ export default function Login() {
           </Heading>
           <Input placeholder='sample@sample.com' background="white" mb="3" type="email" />
           <Input placeholder='********' background="white" mb="6" type="password" />
-          <Button mb="6" textColor="white" background="orange.500">
+          <Button mb="6" _hover={{ bg: "orange"}} background="orange.500" onClick={linkToTop}>
             Log in
           </Button>
           <Text textAlign="center">

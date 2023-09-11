@@ -1,6 +1,6 @@
 'use client'
 
-import { Button, Flex, Heading, Input, Link, Text } from '@chakra-ui/react'
+import { Box, Button, Flex, Heading, Input, Link, Text } from '@chakra-ui/react'
 import Header from '../components/header/header'
 import { useRouter } from 'next/navigation'
 
@@ -15,7 +15,11 @@ export default function Login() {
   return (
     <div>
       {/* header */}
-      <Header />
+      <Box background="orange" p="3" display="flex" alignItems="center" m="3" justifyContent="space-between">
+        <Heading textColor="white">
+          Favorite Restaurants App
+        </Heading>
+      </Box>
       {/* header */}
 
       {/* ログイン */}

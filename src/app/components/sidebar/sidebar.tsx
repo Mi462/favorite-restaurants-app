@@ -47,13 +47,6 @@ export default function Sidebar() {
             </Button>
             {/* ホームボタン */}
 
-            {/* メッセージボタン */}
-            <Button ml="1" mr="3" mb="1">
-              <FontAwesomeIcon icon={faEnvelope} size="lg" color="#fe9611"/>
-              <Text ml="5">メッセージ</Text>
-            </Button>
-            {/* メッセージボタン */}
-
             {/* マップボタン */}
             <Button ml="1" mr="3" mb="3" onClick={linkToMap}>
               <FontAwesomeIcon icon={faLocationDot} size="lg" color="#fe9611"/>

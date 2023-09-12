@@ -40,7 +40,7 @@ export default function Top() {
         </Box> 
         {/* Sidebar */}
 
-        <Box width="60%" height="3000">
+        <Box width="60%" height="100%" mb="5">
 
           {/* 囲いの中 */}
           <Box height="500" borderRadius="20" border="2px" borderColor="orange.500" mt="5">

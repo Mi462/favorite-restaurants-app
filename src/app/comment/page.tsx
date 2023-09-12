@@ -1,9 +1,9 @@
 'use client'
 
-import { Avatar, Box, Button, Flex, Text, Wrap, WrapItem } from '@chakra-ui/react';
+import { Avatar, Box, Flex, Text, Wrap, WrapItem } from '@chakra-ui/react';
 import Header from '../components/header/header'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faComment, faEnvelope, faHeart, faHouse, faLocationDot, faPenToSquare, faPlus, faReply, faTrashCan } from '@fortawesome/free-solid-svg-icons';
+import { faComment, faHeart, faLocationDot, faPenToSquare, faReply, faTrashCan } from '@fortawesome/free-solid-svg-icons';
 import { useRouter } from 'next/navigation';
 import Sidebar from '../components/sidebar/sidebar';
 
@@ -11,12 +11,8 @@ export default function Comment() {
 
   const router = useRouter();
 
-  const linkToTop = () => {
-    router.push("/top");
-  }
-
-  const linkToCreate = () => {
-    router.push("/create");
+  const linkToMap = () => {
+    router.push("/map");
   }
 
   const linkToEdit = () => {
@@ -25,6 +21,10 @@ export default function Comment() {
 
   const linkToCommentEdit = () => {
     router.push("/commentEdit");
+  }
+
+  const linkToCommentCreate = () => {
+    router.push("/commentCreate");
   }
 
   return (
@@ -39,7 +39,7 @@ export default function Comment() {
         {/* Sidebar */}
 
       {/* Posts */}
-      <Box width="60%" height="1000">
+      <Box width="60%" height="100%" mb="16">
       <Flex direction="column">
       <Box height="300" borderRadius="20" background="orange.200" border="2px" borderColor="orange.500" mt="5">
         <Flex>
@@ -70,8 +70,9 @@ export default function Comment() {
                 {/* アカウント */}
 
                 {/* コメント */}
+                <Text mb="3">ジャンル： 日本料理</Text>
                 <Text>
-                ここにテキストが入ります。ここにテキストが入ります。ここにテキストが入ります。ここにテキストが入ります。 ここにテキストが入ります。ここにテキストが入ります。ここにテキストが入ります。ここにテキストが入ります。ここにテキストが入ります。スタバの新作が気になる。
+                ここにテキストが入ります。ここにテキストが入ります。ここにテキストが入ります。ここにテキストが入ります。 ここにテキストが入ります。ここにテキストが入ります。ここにテキストが入ります。スタバの新作が気になる。
                 </Text>
                 {/* コメント */}
                 
@@ -80,13 +81,29 @@ export default function Comment() {
 
               {/* ボタン */}
               <Box height="6" display="flex" alignItems="center" justifyContent="space-between" ml="1" mr="1" mt="1">
-                <FontAwesomeIcon icon={faComment} size="lg" color="#4299E1"/>
+
+                {/* 返信ボタン */}
+                <button onClick={linkToCommentCreate}>
+                  <FontAwesomeIcon icon={faReply} size="lg" color="#4299E1"/>
+                </button>
+                {/* 返信ボタン */}
+
+                {/* いいねボタン */}
                 <FontAwesomeIcon icon={faHeart} size="lg" color="#4299E1"/>
-                <FontAwesomeIcon icon={faLocationDot} size="lg" color="#4299E1"/>
+                {/* いいねボタン */}
+
+                {/* マップボタン */}
+                <button onClick={linkToMap}>
+                  <FontAwesomeIcon icon={faLocationDot} size="lg" color="#4299E1"/>
+                </button>
+                {/* マップボタン */}
+
+                {/* 編集ボタン */}
                 <button onClick={linkToEdit}>
                   <FontAwesomeIcon icon={faPenToSquare} size="lg" color="#4299E1"/>
                 </button>
-                <FontAwesomeIcon icon={faTrashCan} size="lg" color="#4299E1"/>
+                {/* 編集ボタン */}
+                
               </Box>
               {/* ボタン */}
 
@@ -134,12 +151,23 @@ export default function Comment() {
 
               {/* ボタン */}
               <Box height="6" display="flex" alignItems="center" justifyContent="space-between" ml="10" mr="10" mt="1">
-                <FontAwesomeIcon icon={faReply} size="lg" color="#4299E1"/>
-                <FontAwesomeIcon icon={faHeart} size="lg" color="#4299E1"/>
-                <FontAwesomeIcon icon={faLocationDot} size="lg" color="#4299E1"/>
+
+                {/* 返信ボタン */}
+                <button onClick={linkToCommentCreate}>
+                  <FontAwesomeIcon icon={faReply} size="lg" color="#4299E1"/>
+                </button>
+                {/* 返信ボタン */}
+
+                {/* いいねボタン */}
+                <FontAwesomeIcon icon={faHeart} size="lg" color="#D53F8C"/>
+                {/* いいねボタン */}
+
+                {/* Editボタン */}
                 <button onClick={linkToCommentEdit}>
                   <FontAwesomeIcon icon={faPenToSquare} size="lg" color="#4299E1"/>
                 </button>
+                {/* Editボタン */}
+
               </Box>
               {/* ボタン */}
 
@@ -187,12 +215,23 @@ export default function Comment() {
 
               {/* ボタン */}
               <Box height="6" display="flex" alignItems="center" justifyContent="space-between" ml="10" mr="10" mt="1">
-              <FontAwesomeIcon icon={faReply} size="lg" color="#4299E1"/>
+
+                {/* 返信ボタン */}
+                <button onClick={linkToCommentCreate}>
+                  <FontAwesomeIcon icon={faReply} size="lg" color="#4299E1"/>
+                </button>
+                {/* 返信ボタン */}
+
+                {/* いいねボタン */}
                 <FontAwesomeIcon icon={faHeart} size="lg" color="#4299E1"/>
-                <FontAwesomeIcon icon={faLocationDot} size="lg" color="#4299E1"/>
+                {/* いいねボタン */}
+
+                {/* Editボタン */}
                 <button onClick={linkToCommentEdit}>
                   <FontAwesomeIcon icon={faPenToSquare} size="lg" color="#4299E1"/>
                 </button>
+                {/* Editボタン */}
+
               </Box>
               {/* ボタン */}
 

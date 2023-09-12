@@ -1,9 +1,9 @@
 'use client'
 
-import { Avatar, Box, Button, Flex, Text, Wrap, WrapItem } from '@chakra-ui/react';
+import { Avatar, Box, Flex, Text, Wrap, WrapItem } from '@chakra-ui/react';
 import Header from '../components/header/header'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faComment, faEnvelope, faHeart, faHouse, faLocationDot, faPenToSquare, faPlus, faReply, faRetweet, faTrashCan } from '@fortawesome/free-solid-svg-icons';
+import { faComment, faHeart, faLocationDot, faPenToSquare, faTrashCan } from '@fortawesome/free-solid-svg-icons';
 import { useRouter } from 'next/navigation';
 import Sidebar from '../components/sidebar/sidebar';
 
@@ -11,16 +11,8 @@ export default function Top() {
 
   const router = useRouter();
 
-  const linkToTop = () => {
-    router.push("/top");
-  }
-
   const linkToComment = () => {
     router.push("/comment");
-  }
-
-  const linkToCreate = () => {
-    router.push("/create");
   }
 
   const linkToEdit = () => {
@@ -45,7 +37,7 @@ export default function Top() {
         {/* Sidebar */}
 
         {/* Posts */}
-        <Box width="60%" height="1000">
+        <Box width="60%" height="100%" mb="16">
           <Flex direction="column">
 
             {/* Posts1 */}
@@ -78,8 +70,9 @@ export default function Top() {
                       {/* アカウント */}
 
                       {/* コメント */}
+                      <Text mb="3">ジャンル： 日本料理</Text>
                       <Text>
-                      ここにテキストが入ります。ここにテキストが入ります。ここにテキストが入ります。ここにテキストが入ります。 ここにテキストが入ります。ここにテキストが入ります。ここにテキストが入ります。ここにテキストが入ります。ここにテキストが入ります。食欲の秋！！
+                      ここにテキストが入ります。ここにテキストが入ります。ここにテキストが入ります。ここにテキストが入ります。 ここにテキストが入ります。ここにテキストが入ります。ここにテキストが入ります。食欲の秋！！
                       </Text>
                       {/* コメント */}
                 
@@ -88,15 +81,33 @@ export default function Top() {
 
                     {/* ボタン */}
                     <Box height="6" display="flex" alignItems="center" justifyContent="space-between" ml="1" mr="1" mt="1">
+
+                      {/* コメントボタン */}
                       <button onClick={linkToComment}>
                         <FontAwesomeIcon icon={faComment} size="lg" color="#4299E1"/>
                       </button>
+                      {/* コメントボタン */}
+
+                      {/* いいねボタン */}
                       <FontAwesomeIcon icon={faHeart} size="lg" color="#D53F8C"/>
-                      <FontAwesomeIcon icon={faLocationDot} size="lg" color="#4299E1"/>
+                      {/* いいねボタン */}
+
+                      {/* マップボタン */}
+                      <button onClick={linkToMap}>
+                        <FontAwesomeIcon icon={faLocationDot} size="lg" color="#4299E1"/>
+                      </button>
+                      {/* マップボタン */}
+
+                      {/* Editボタン */}
                       <button onClick={linkToEdit}>
                         <FontAwesomeIcon icon={faPenToSquare} size="lg" color="#4299E1"/>
                       </button>
+                      {/* Editボタン */}
+
+                      {/* 削除ボタン */}
                       <FontAwesomeIcon icon={faTrashCan} size="lg" color="#4299E1"/>
+                      {/* 削除ボタン */}
+
                     </Box>
                     {/* ボタン */}
 
@@ -138,8 +149,9 @@ export default function Top() {
                       {/* アカウント */}
 
                       {/* コメント */}
+                      <Text mb="3">ジャンル： 日本料理</Text>
                       <Text>
-                      ここにテキストが入ります。ここにテキストが入ります。ここにテキストが入ります。ここにテキストが入ります。 ここにテキストが入ります。ここにテキストが入ります。ここにテキストが入ります。ここにテキストが入ります。ここにテキストが入ります。月見バーガー出てきた！
+                      ここにテキストが入ります。ここにテキストが入ります。ここにテキストが入ります。ここにテキストが入ります。 ここにテキストが入ります。ここにテキストが入ります。ここにテキストが入ります。月見バーガー出てきた！
                       </Text>
                       {/* コメント */}
                 
@@ -148,15 +160,31 @@ export default function Top() {
 
                     {/* ボタン */}
                     <Box height="6" display="flex" alignItems="center" justifyContent="space-between" ml="1" mr="1" mt="1">
+                      {/* コメントボタン */}
                       <button onClick={linkToComment}>
                         <FontAwesomeIcon icon={faComment} size="lg" color="#4299E1"/>
                       </button>
+                      {/* コメントボタン */}
+
+                      {/* いいねボタン */}
                       <FontAwesomeIcon icon={faHeart} size="lg" color="#4299E1"/>
-                      <FontAwesomeIcon icon={faLocationDot} size="lg" color="#4299E1"/>
+                      {/* いいねボタン */}
+
+                      {/* マップボタン */}
+                      <button onClick={linkToMap}>
+                        <FontAwesomeIcon icon={faLocationDot} size="lg" color="#4299E1"/>
+                      </button>
+                      {/* マップボタン */}
+
+                      {/* Editボタン */}
                       <button onClick={linkToEdit}>
                         <FontAwesomeIcon icon={faPenToSquare} size="lg" color="#4299E1"/>
                       </button>
+                      {/* Editボタン */}
+
+                      {/* 削除ボタン */}
                       <FontAwesomeIcon icon={faTrashCan} size="lg" color="#4299E1"/>
+                      {/* 削除ボタン */}
                     </Box>
                     {/* ボタン */}
 
@@ -198,8 +226,9 @@ export default function Top() {
                       {/* アカウント */}
 
                       {/* コメント */}
+                      <Text mb="3">ジャンル： 日本料理</Text>
                       <Text>
-                      ここにテキストが入ります。ここにテキストが入ります。ここにテキストが入ります。ここにテキストが入ります。 ここにテキストが入ります。ここにテキストが入ります。ここにテキストが入ります。ここにテキストが入ります。ここにテキストが入ります。ミスドは美味しい。
+                      ここにテキストが入ります。ここにテキストが入ります。ここにテキストが入ります。ここにテキストが入ります。 ここにテキストが入ります。ここにテキストが入ります。ここにテキストが入ります。ミスドは美味しい。
                       </Text>
                       {/* コメント */}
                 
@@ -208,15 +237,31 @@ export default function Top() {
 
                     {/* ボタン */}
                     <Box height="6" display="flex" alignItems="center" justifyContent="space-between" ml="1" mr="1" mt="1">
+                      {/* コメントボタン */}
                       <button onClick={linkToComment}>
                         <FontAwesomeIcon icon={faComment} size="lg" color="#4299E1"/>
                       </button>
+                      {/* コメントボタン */}
+
+                      {/* いいねボタン */}
                       <FontAwesomeIcon icon={faHeart} size="lg" color="#4299E1"/>
-                      <FontAwesomeIcon icon={faLocationDot} size="lg" color="#4299E1"/>
+                      {/* いいねボタン */}
+
+                      {/* マップボタン */}
+                      <button onClick={linkToMap}>
+                        <FontAwesomeIcon icon={faLocationDot} size="lg" color="#4299E1"/>
+                      </button>
+                      {/* マップボタン */}
+
+                      {/* Editボタン */}
                       <button onClick={linkToEdit}>
                         <FontAwesomeIcon icon={faPenToSquare} size="lg" color="#4299E1"/>
                       </button>
+                      {/* Editボタン */}
+
+                      {/* 削除ボタン */}
                       <FontAwesomeIcon icon={faTrashCan} size="lg" color="#4299E1"/>
+                      {/* 削除ボタン */}
                     </Box>
                     {/* ボタン */}
 

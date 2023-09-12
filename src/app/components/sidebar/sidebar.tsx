@@ -1,7 +1,7 @@
 "use client"
 
-import { Avatar, Box, Button, Flex, Text, Wrap, WrapItem } from "@chakra-ui/react"
-import { faEnvelope, faHouse, faLocationDot, faPlus } from "@fortawesome/free-solid-svg-icons"
+import { Avatar, Button, Flex, Text, Wrap, WrapItem } from "@chakra-ui/react"
+import { faHouse, faLocationDot, faPlus } from "@fortawesome/free-solid-svg-icons"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { useRouter } from "next/navigation";
 

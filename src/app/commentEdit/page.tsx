@@ -1,19 +1,15 @@
 'use client'
 
-import { Avatar, Box, Button, Flex, Select, Text, Textarea, Wrap, WrapItem } from '@chakra-ui/react';
+import { Avatar, Box, Flex, Text, Textarea, Wrap, WrapItem } from '@chakra-ui/react';
 import Header from '../components/header/header'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCirclePlus, faEnvelope, faHouse, faImage, faLocationDot, faPlus } from '@fortawesome/free-solid-svg-icons';
+import { faCirclePlus, faLocationDot } from '@fortawesome/free-solid-svg-icons';
 import { useRouter } from 'next/navigation';
 import Sidebar from '../components/sidebar/sidebar';
 
 export default function CmmentEdit() {
 
   const router = useRouter();
-
-  const linkToTop = () => {
-    router.push("/top");
-  }
 
   const linkToComment = () => {
     router.push("/comment");

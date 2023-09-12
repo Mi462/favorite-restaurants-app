@@ -3,7 +3,7 @@
 import { Avatar, Box, Flex, Text, Wrap, WrapItem } from '@chakra-ui/react';
 import Header from '../components/header/header'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faComment, faHeart, faLocationDot, faPenToSquare, faReply, faTrashCan } from '@fortawesome/free-solid-svg-icons';
+import { faHeart, faLocationDot, faPenToSquare, faReply } from '@fortawesome/free-solid-svg-icons';
 import { useRouter } from 'next/navigation';
 import Sidebar from '../components/sidebar/sidebar';
 

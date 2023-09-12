@@ -1,9 +1,9 @@
 'use client'
 
-import { Avatar, Box, Button, Flex, Select, Text, Textarea, Wrap, WrapItem } from '@chakra-ui/react';
+import { Avatar, Box, Flex, Select, Text, Textarea, Wrap, WrapItem } from '@chakra-ui/react';
 import Header from '../components/header/header'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCirclePlus, faEnvelope, faHouse, faImage, faLocationDot, faPlus } from '@fortawesome/free-solid-svg-icons';
+import { faCirclePlus, faImage, faLocationDot } from '@fortawesome/free-solid-svg-icons';
 import { useRouter } from 'next/navigation';
 import Sidebar from '../components/sidebar/sidebar';
 
@@ -13,10 +13,6 @@ export default function Edit() {
 
   const linkToTop = () => {
     router.push("/top");
-  }
-
-  const linkToMap = () => {
-    router.push("/map");
   }
 
   return (

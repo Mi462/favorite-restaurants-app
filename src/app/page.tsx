@@ -1,15 +1,30 @@
 'use client'
 
 import { Box, Button, Flex, Heading, Input, Link, Text } from '@chakra-ui/react'
+import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
 import { useRouter } from 'next/navigation'
 
-export default function Login() {
+  export default function Login() {
 
-  const router = useRouter();
+    const router = useRouter();
+    // const auth = getAuth();
 
-  const linkToTop = () => {
-    router.push("/top");
-  }
+    const linkToTop = () => {
+      router.push("/top");
+    }
+
+    // signInWithEmailAndPassword(auth, email, password)
+    //   .then((userCredential) => {
+    //     // Signed in 
+    //     console.log("ログイン成功！")
+    //     // const user = userCredential.user;
+    //     // ...
+    //   })
+    //   .catch((error) => {
+    //     console.log("エラーです")
+    //     // const errorCode = error.code;
+    //     // const errorMessage = error.message;
+    //   });
 
   return (
     <div>
@@ -29,9 +44,11 @@ export default function Login() {
           </Heading>
           <Input placeholder='sample@sample.com' background="white" mb="3" type="email" />
           <Input placeholder='********' background="white" mb="6" type="password" />
-          <Button mb="6" colorScheme="orange" onClick={linkToTop}>
-            Log in
-          </Button>
+          
+            <Button mb="6" colorScheme="orange" onClick={linkToTop}>
+              Log in
+            </Button>
+
           <Text textAlign="center">
             新規の方は
             <Link color="orange.500" href="/signup">こちら</Link>
@@ -43,3 +60,4 @@ export default function Login() {
     </div>
   )
 }
+

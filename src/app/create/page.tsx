@@ -17,16 +17,18 @@ export default function Create() {
   const router = useRouter();
 
   //categoryの状態
-  const [ selectCategory, setSelectCategory ] = useState("Japanese-cuisine");
+  const [ selectCategory, setSelectCategory ] = useState("日本料理");
 
-  //状態
-  const [ post, setPost ] = useState({
+  const postData = {
     id: uuidv4(),
     text: "",
-    category: "Japanese-cuisine",
-    create: "",
-    update: ""
-  });
+    category: "日本料理",
+    createdAt: "",
+    updatedAt: ""
+  }
+
+  //状態
+  const [ post, setPost ] = useState(postData);
   
   //投稿ボタン押下時にFirebaseにデータが登録され、Top画面に遷移する関数
   const createPost = async(e: React.MouseEvent<HTMLElement>) => {
@@ -35,36 +37,23 @@ export default function Create() {
     if( post.text === "") return;
     console.log(post.text)
     //Firebaseにデータを登録する
-    await setDoc(doc(db, "cities", "LA"), {
-      name: "Los Angeles",
-      state: "CA",
-      country: "USA"
-    });
-    // await setDoc(doc(db, "posts", post.id), {
-    //   id: post.id,
-    //   text: post.text,
-    //   category: selectCategory,
-    //   create: serverTimestamp(),
-    //   update: serverTimestamp()
-    // })
-    // console.log(post)
+    await setDoc(doc(db, "posts", post.id), {
+      id: post.id,
+      text: post.text,
+      category: selectCategory,
+      createdAt: serverTimestamp(),
+      updatedAt: serverTimestamp()
+    })
     //textの中身を空にする
-    // setPost({
-    //   id: uuidv4(),
-    //   text: "",
-    //   category: "Japanese-cuisine",
-    //   create: "",
-    //   update: ""
-    // })
+    setPost(postData)
+    console.log(post)
     //Top画面に遷移する
     router.push("/top");
   }
 
   //categoryの内容を変更できる
   const onChangePostCategory = (e: React.ChangeEvent<HTMLSelectElement>) => { setSelectCategory(e.target.value) }
-  console.log(selectCategory)
-  console.log(post.text)
-
+  
   return (
     <div>
       <Header />
@@ -107,11 +96,11 @@ export default function Create() {
 
                 {/* コメント */}
                 <Select size="sm" borderRadius="5" onChange={(e) => {onChangePostCategory(e)}}>
-                  <option value="Japanese-cuisine">日本料理</option>
-                  <option value="Chinese-cuisine">中国料理</option>
-                  <option value="French-cuisine">フランス料理</option>
-                  <option value="Italian-cuisine">イタリア料理</option>
-                  <option value="Ethnic-cuisine">エスニック料理</option>
+                  <option value="日本料理">日本料理</option>
+                  <option value="中国料理">中国料理</option>
+                  <option value="フランス料理">フランス料理</option>
+                  <option value="イタリア料理">イタリア料理</option>
+                  <option value="エスニック料理">エスニック料理</option>
                 </Select>
                 <Textarea placeholder='おすすめのお店・料理は？' value={post.text} resize="none" borderRadius={5} size="md" rows={5} mt={1} onChange={(e) => setPost({ ...post, text: e.target.value })}/>
                 {/* コメント */}

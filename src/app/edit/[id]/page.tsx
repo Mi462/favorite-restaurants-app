@@ -1,19 +1,60 @@
 'use client'
 
 import { Avatar, Box, Flex, Select, Text, Textarea, Wrap, WrapItem } from '@chakra-ui/react';
-import Header from '../components/header/header'
+import Header from '../../components/header/header'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCirclePlus, faImage, faLocationDot } from '@fortawesome/free-solid-svg-icons';
 import { useRouter } from 'next/navigation';
-import Sidebar from '../components/sidebar/sidebar';
+import Sidebar from '../../components/sidebar/sidebar';
+import { useEffect, useState } from 'react';
+import { doc, getDoc } from 'firebase/firestore';
+import { db } from '@/lib/FirebaseConfig';
+import { format } from 'path';
 
-export default function Edit() {
+export default function Edit({ params }: { params: { id: string } }) {
 
+  //画面遷移用
   const router = useRouter();
+  //状態
+  const [ editPost, setEditPost ] = useState({
+    id: params.id,
+    text: "",
+    category: "日本料理",
+    createdAt: "",
+    updatedAt: ""
+  });
+  //カテゴリの状態
+  const [ selectCategory, setSelectCategory ] = useState("日本料理");
 
   const linkToTop = () => {
     router.push("/top");
   }
+
+  //カテゴリの選択
+  const onChangePostStatus = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setSelectCategory(e.target.value)
+  }
+
+  useEffect(() => {
+    (async() => {
+      //渡ってきたidを元にデータベースからデータを取り出してきた
+      const docRef = doc(db, "posts", params.id);
+      const docSnap = await getDoc(docRef); 
+      const { text, category, createdAt, updatedAt } = docSnap.data() || {};
+      //取り出したデータをsetEditTodoに設定する
+      setEditPost({
+        id: params.id,
+        text,
+        category,
+        createdAt,
+        updatedAt
+      })
+    })()
+  }, [])
+
+  console.log(editPost)
+  console.log(editPost.category)
+  
 
   return (
     <div>
@@ -33,7 +74,7 @@ export default function Edit() {
           {/* 写真 */}
           <Box width="50%" height="250" background="#FEFCBF" ml="5" mr="5" mt="5" display='flex' justifyContent='center' alignItems='center'>
             <FontAwesomeIcon icon={faImage} size="lg" color="#4299E1"/>
-            <Text ml="1">クリックしたら画像を変更できる</Text>
+            <Text ml="1">画像を変更可能</Text>
           </Box>
           {/* 写真 */}
 
@@ -56,14 +97,14 @@ export default function Edit() {
                 {/* アカウント */}
 
                 {/* コメント */}
-                <Select size="sm" borderRadius="5">
-                  <option value="Japanese-cuisine">日本料理</option>
-                  <option value="Chinese-cuisine">中国料理</option>
-                  <option value="French-cuisine">フランス料理</option>
-                  <option value="Italian-cuisine">イタリア料理</option>
-                  <option value="Ethnic-cuisine">エスニック料理</option>
+                <Select size="sm" borderRadius="5" value={editPost.category} onChange={(e) => {onChangePostStatus(e)}}>
+                  <option value="日本料理">日本料理</option>
+                  <option value="中国料理">中国料理</option>
+                  <option value="フランス料理">フランス料理</option>
+                  <option value="イタリア料理">イタリア料理</option>
+                  <option value="エスニック料理">エスニック料理</option>
                 </Select>
-                <Textarea defaultValue='ミスドの生フレンチクルーラー！' resize="none" borderRadius={5} size="md" rows={5} mt={1} />
+                <Textarea resize="none" borderRadius={5} size="md" rows={5} mt={1} value={editPost.text} onChange={(e) => {setEditPost({ ...editPost, text: e.target.value })}}/>
                 {/* コメント */}
                 
               </Box>

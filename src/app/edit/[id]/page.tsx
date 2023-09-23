@@ -35,13 +35,6 @@ export default function Edit({ params }: { params: { id: string } }) {
     createdAt: "",
     updatedAt: "",
   });
-  //カテゴリの状態
-  // const [selectCategory, setSelectCategory] = useState(editPost.category);
-
-  //カテゴリの選択
-  // const onChangePostCategory = (e: React.ChangeEvent<HTMLSelectElement>) => {
-  //   setSelectCategory(e.target.value);
-  // };
 
   //再投稿ボタン押下時にFirebaseにあるデータが更新され、Top画面に遷移する関数
   const onClickEditPost = async (

@@ -3,7 +3,9 @@
 import {
   Avatar,
   Box,
+  Button,
   Flex,
+  Input,
   Select,
   Text,
   Textarea,
@@ -23,11 +25,16 @@ import { useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import { doc, serverTimestamp, setDoc } from "firebase/firestore";
 import { db } from "@/lib/FirebaseConfig";
+import storage from "../../lib/FirebaseConfig";
+import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
 
 export default function Create() {
   //画面遷移用
   const router = useRouter();
-
+  //imageのオブジェクトの管理
+  const [image, setImage] = useState(null);
+  //画像を選択して画面にpreview用として表示するためのURL格納用
+  const [createobjectURL, setCreateObjectURL] = useState(null);
   //categoryの状態
   const [selectCategory, setSelectCategory] = useState("日本料理");
 
@@ -68,6 +75,36 @@ export default function Create() {
     setSelectCategory(e.target.value);
   };
 
+  //画像が選択された後に実行するようにして、fileオブジェクトをimageにセット
+  // const uploadToClient = (event: any) => {
+  //   if (event.target.files && event.target.files[0]) {
+  //     const file = event.target.files[0];
+
+  //     setImage(file);
+  //     setCreateObjectURL(URL.createObjectURL(file));
+  //   }
+  // };
+
+  const onFileupUploadToFirebase = (e: any) => {
+    const storage = getStorage();
+    const file = e.target.files[0];
+    const storageRef = ref(storage, "/image" + file.name);
+    //StorageにアップロードしてFirebaseに登録
+    uploadBytes(storageRef, file)
+      .then((snapshot) => {
+        console.log("Uploaded a blob or file!");
+        //Firebaseに登録した画像データをURLで取り出す
+        getDownloadURL(ref(storage, "/image" + file.name)).then((url) => {
+          console.log(url);
+          //imgタグのsrcに画像URLを渡す
+          const dataSrc = url;
+        });
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
   return (
     <div>
       <Header />
@@ -91,20 +128,43 @@ export default function Create() {
         >
           <Flex>
             {/* 写真 */}
-            <Box
-              width="50%"
-              height="250"
-              background="#FEFCBF"
-              ml="5"
-              mr="5"
-              mt="5"
-              display="flex"
-              justifyContent="center"
-              alignItems="center"
-            >
-              <FontAwesomeIcon icon={faImage} size="lg" color="#4299E1" />
-              <Text ml="1">画像を選択</Text>
-            </Box>
+            {dataSrc === "" ? (
+              <Box
+                width="50%"
+                height="250"
+                background="#FEFCBF"
+                ml="5"
+                mr="5"
+                mt="5"
+                display="flex"
+                justifyContent="center"
+                alignItems="center"
+              >
+                <label htmlFor="form-image" style={{ cursor: "pointer" }}>
+                  <FontAwesomeIcon icon={faImage} size="lg" color="#4299E1" />
+                  画像を選択
+                </label>
+                <Input
+                  display="none"
+                  multiple
+                  name="imageURL"
+                  type="file"
+                  id="form-image"
+                  accept=".png, .jpeg, .jpg"
+                  onChange={onFileupUploadToFirebase}
+                />
+              </Box>
+            ) : (
+              <img
+                src={dataSrc}
+                width="50%"
+                height="250"
+                ml="5"
+                mr="5"
+                mt="5"
+              />
+            )}
+
             {/* 写真 */}
 
             {/* 写真横のアカウント・コメント・ボタンなど */}

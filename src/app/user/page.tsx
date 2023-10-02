@@ -71,7 +71,7 @@ export default function Top() {
           >
             <Flex>
               {/* アカウント画像の編集 */}
-              <Box ml="3" width="30%" height="180">
+              <Box width="25%" height="180">
                 <Wrap display="flex" justifyContent="center">
                   <WrapItem>
                     <Avatar
@@ -88,11 +88,11 @@ export default function Top() {
                   fontSize="md"
                   mb="3"
                 >
-                  アカウント画像の選択
+                  画像の選択
                 </Text>
               </Box>
               {/* アカウント画像の編集 */}
-              <Box mr="3" ml="3" width="70%" height="180">
+              <Box mr="3" width="85%" height="180">
                 <Text mt="5">ユーザー名</Text>
                 <Input
                   placeholder="ユーザー名"

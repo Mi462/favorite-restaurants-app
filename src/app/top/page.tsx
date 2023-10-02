@@ -4,23 +4,19 @@ import {
   Avatar,
   Box,
   Flex,
-  Tab,
-  TabList,
-  TabPanel,
-  TabPanels,
-  Tabs,
   Text,
   Wrap,
   WrapItem,
+  Select,
   Button,
 } from "@chakra-ui/react";
 import Header from "../components/header/header";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-  faComment,
   faHeart,
   faLocationDot,
   faPenToSquare,
+  faPlus,
   faTrashCan,
 } from "@fortawesome/free-solid-svg-icons";
 import { useRouter } from "next/navigation";
@@ -42,6 +38,8 @@ export default function Top() {
   const router = useRouter();
   //状態
   const [posts, setPosts] = useState([]);
+  //上のプルダウンの状態
+  const [selectStatus, setSelectStatus] = useState("全て");
 
   //Firebaseからデータを取り出す
   useEffect(() => {
@@ -64,7 +62,7 @@ export default function Top() {
     });
   }, []);
 
-  // console.log(posts);
+  console.log(posts);
 
   const linkToShow = (id: string) => {
     router.push(`/show/${id}`);
@@ -76,6 +74,15 @@ export default function Top() {
 
   const linkToMap = () => {
     router.push("/map");
+  };
+
+  const linkToCreate = () => {
+    router.push("/create");
+  };
+
+  //上のStatusの内容を変更できる
+  const onChangeTodoStatus = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setSelectStatus(e.target.value);
   };
 
   const clickDelete = (id: string) => {
@@ -100,35 +107,62 @@ export default function Top() {
 
         {/* Posts */}
         <Box width="60%" height="100%" mb="16">
-          <Tabs variant="enclosed">
-            <TabList>
-              <Tab>日本料理</Tab>
-              <Tab>中国料理</Tab>
-              <Tab>フランス料理</Tab>
-              <Tab>イタリア料理</Tab>
-              <Tab>エスニック料理</Tab>
-            </TabList>
-            <TabPanels>
-              <TabPanel>
-                {/* {posts.} */}
-                <p>日本料理</p>
-              </TabPanel>
-              <TabPanel>
-                <p>中国料理</p>
-              </TabPanel>
-              <TabPanel>
-                <p>フランス料理</p>
-              </TabPanel>
-              <TabPanel>
-                <p>イタリア料理</p>
-              </TabPanel>
-              <TabPanel>
-                <p>エスニック料理</p>
-              </TabPanel>
-            </TabPanels>
-          </Tabs>
           <Flex direction="column">
+            <Flex justifyContent="space-between">
+              <Box mt="3" width="20%" display="flex">
+                {/* 上のプルダウンリスト */}
+                <Select
+                  name="status"
+                  borderColor="orange.500"
+                  value={selectStatus}
+                  onChange={(e) => onChangeTodoStatus(e)}
+                >
+                  <option value="全て">全て</option>
+                  <option value="日本料理">日本料理</option>
+                  <option value="中国料理">中国料理</option>
+                  <option value="フランス料理">フランス料理</option>
+                  <option value="イタリア料理">イタリア料理</option>
+                  <option value="エスニック料理">エスニック料理</option>
+                </Select>
+                {/* 上のプルダウンリスト */}
+              </Box>
+              <Box mt="3" display="flex">
+                {/* 投稿ボタン */}
+                <Button onClick={linkToCreate} borderRadius="50">
+                  <Flex>
+                    <FontAwesomeIcon icon={faPlus} size="lg" color="#fe9611" />
+                    <Text ml="5">投稿</Text>
+                  </Flex>
+                </Button>
+                {/* 投稿ボタン */}
+              </Box>
+            </Flex>
+
             {posts?.map((post: any) => {
+              if (selectStatus === "日本料理" && post.category !== "日本料理")
+                return;
+              if (selectStatus === "中国料理" && post.category !== "中国料理")
+                return;
+              if (
+                selectStatus === "フランス料理" &&
+                post.category !== "フランス料理"
+              )
+                return;
+              if (
+                selectStatus === "イタリア料理" &&
+                post.category !== "イタリア料理"
+              )
+                return;
+              if (
+                selectStatus === "フランス料理" &&
+                post.category !== "フランス料理"
+              )
+                return;
+              if (
+                selectStatus === "エスニック料理" &&
+                post.category !== "エスニック料理"
+              )
+                return;
               return (
                 <Box
                   height="300"

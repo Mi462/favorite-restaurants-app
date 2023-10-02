@@ -1,6 +1,19 @@
 "use client";
 
-import { Avatar, Box, Flex, Text, Wrap, WrapItem } from "@chakra-ui/react";
+import {
+  Avatar,
+  Box,
+  Flex,
+  Tab,
+  TabList,
+  TabPanel,
+  TabPanels,
+  Tabs,
+  Text,
+  Wrap,
+  WrapItem,
+  Button,
+} from "@chakra-ui/react";
 import Header from "../components/header/header";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -51,10 +64,10 @@ export default function Top() {
     });
   }, []);
 
-  console.log(posts);
+  // console.log(posts);
 
-  const linkToComment = () => {
-    router.push("/comment");
+  const linkToShow = (id: string) => {
+    router.push(`/show/${id}`);
   };
 
   const linkToEdit = (id: string) => {
@@ -87,6 +100,33 @@ export default function Top() {
 
         {/* Posts */}
         <Box width="60%" height="100%" mb="16">
+          <Tabs variant="enclosed">
+            <TabList>
+              <Tab>日本料理</Tab>
+              <Tab>中国料理</Tab>
+              <Tab>フランス料理</Tab>
+              <Tab>イタリア料理</Tab>
+              <Tab>エスニック料理</Tab>
+            </TabList>
+            <TabPanels>
+              <TabPanel>
+                {/* {posts.} */}
+                <p>日本料理</p>
+              </TabPanel>
+              <TabPanel>
+                <p>中国料理</p>
+              </TabPanel>
+              <TabPanel>
+                <p>フランス料理</p>
+              </TabPanel>
+              <TabPanel>
+                <p>イタリア料理</p>
+              </TabPanel>
+              <TabPanel>
+                <p>エスニック料理</p>
+              </TabPanel>
+            </TabPanels>
+          </Tabs>
           <Flex direction="column">
             {posts?.map((post: any) => {
               return (
@@ -98,6 +138,10 @@ export default function Top() {
                   borderColor="orange.500"
                   mt="5"
                   key={post.id}
+                  onClick={() => {
+                    linkToShow(post.id);
+                  }}
+                  style={{ cursor: "pointer" }}
                 >
                   <Flex>
                     {/* 写真 */}
@@ -157,16 +201,6 @@ export default function Top() {
                           mr="1"
                           mt="1"
                         >
-                          {/* コメントボタン */}
-                          <button onClick={linkToComment}>
-                            <FontAwesomeIcon
-                              icon={faComment}
-                              size="lg"
-                              color="#4299E1"
-                            />
-                          </button>
-                          {/* コメントボタン */}
-
                           {/* いいねボタン */}
                           <FontAwesomeIcon
                             icon={faHeart}
@@ -176,41 +210,36 @@ export default function Top() {
                           {/* いいねボタン */}
 
                           {/* マップボタン */}
-                          <button onClick={linkToMap}>
-                            <FontAwesomeIcon
-                              icon={faLocationDot}
-                              size="lg"
-                              color="#4299E1"
-                            />
-                          </button>
+                          <FontAwesomeIcon
+                            icon={faLocationDot}
+                            size="lg"
+                            color="#4299E1"
+                            onClick={linkToMap}
+                          />
                           {/* マップボタン */}
 
                           {/* Editボタン */}
-                          <button
+                          <FontAwesomeIcon
+                            icon={faPenToSquare}
+                            size="lg"
+                            color="#4299E1"
                             onClick={() => {
                               linkToEdit(post.id);
                             }}
-                          >
-                            <FontAwesomeIcon
-                              icon={faPenToSquare}
-                              size="lg"
-                              color="#4299E1"
-                            />
-                          </button>
+                          />
                           {/* Editボタン */}
 
                           {/* 削除ボタン */}
-                          <button
+
+                          <FontAwesomeIcon
+                            icon={faTrashCan}
+                            size="lg"
+                            color="#4299E1"
                             onClick={() => {
                               clickDelete(post.id);
                             }}
-                          >
-                            <FontAwesomeIcon
-                              icon={faTrashCan}
-                              size="lg"
-                              color="#4299E1"
-                            />
-                          </button>
+                          />
+
                           {/* 削除ボタン */}
                         </Box>
                         {/* ボタン */}

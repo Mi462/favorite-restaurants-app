@@ -1,6 +1,16 @@
 "use client";
 
-import { Box, Button, Flex, Heading, Input } from "@chakra-ui/react";
+import {
+  Avatar,
+  Box,
+  Button,
+  Flex,
+  Heading,
+  Input,
+  Wrap,
+  WrapItem,
+  Text,
+} from "@chakra-ui/react";
 import Header from "../components/header/header";
 import { useRouter } from "next/navigation";
 import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
@@ -53,6 +63,27 @@ export default function Login() {
           <Heading textAlign="center" mb="6">
             Sign up
           </Heading>
+          <Box display="flex" justifyContent="center">
+            <Wrap>
+              <WrapItem>
+                <Avatar
+                  name="Tarou"
+                  size="md"
+                  src="https://bit.ly/dan-abramov"
+                ></Avatar>
+              </WrapItem>
+            </Wrap>
+          </Box>
+          <Text display="flex" justifyContent="center" fontSize="md" mb="3">
+            アカウント画像の選択
+          </Text>
+
+          <Input
+            placeholder="ユーザー名"
+            background="white"
+            mb="3"
+            type="userName"
+          />
           <Input
             placeholder="sample@sample.com"
             background="white"

@@ -33,8 +33,8 @@ export default function Top() {
     router.push("/top");
   };
 
-  const linkToComment = () => {
-    router.push("/comment");
+  const linkToShow = () => {
+    router.push("/show");
   };
 
   const linkToCreate = () => {

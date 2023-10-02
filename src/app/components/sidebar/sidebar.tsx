@@ -5,12 +5,17 @@ import {
   faHouse,
   faLocationDot,
   faPlus,
+  faUser,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useRouter } from "next/navigation";
 
 export default function Sidebar() {
   const router = useRouter();
+
+  const linkToUser = () => {
+    router.push("/user");
+  };
 
   const linkToTop = () => {
     router.push("/top");
@@ -46,6 +51,13 @@ export default function Sidebar() {
             </Text>
           </Flex>
           {/* アカウント表示 */}
+
+          {/* ユーザーボタン */}
+          <Button ml="1" mr="3" mb="1" onClick={linkToUser}>
+            <FontAwesomeIcon icon={faUser} size="lg" color="#fe9611" />
+            <Text ml="5">ユーザー</Text>
+          </Button>
+          {/* ユーザーボタン */}
 
           {/* ホームボタン */}
           <Button ml="1" mr="3" mb="1" onClick={linkToTop}>

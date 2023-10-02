@@ -1,35 +1,72 @@
 "use client";
 
-import { Avatar, Box, Flex, Text, Wrap, WrapItem } from "@chakra-ui/react";
-import Header from "../components/header/header";
+import {
+  Avatar,
+  Box,
+  Flex,
+  Text,
+  Wrap,
+  WrapItem,
+  Button,
+} from "@chakra-ui/react";
+import Header from "../../components/header/header";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faHeart,
   faLocationDot,
   faPenToSquare,
   faReply,
+  faTrashCan,
 } from "@fortawesome/free-solid-svg-icons";
 import { useRouter } from "next/navigation";
-import Sidebar from "../components/sidebar/sidebar";
+import { useEffect, useState } from "react";
+import Sidebar from "../../components/sidebar/sidebar";
+import { deleteDoc, doc, getDoc } from "firebase/firestore";
+import { db } from "@/lib/FirebaseConfig";
+import { format } from "date-fns";
 
-export default function Comment() {
+export default function Comment({ params }: { params: { id: string } }) {
   const router = useRouter();
+  //状態
+  const [subPost, setSubPost] = useState<any>({
+    // id: params.id,
+    // text: "",
+    // category: "日本料理",
+    // createdAt: "",
+    // updatedAt: "",
+  });
 
   const linkToMap = () => {
     router.push("/map");
   };
 
-  const linkToEdit = () => {
-    router.push("/edit");
-  };
-
-  const linkToCommentEdit = () => {
-    router.push("/commentEdit");
+  const linkToEdit = (id: string) => {
+    router.push(`/edit/${id}`);
   };
 
   const linkToCommentCreate = () => {
     router.push("/commentCreate");
   };
+
+  //Firebaseからデータを取り出す
+  const getCommentFormFirebase = async () => {
+    //渡ってきたidを元にデータベースからデータを取り出す
+    const docRef = doc(db, "posts", params.id);
+    const docSnap = await getDoc(docRef);
+    //取り出したデータをsetEditTodoに設定する
+    setSubPost({
+      id: params.id,
+      text: docSnap.data()?.text,
+      category: docSnap.data()?.category,
+      createdAt: format(docSnap.data()?.createdAt.toDate(), "yyyy/MM/dd HH:mm"),
+      updatedAt: format(docSnap.data()?.updatedAt.toDate(), "yyyy/MM/dd HH:mm"),
+    });
+    console.log(subPost);
+  };
+
+  useEffect(() => {
+    getCommentFormFirebase();
+  }, []);
 
   return (
     <div>
@@ -90,16 +127,13 @@ export default function Comment() {
                             アカウント名
                           </Text>
                         </Box>
-                        <Text>2023/00/00 00:00:00</Text>
+                        <Text>{subPost.updatedAt}</Text>
                       </Flex>
                       {/* アカウント */}
 
                       {/* コメント */}
-                      <Text mb="3">ジャンル： 日本料理</Text>
-                      <Text>
-                        ここにテキストが入ります。ここにテキストが入ります。ここにテキストが入ります。ここにテキストが入ります。
-                        ここにテキストが入ります。ここにテキストが入ります。ここにテキストが入ります。スタバの新作が気になる。
-                      </Text>
+                      <Text mb="3">ジャンル： {subPost.category}</Text>
+                      <Text>{subPost.text}</Text>
                       {/* コメント */}
                     </Box>
                     {/* 写真横のアカウント・コメント */}
@@ -115,13 +149,12 @@ export default function Comment() {
                       mt="1"
                     >
                       {/* 返信ボタン */}
-                      <button onClick={linkToCommentCreate}>
-                        <FontAwesomeIcon
-                          icon={faReply}
-                          size="lg"
-                          color="#4299E1"
-                        />
-                      </button>
+                      <FontAwesomeIcon
+                        icon={faReply}
+                        size="lg"
+                        color="#4299E1"
+                        onClick={linkToCommentCreate}
+                      />
                       {/* 返信ボタン */}
 
                       {/* いいねボタン */}
@@ -133,23 +166,24 @@ export default function Comment() {
                       {/* いいねボタン */}
 
                       {/* マップボタン */}
-                      <button onClick={linkToMap}>
-                        <FontAwesomeIcon
-                          icon={faLocationDot}
-                          size="lg"
-                          color="#4299E1"
-                        />
-                      </button>
+                      <FontAwesomeIcon
+                        icon={faLocationDot}
+                        size="lg"
+                        color="#4299E1"
+                        onClick={linkToMap}
+                      />
                       {/* マップボタン */}
 
                       {/* 編集ボタン */}
-                      <button onClick={linkToEdit}>
-                        <FontAwesomeIcon
-                          icon={faPenToSquare}
-                          size="lg"
-                          color="#4299E1"
-                        />
-                      </button>
+                      <FontAwesomeIcon
+                        icon={faPenToSquare}
+                        size="lg"
+                        color="#4299E1"
+                        style={{ cursor: "pointer" }}
+                        onClick={() => {
+                          linkToEdit(params.id);
+                        }}
+                      />
                       {/* 編集ボタン */}
                     </Box>
                     {/* ボタン */}
@@ -209,53 +243,12 @@ export default function Comment() {
                       {/* コメント */}
                     </Box>
                     {/* 写真横のアカウント・コメント */}
-
-                    {/* ボタン */}
-                    <Box
-                      height="6"
-                      display="flex"
-                      alignItems="center"
-                      justifyContent="space-between"
-                      ml="10"
-                      mr="10"
-                      mt="1"
-                    >
-                      {/* 返信ボタン */}
-                      <button onClick={linkToCommentCreate}>
-                        <FontAwesomeIcon
-                          icon={faReply}
-                          size="lg"
-                          color="#4299E1"
-                        />
-                      </button>
-                      {/* 返信ボタン */}
-
-                      {/* いいねボタン */}
-                      <FontAwesomeIcon
-                        icon={faHeart}
-                        size="lg"
-                        color="#D53F8C"
-                      />
-                      {/* いいねボタン */}
-
-                      {/* Editボタン */}
-                      <button onClick={linkToCommentEdit}>
-                        <FontAwesomeIcon
-                          icon={faPenToSquare}
-                          size="lg"
-                          color="#4299E1"
-                        />
-                      </button>
-                      {/* Editボタン */}
-                    </Box>
-                    {/* ボタン */}
                   </Flex>
                 </Box>
                 {/* 写真横のアカウント・コメント・ボタンなど */}
               </Flex>
             </Box>
             {/* Comment1 */}
-
             {/* Comment2 */}
             <Box
               width="95%"
@@ -305,46 +298,6 @@ export default function Comment() {
                       {/* コメント */}
                     </Box>
                     {/* 写真横のアカウント・コメント */}
-
-                    {/* ボタン */}
-                    <Box
-                      height="6"
-                      display="flex"
-                      alignItems="center"
-                      justifyContent="space-between"
-                      ml="10"
-                      mr="10"
-                      mt="1"
-                    >
-                      {/* 返信ボタン */}
-                      <button onClick={linkToCommentCreate}>
-                        <FontAwesomeIcon
-                          icon={faReply}
-                          size="lg"
-                          color="#4299E1"
-                        />
-                      </button>
-                      {/* 返信ボタン */}
-
-                      {/* いいねボタン */}
-                      <FontAwesomeIcon
-                        icon={faHeart}
-                        size="lg"
-                        color="#4299E1"
-                      />
-                      {/* いいねボタン */}
-
-                      {/* Editボタン */}
-                      <button onClick={linkToCommentEdit}>
-                        <FontAwesomeIcon
-                          icon={faPenToSquare}
-                          size="lg"
-                          color="#4299E1"
-                        />
-                      </button>
-                      {/* Editボタン */}
-                    </Box>
-                    {/* ボタン */}
                   </Flex>
                 </Box>
                 {/* 写真横のアカウント・コメント・ボタンなど */}

@@ -15,11 +15,11 @@ import { faCirclePlus, faLocationDot } from "@fortawesome/free-solid-svg-icons";
 import { useRouter } from "next/navigation";
 import Sidebar from "../components/sidebar/sidebar";
 
-export default function CmmentEdit() {
+export default function CommentCreate() {
   const router = useRouter();
 
-  const linkToComment = () => {
-    router.push("/comment");
+  const linkToShow = () => {
+    router.push("/show");
   };
 
   return (
@@ -98,7 +98,7 @@ export default function CmmentEdit() {
                 {/* マップボタン */}
 
                 {/* 投稿ボタン */}
-                <button onClick={linkToComment}>
+                <button onClick={linkToShow}>
                   <Box
                     height="6"
                     display="flex"

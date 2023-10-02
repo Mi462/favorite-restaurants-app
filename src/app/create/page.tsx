@@ -3,8 +3,8 @@
 import {
   Avatar,
   Box,
-  Button,
   Flex,
+  Image,
   Input,
   Select,
   Text,
@@ -25,16 +25,15 @@ import { useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import { doc, serverTimestamp, setDoc } from "firebase/firestore";
 import { db } from "@/lib/FirebaseConfig";
-import storage from "../../lib/FirebaseConfig";
-import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
+import { getStorage, ref, uploadBytes } from "firebase/storage";
 
 export default function Create() {
   //画面遷移用
   const router = useRouter();
-  //imageのオブジェクトの管理
-  const [image, setImage] = useState(null);
-  //画像を選択して画面にpreview用として表示するためのURL格納用
-  const [createobjectURL, setCreateObjectURL] = useState(null);
+  //画像のURL管理
+  const [createObjectURL, setCreateObjectURL] = useState<string>();
+  //fileのオブジェクト管理
+  const [image, setImage] = useState<any>();
   //categoryの状態
   const [selectCategory, setSelectCategory] = useState("日本料理");
 
@@ -50,11 +49,13 @@ export default function Create() {
   const [post, setPost] = useState(postData);
 
   //投稿ボタン押下時にFirebaseにデータが登録され、Top画面に遷移する関数
-  const createPost = async (e: React.MouseEvent<HTMLElement>) => {
+  const createPost = async (e: any) => {
     e.preventDefault();
     //textに何も記入されていない場合は反映されない
     if (post.text === "") return;
-    console.log(post.text);
+    // console.log(post.text);
+    //画像がセットされていない場合は反映されない
+    if (image === undefined) return;
     //Firebaseにデータを登録する
     await setDoc(doc(db, "posts", post.id), {
       id: post.id,
@@ -65,45 +66,39 @@ export default function Create() {
     });
     //textの中身を空にする
     setPost(postData);
-    console.log(post);
+    // console.log(post);
+
+    //Storageに画像を登録する
+    const storage = getStorage();
+    const storageRef = ref(storage, "/image" + image.name);
+    uploadBytes(storageRef, image)
+      .then((snapshot) => {
+        console.log("Uploaded a blob or file!");
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+
     //Top画面に遷移する
     router.push("/top");
   };
 
-  //categoryの内容を変更できる
+  //categoryの内容を変更できる関数
   const onChangePostCategory = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectCategory(e.target.value);
   };
 
-  //画像が選択された後に実行するようにして、fileオブジェクトをimageにセット
-  // const uploadToClient = (event: any) => {
-  //   if (event.target.files && event.target.files[0]) {
-  //     const file = event.target.files[0];
+  //ローカルのフォルダ内の画像を選択して表示する関数
+  const onFileUploadToFirebase = (e: any) => {
+    const file = e.target.files[0];
+    // console.log(file);
+    //ローカルで選択した画像のURLを設定
+    setCreateObjectURL(window.URL.createObjectURL(file));
+    //fileの設定
+    setImage(file);
+  };
 
-  //     setImage(file);
-  //     setCreateObjectURL(URL.createObjectURL(file));
-  //   }
-  // };
-
-  // const onFileupUploadToFirebase = (e: any) => {
-  //   const storage = getStorage();
-  //   const file = e.target.files[0];
-  //   const storageRef = ref(storage, "/image" + file.name);
-  //   //StorageにアップロードしてFirebaseに登録
-  //   uploadBytes(storageRef, file)
-  //     .then((snapshot) => {
-  //       console.log("Uploaded a blob or file!");
-  //       //Firebaseに登録した画像データをURLで取り出す
-  //       getDownloadURL(ref(storage, "/image" + file.name)).then((url) => {
-  //         console.log(url);
-  //         //imgタグのsrcに画像URLを渡す
-  //         const dataSrc = url;
-  //       });
-  //     })
-  //     .catch((error) => {
-  //       console.log(error);
-  //     });
-  // };
+  // console.log(image);
 
   return (
     <div>
@@ -128,43 +123,43 @@ export default function Create() {
         >
           <Flex>
             {/* 写真 */}
-            {/* {dataSrc === "" ? ( */}
-            <Box
-              width="50%"
-              height="250"
-              background="#FEFCBF"
-              ml="5"
-              mr="5"
-              mt="5"
-              display="flex"
-              justifyContent="center"
-              alignItems="center"
-            >
-              <label htmlFor="form-image" style={{ cursor: "pointer" }}>
-                <FontAwesomeIcon icon={faImage} size="lg" color="#4299E1" />
-                画像を選択
-              </label>
-              <Input
-                display="none"
-                multiple
-                name="imageURL"
-                type="file"
-                id="form-image"
-                accept=".png, .jpeg, .jpg"
-                // onChange={onFileupUploadToFirebase}
-              />
-            </Box>
-            {/* ) : (
-              <img
-                src={dataSrc}
+            {createObjectURL === undefined ? (
+              <Box
+                width="50%"
+                height="250"
+                background="#FEFCBF"
+                ml="5"
+                mr="5"
+                mt="5"
+                display="flex"
+                justifyContent="center"
+                alignItems="center"
+              >
+                <label htmlFor="form-image" style={{ cursor: "pointer" }}>
+                  <FontAwesomeIcon icon={faImage} size="lg" color="#4299E1" />
+                  画像を選択
+                </label>
+                <Input
+                  display="none"
+                  multiple
+                  name="imageURL"
+                  type="file"
+                  id="form-image"
+                  accept=".png, .jpeg, .jpg"
+                  onChange={onFileUploadToFirebase}
+                />
+              </Box>
+            ) : (
+              <Image
+                src={createObjectURL}
+                alt="imageDataPost"
                 width="50%"
                 height="250"
                 ml="5"
                 mr="5"
                 mt="5"
               />
-            )} */}
-
+            )}
             {/* 写真 */}
 
             {/* 写真横のアカウント・コメント・ボタンなど */}

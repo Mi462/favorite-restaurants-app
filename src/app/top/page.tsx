@@ -9,10 +9,12 @@ import {
   WrapItem,
   Select,
   Button,
+  Image,
 } from "@chakra-ui/react";
 import Header from "../components/header/header";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
+  faComment,
   faHeart,
   faLocationDot,
   faPenToSquare,
@@ -55,17 +57,18 @@ export default function Top() {
           category: doc.data().category,
           createdAt: format(doc.data().createdAt.toDate(), "yyyy/MM/dd HH:mm"),
           updatedAt: format(doc.data().updatedAt.toDate(), "yyyy/MM/dd HH:mm"),
+          picture: doc.data().picture,
         };
       });
       setPosts(getPostsData);
-      console.log(posts);
+      // console.log(posts);
     });
   }, []);
 
   console.log(posts);
 
-  const linkToShow = (id: string) => {
-    router.push(`/show/${id}`);
+  const linkToComment = (id: string) => {
+    router.push(`/comment/${id}`);
   };
 
   const linkToEdit = (id: string) => {
@@ -172,21 +175,26 @@ export default function Top() {
                   borderColor="orange.500"
                   mt="5"
                   key={post.id}
-                  onClick={() => {
-                    linkToShow(post.id);
-                  }}
-                  style={{ cursor: "pointer" }}
                 >
                   <Flex>
                     {/* 写真 */}
-                    <Box
+                    {/* <Box
                       width="50%"
                       height="250"
                       background="#FEFCBF"
                       ml="5"
                       mr="5"
                       mt="5"
-                    ></Box>
+                    ></Box> */}
+                    <Image
+                      src={post.picture}
+                      alt="imageDataPost"
+                      width="50%"
+                      height="250"
+                      ml="5"
+                      mr="5"
+                      mt="5"
+                    />
                     {/* 写真 */}
 
                     {/* 写真横のアカウント・コメント・ボタンなど */}
@@ -235,6 +243,18 @@ export default function Top() {
                           mr="1"
                           mt="1"
                         >
+                          {/* コメントボタン */}
+                          <FontAwesomeIcon
+                            icon={faComment}
+                            size="lg"
+                            color="#4299E1"
+                            onClick={() => {
+                              linkToComment(post.id);
+                            }}
+                            cursor="pointer"
+                          />
+                          {/* コメントボタン */}
+
                           {/* いいねボタン */}
                           <FontAwesomeIcon
                             icon={faHeart}
@@ -260,11 +280,11 @@ export default function Top() {
                             onClick={() => {
                               linkToEdit(post.id);
                             }}
+                            cursor="pointer"
                           />
                           {/* Editボタン */}
 
                           {/* 削除ボタン */}
-
                           <FontAwesomeIcon
                             icon={faTrashCan}
                             size="lg"
@@ -272,8 +292,8 @@ export default function Top() {
                             onClick={() => {
                               clickDelete(post.id);
                             }}
+                            cursor="pointer"
                           />
-
                           {/* 削除ボタン */}
                         </Box>
                         {/* ボタン */}

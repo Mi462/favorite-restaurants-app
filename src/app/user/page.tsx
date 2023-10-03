@@ -36,8 +36,8 @@ export default function Top() {
     router.push("/top");
   };
 
-  const linkToShow = () => {
-    router.push("/show");
+  const linkToComment = () => {
+    router.push("/comment");
   };
 
   const linkToCreate = () => {

@@ -18,7 +18,7 @@ import Sidebar from "../components/sidebar/sidebar";
 export default function CommentCreate() {
   const router = useRouter();
 
-  const linkToShow = () => {
+  const linkToComment = () => {
     router.push("/show");
   };
 
@@ -98,7 +98,7 @@ export default function CommentCreate() {
                 {/* マップボタン */}
 
                 {/* 投稿ボタン */}
-                <button onClick={linkToShow}>
+                <button onClick={linkToComment}>
                   <Box
                     height="6"
                     display="flex"

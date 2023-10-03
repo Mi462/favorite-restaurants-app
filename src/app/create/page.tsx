@@ -23,7 +23,7 @@ import { useRouter } from "next/navigation";
 import Sidebar from "../components/sidebar/sidebar";
 import { useState } from "react";
 import { v4 as uuidv4 } from "uuid";
-import { doc, serverTimestamp, setDoc } from "firebase/firestore";
+import { Timestamp, doc, setDoc } from "firebase/firestore";
 import { db } from "@/lib/FirebaseConfig";
 import { getStorage, ref, uploadBytes } from "firebase/storage";
 
@@ -43,6 +43,7 @@ export default function Create() {
     category: "日本料理",
     createdAt: "",
     updatedAt: "",
+    picture: "",
   };
 
   //状態
@@ -52,21 +53,28 @@ export default function Create() {
   const createPost = async (e: any) => {
     e.preventDefault();
     //textに何も記入されていない場合は反映されない
-    if (post.text === "") return;
+    if (post.text === "") {
+      alert("テキストが入力されていません。");
+      return;
+    }
     // console.log(post.text);
     //画像がセットされていない場合は反映されない
-    if (image === undefined) return;
+    if (image === undefined) {
+      alert("画像が選択されていません。");
+      return;
+    }
     //Firebaseにデータを登録する
     await setDoc(doc(db, "posts", post.id), {
       id: post.id,
       text: post.text,
       category: selectCategory,
-      createdAt: serverTimestamp(),
-      updatedAt: serverTimestamp(),
+      createdAt: Timestamp.now(),
+      updatedAt: Timestamp.now(),
+      picture: createObjectURL,
     });
     //textの中身を空にする
     setPost(postData);
-    // console.log(post);
+    console.log(post);
 
     //Storageに画像を登録する
     const storage = getStorage();

@@ -25,7 +25,7 @@ import { useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import { Timestamp, doc, setDoc } from "firebase/firestore";
 import { db } from "@/lib/FirebaseConfig";
-import { getStorage, ref, uploadBytes } from "firebase/storage";
+import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
 
 export default function Create() {
   //画面遷移用
@@ -76,17 +76,6 @@ export default function Create() {
     setPost(postData);
     console.log(post);
 
-    //Storageに画像を登録する
-    const storage = getStorage();
-    const storageRef = ref(storage, "/image" + image.name);
-    uploadBytes(storageRef, image)
-      .then((snapshot) => {
-        console.log("Uploaded a blob or file!");
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-
     //Top画面に遷移する
     router.push("/top");
   };
@@ -96,14 +85,32 @@ export default function Create() {
     setSelectCategory(e.target.value);
   };
 
-  //ローカルのフォルダ内の画像を選択して表示する関数
-  const onFileUploadToFirebase = (e: any) => {
+  //画像を選択してFirebaseにアップロードとダウンロード、さらに表示する関数
+  const onFileUploadToFirebase = async (e: any) => {
     const file = e.target.files[0];
     // console.log(file);
-    //ローカルで選択した画像のURLを設定
-    setCreateObjectURL(window.URL.createObjectURL(file));
-    //fileの設定
     setImage(file);
+
+    //Storageに画像をアップロードする
+    const storage = getStorage();
+    const storageRef = ref(storage, "/image" + file.name);
+    await uploadBytes(storageRef, file)
+      .then((snapshot) => {
+        console.log("Uploaded a blob or file!");
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+
+    //Storageから画像をダウンロードする
+    getDownloadURL(ref(storage, "/image" + file.name))
+      .then((url) => {
+        console.log(url);
+        setCreateObjectURL(url);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   };
 
   // console.log(image);

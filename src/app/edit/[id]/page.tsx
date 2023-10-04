@@ -4,6 +4,7 @@ import {
   Avatar,
   Box,
   Flex,
+  Image,
   Select,
   Text,
   Textarea,
@@ -13,16 +14,14 @@ import {
 import Header from "../../components/header/header";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-  faCirclePlus,
-  faImage,
   faLocationDot,
+  faRotateRight,
 } from "@fortawesome/free-solid-svg-icons";
 import { useRouter } from "next/navigation";
 import Sidebar from "../../components/sidebar/sidebar";
 import { useEffect, useState } from "react";
-import { doc, getDoc, serverTimestamp, updateDoc } from "firebase/firestore";
+import { Timestamp, doc, getDoc, updateDoc } from "firebase/firestore";
 import { db } from "@/lib/FirebaseConfig";
-import { format } from "path";
 
 export default function Edit({ params }: { params: { id: string } }) {
   //画面遷移用
@@ -34,6 +33,7 @@ export default function Edit({ params }: { params: { id: string } }) {
     category: "日本料理",
     createdAt: "",
     updatedAt: "",
+    picture: "",
   });
 
   //再投稿ボタン押下時にFirebaseにあるデータが更新され、Top画面に遷移する関数
@@ -44,36 +44,36 @@ export default function Edit({ params }: { params: { id: string } }) {
     e.preventDefault();
     //textに何も記入されていない場合は反映されない
     if (editPost.text === "") return;
-    console.log(editPost.text);
     //Firebaseでデータを更新する
     await updateDoc(doc(db, "posts", id), {
       text: editPost.text,
       category: editPost.category,
-      updatedAt: serverTimestamp(),
+      updatedAt: Timestamp.now(),
     });
     //Top画面に遷移する
     router.push("/top");
   };
 
-  useEffect(() => {
-    (async () => {
-      //渡ってきたidを元にデータベースからデータを取り出してきた
-      const docRef = doc(db, "posts", params.id);
-      const docSnap = await getDoc(docRef);
-      const { text, category, createdAt, updatedAt } = docSnap.data() || {};
-      //取り出したデータをsetEditTodoに設定する
-      setEditPost({
-        id: params.id,
-        text,
-        category,
-        createdAt,
-        updatedAt,
-      });
-    })();
-  }, []);
+  const postDataFromFirebase = async () => {
+    //渡ってきたidを元にデータベースからデータを取り出してきた
+    const docRef = doc(db, "posts", params.id);
+    const docSnap = await getDoc(docRef);
+    const { text, category, createdAt, updatedAt, picture } =
+      docSnap.data() || {};
+    //取り出したデータをsetEditTodoに設定する
+    setEditPost({
+      id: params.id,
+      text,
+      category,
+      createdAt,
+      updatedAt,
+      picture,
+    });
+  };
 
-  console.log(editPost);
-  console.log(editPost.category);
+  useEffect(() => {
+    postDataFromFirebase();
+  }, []);
 
   return (
     <div>
@@ -98,20 +98,15 @@ export default function Edit({ params }: { params: { id: string } }) {
         >
           <Flex>
             {/* 写真 */}
-            <Box
+            <Image
+              src={editPost.picture}
+              alt="imageDataPost"
               width="50%"
               height="250"
-              background="#FEFCBF"
               ml="5"
               mr="5"
               mt="5"
-              display="flex"
-              justifyContent="center"
-              alignItems="center"
-            >
-              <FontAwesomeIcon icon={faImage} size="lg" color="#4299E1" />
-              <Text ml="1">画像を変更可能</Text>
-            </Box>
+            />
             {/* 写真 */}
 
             {/* 写真横のアカウント・コメント・ボタンなど */}
@@ -196,7 +191,7 @@ export default function Edit({ params }: { params: { id: string } }) {
                       mt="1"
                     >
                       <FontAwesomeIcon
-                        icon={faCirclePlus}
+                        icon={faRotateRight}
                         size="lg"
                         color="#fe9611"
                       />

@@ -8,6 +8,7 @@ import {
   Wrap,
   WrapItem,
   Button,
+  Image,
 } from "@chakra-ui/react";
 import Header from "../../components/header/header";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -29,11 +30,12 @@ export default function Comment({ params }: { params: { id: string } }) {
   const router = useRouter();
   //状態
   const [subPost, setSubPost] = useState<any>({
-    // id: params.id,
-    // text: "",
-    // category: "日本料理",
-    // createdAt: "",
-    // updatedAt: "",
+    id: params.id,
+    text: "",
+    category: "日本料理",
+    createdAt: "",
+    updatedAt: "",
+    picture: "",
   });
 
   const linkToMap = () => {
@@ -49,23 +51,26 @@ export default function Comment({ params }: { params: { id: string } }) {
   };
 
   //Firebaseからデータを取り出す
-  const getCommentFormFirebase = async () => {
+  const postDataFromFirebase = async () => {
     //渡ってきたidを元にデータベースからデータを取り出す
     const docRef = doc(db, "posts", params.id);
     const docSnap = await getDoc(docRef);
+    const { text, category, createdAt, updatedAt, picture } =
+      docSnap.data() || {};
     //取り出したデータをsetEditTodoに設定する
     setSubPost({
       id: params.id,
-      text: docSnap.data()?.text,
-      category: docSnap.data()?.category,
-      createdAt: format(docSnap.data()?.createdAt.toDate(), "yyyy/MM/dd HH:mm"),
-      updatedAt: format(docSnap.data()?.updatedAt.toDate(), "yyyy/MM/dd HH:mm"),
+      text,
+      category,
+      createdAt: format(createdAt.toDate(), "yyyy/MM/dd HH:mm"),
+      updatedAt: format(updatedAt.toDate(), "yyyy/MM/dd HH:mm"),
+      picture,
     });
-    console.log(subPost);
+    // console.log(subPost);
   };
 
   useEffect(() => {
-    getCommentFormFirebase();
+    postDataFromFirebase();
   }, []);
 
   return (
@@ -92,14 +97,15 @@ export default function Comment({ params }: { params: { id: string } }) {
             >
               <Flex>
                 {/* 写真 */}
-                <Box
+                <Image
+                  src={subPost.picture}
+                  alt="imageDataPost"
                   width="50%"
                   height="250"
-                  background="#FEFCBF"
                   ml="5"
                   mr="5"
                   mt="5"
-                ></Box>
+                />
                 {/* 写真 */}
 
                 {/* 写真横のアカウント・コメント・ボタンなど */}
@@ -154,6 +160,7 @@ export default function Comment({ params }: { params: { id: string } }) {
                         size="lg"
                         color="#4299E1"
                         onClick={linkToCommentCreate}
+                        cursor="pointer"
                       />
                       {/* 返信ボタン */}
 
@@ -171,6 +178,7 @@ export default function Comment({ params }: { params: { id: string } }) {
                         size="lg"
                         color="#4299E1"
                         onClick={linkToMap}
+                        cursor="pointer"
                       />
                       {/* マップボタン */}
 
@@ -179,7 +187,7 @@ export default function Comment({ params }: { params: { id: string } }) {
                         icon={faPenToSquare}
                         size="lg"
                         color="#4299E1"
-                        style={{ cursor: "pointer" }}
+                        cursor="pointer"
                         onClick={() => {
                           linkToEdit(params.id);
                         }}

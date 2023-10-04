@@ -34,6 +34,7 @@ import {
 } from "firebase/firestore";
 import { db } from "@/lib/FirebaseConfig";
 import { format } from "date-fns";
+import page from "./page.css";
 
 export default function Top() {
   //画面遷移
@@ -41,31 +42,34 @@ export default function Top() {
   //状態
   const [posts, setPosts] = useState([]);
   //上のプルダウンの状態
-  const [selectStatus, setSelectStatus] = useState("全て");
+  const [selectCategory, setSelectCategory] = useState("全て");
 
-  //Firebaseからデータを取り出す
-  useEffect(() => {
+  const postDataFromFirebase = async () => {
     //データベースからデータを取得
     const postsData = collection(db, "posts");
     //Updateを基準に降順で取得
     const q = query(postsData, orderBy("updatedAt", "desc"));
-    getDocs(q).then((snapShot) => {
+    await getDocs(q).then((snapShot) => {
       const getPostsData: any = snapShot.docs.map((doc) => {
+        const { id, text, category, createdAt, updatedAt, picture } =
+          doc.data();
         return {
-          id: doc.data().id,
-          text: doc.data().text,
-          category: doc.data().category,
-          createdAt: format(doc.data().createdAt.toDate(), "yyyy/MM/dd HH:mm"),
-          updatedAt: format(doc.data().updatedAt.toDate(), "yyyy/MM/dd HH:mm"),
-          picture: doc.data().picture,
+          id,
+          text,
+          category,
+          createdAt: format(createdAt.toDate(), "yyyy/MM/dd HH:mm"),
+          updatedAt: format(updatedAt.toDate(), "yyyy/MM/dd HH:mm"),
+          picture,
         };
       });
       setPosts(getPostsData);
       // console.log(posts);
     });
-  }, []);
+  };
 
-  console.log(posts);
+  useEffect(() => {
+    postDataFromFirebase();
+  }, []);
 
   const linkToComment = (id: string) => {
     router.push(`/comment/${id}`);
@@ -83,21 +87,21 @@ export default function Top() {
     router.push("/create");
   };
 
-  //上のStatusの内容を変更できる
-  const onChangeTodoStatus = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setSelectStatus(e.target.value);
+  //上のcategoryの内容を変更できる
+  const onChangePostCategory = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setSelectCategory(e.target.value);
   };
 
-  const clickDelete = (id: string) => {
+  const clickDelete = async (id: string) => {
     //firebaseの中のデータを削除する（バック側）
-    deleteDoc(doc(db, "posts", id));
+    await deleteDoc(doc(db, "posts", id));
     //表示するための処理（フロント側）
     const deletePost = posts.filter((post: any) => post.id !== id);
     setPosts(deletePost);
   };
 
   return (
-    <div>
+    <div className="screen">
       <Header />
 
       {/* SidebarとPosts */}
@@ -117,8 +121,8 @@ export default function Top() {
                 <Select
                   name="status"
                   borderColor="orange.500"
-                  value={selectStatus}
-                  onChange={(e) => onChangeTodoStatus(e)}
+                  value={selectCategory}
+                  onChange={(e) => onChangePostCategory(e)}
                 >
                   <option value="全て">全て</option>
                   <option value="日本料理">日本料理</option>
@@ -142,27 +146,27 @@ export default function Top() {
             </Flex>
 
             {posts?.map((post: any) => {
-              if (selectStatus === "日本料理" && post.category !== "日本料理")
+              if (selectCategory === "日本料理" && post.category !== "日本料理")
                 return;
-              if (selectStatus === "中国料理" && post.category !== "中国料理")
+              if (selectCategory === "中国料理" && post.category !== "中国料理")
                 return;
               if (
-                selectStatus === "フランス料理" &&
+                selectCategory === "フランス料理" &&
                 post.category !== "フランス料理"
               )
                 return;
               if (
-                selectStatus === "イタリア料理" &&
+                selectCategory === "イタリア料理" &&
                 post.category !== "イタリア料理"
               )
                 return;
               if (
-                selectStatus === "フランス料理" &&
+                selectCategory === "フランス料理" &&
                 post.category !== "フランス料理"
               )
                 return;
               if (
-                selectStatus === "エスニック料理" &&
+                selectCategory === "エスニック料理" &&
                 post.category !== "エスニック料理"
               )
                 return;
@@ -178,14 +182,6 @@ export default function Top() {
                 >
                   <Flex>
                     {/* 写真 */}
-                    {/* <Box
-                      width="50%"
-                      height="250"
-                      background="#FEFCBF"
-                      ml="5"
-                      mr="5"
-                      mt="5"
-                    ></Box> */}
                     <Image
                       src={post.picture}
                       alt="imageDataPost"
@@ -228,7 +224,9 @@ export default function Top() {
 
                           {/* コメント */}
                           <Text mb="3">カテゴリ：{post.category}</Text>
-                          <Text>{post.text}</Text>
+                          <Box width="100%" height="55%" overflowY="scroll">
+                            <Text>{post.text}</Text>
+                          </Box>
                           {/* コメント */}
                         </Box>
                         {/* 写真横のアカウント・コメント */}

@@ -9,6 +9,8 @@ import { onAuthStateChanged } from "firebase/auth";
 import type { User } from "firebase/auth";
 import { useRouter } from "next/navigation";
 import { auth } from "@/lib/FirebaseConfig";
+import { usePathname } from "next/navigation";
+
 // import { useRecoilState } from "recoil";
 
 export type UserType = User | null;
@@ -23,6 +25,8 @@ export type AuthProps = {
 
 const AuthContext = createContext<Partial<AuthContextProps>>({});
 
+const pathname = usePathname();
+
 export const useAuthContext = () => {
   return useContext(AuthContext);
 };
@@ -31,15 +35,15 @@ export const AuthProvider = ({ children }: AuthProps) => {
   const router = useRouter();
   const [user, setUser] = useState<UserType>(null);
   const isAvailableForViewing =
-    router.pathname === "/top" ||
-    router.pathname === "/user" ||
-    router.pathname === "/map" ||
-    router.pathname === "/edit" ||
-    router.pathname === "/commentCreate" ||
-    router.pathname === "/create" ||
-    router.pathname === "/comment" ||
-    router.pathname === "/login" ||
-    router.pathname === "/signup";
+    pathname === "/top" ||
+    pathname === "/user" ||
+    pathname === "/map" ||
+    pathname === "/edit" ||
+    pathname === "/commentCreate" ||
+    pathname === "/create" ||
+    pathname === "/comment" ||
+    pathname === "/login" ||
+    pathname === "/signup";
   const value = {
     user,
   };

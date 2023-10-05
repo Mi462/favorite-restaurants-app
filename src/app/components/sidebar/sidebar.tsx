@@ -1,6 +1,14 @@
 "use client";
 
-import { Avatar, Button, Flex, Text, Wrap, WrapItem } from "@chakra-ui/react";
+import {
+  Avatar,
+  Box,
+  Button,
+  Flex,
+  Text,
+  Wrap,
+  WrapItem,
+} from "@chakra-ui/react";
 import {
   faHouse,
   faLocationDot,
@@ -36,7 +44,12 @@ export default function Sidebar() {
 
         <Flex direction="column" width="full">
           {/* アカウント表示 */}
-          <Flex alignItems="center" m="3">
+          <Box
+            display="flex"
+            alignItems="center"
+            m="3"
+            // w={["150px", "300px", "500px", "700px", "1000px"]}
+          >
             <Wrap>
               <WrapItem>
                 <Avatar
@@ -49,7 +62,7 @@ export default function Sidebar() {
             <Text fontSize="2xl" ml="3">
               アカウント名
             </Text>
-          </Flex>
+          </Box>
           {/* アカウント表示 */}
 
           {/* ユーザーボタン */}

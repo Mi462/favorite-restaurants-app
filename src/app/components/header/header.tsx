@@ -8,7 +8,7 @@ export default function Header() {
   const router = useRouter();
 
   const linkToLogin = () => {
-    router.push("/");
+    router.push("/login");
   };
 
   return (

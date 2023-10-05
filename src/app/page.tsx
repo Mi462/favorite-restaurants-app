@@ -1,43 +1,55 @@
-'use client'
+"use client";
 
-import { Box, Button, Flex, Heading, Input, Link, Text } from '@chakra-ui/react'
-import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
-import { useRouter } from 'next/navigation'
+import {
+  Box,
+  Button,
+  Flex,
+  Heading,
+  Input,
+  Link,
+  Text,
+} from "@chakra-ui/react";
+import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+import { useRouter } from "next/navigation";
 
-  export default function Login() {
+export default function Login() {
+  const router = useRouter();
+  // const auth = getAuth();
 
-    const router = useRouter();
-    // const auth = getAuth();
+  const linkToTop = () => {
+    router.push("/top");
+  };
 
-    const linkToTop = () => {
-      router.push("/top");
-    }
-
-    // signInWithEmailAndPassword(auth, email, password)
-    //   .then((userCredential) => {
-    //     // Signed in 
-    //     console.log("ログイン成功！")
-    //     // const user = userCredential.user;
-    //     // ...
-    //   })
-    //   .catch((error) => {
-    //     console.log("エラーです")
-    //     // const errorCode = error.code;
-    //     // const errorMessage = error.message;
-    //   });
+  // signInWithEmailAndPassword(auth, email, password)
+  //   .then((userCredential) => {
+  //     // Signed in
+  //     console.log("ログイン成功！")
+  //     // const user = userCredential.user;
+  //     // ...
+  //   })
+  //   .catch((error) => {
+  //     console.log("エラーです")
+  //     // const errorCode = error.code;
+  //     // const errorMessage = error.message;
+  //   });
 
   return (
     <div>
       {/* header */}
-      <Box background="orange" p="3" display="flex" alignItems="center" m="3" justifyContent="space-between">
-        <Heading textColor="white">
-          Favorite Restaurants App
-        </Heading>
+      <Box
+        background="orange"
+        p="3"
+        display="flex"
+        alignItems="center"
+        m="3"
+        justifyContent="space-between"
+      >
+        <Heading textColor="white">Favorite Restaurants App</Heading>
       </Box>
       {/* header */}
 
       {/* ログイン */}
-      <Flex height="80vh" alignItems="center" justifyContent="center">
+      {/* <Flex height="80vh" alignItems="center" justifyContent="center">
         <Flex direction="column" background="orange.100" padding="12" rounded="6">
           <Heading textAlign="center" mb="6">
             Log in
@@ -55,9 +67,8 @@ import { useRouter } from 'next/navigation'
             へ
           </Text>
         </Flex>
-      </Flex>
+      </Flex> */}
       {/* ログイン */}
     </div>
-  )
+  );
 }
-

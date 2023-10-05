@@ -103,7 +103,7 @@ export default function Create() {
       });
 
     //Storageから画像をダウンロードする
-    getDownloadURL(ref(storage, "/image" + file.name))
+    await getDownloadURL(ref(storage, "/image" + file.name))
       .then((url) => {
         console.log(url);
         setCreateObjectURL(url);

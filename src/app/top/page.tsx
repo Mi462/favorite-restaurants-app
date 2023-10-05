@@ -34,7 +34,6 @@ import {
 } from "firebase/firestore";
 import { db } from "@/lib/FirebaseConfig";
 import { format } from "date-fns";
-import page from "./page.css";
 
 export default function Top() {
   //画面遷移
@@ -224,9 +223,9 @@ export default function Top() {
 
                           {/* コメント */}
                           <Text mb="3">カテゴリ：{post.category}</Text>
-                          <Box width="100%" height="55%" overflowY="scroll">
-                            <Text>{post.text}</Text>
-                          </Box>
+                          {/* <Box width="100%" height="55%" overflowY="scroll"> */}
+                          <Text>{post.text}</Text>
+                          {/* </Box> */}
                           {/* コメント */}
                         </Box>
                         {/* 写真横のアカウント・コメント */}

@@ -1,5 +1,6 @@
 "use client";
 
+import { auth } from "@/lib/FirebaseConfig";
 import {
   Avatar,
   Box,
@@ -16,10 +17,18 @@ import {
   faUser,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { onAuthStateChanged } from "firebase/auth";
 import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
 export default function Sidebar() {
   const router = useRouter();
+  const [user, setUser] = useState<any>({
+    userName: "",
+    email: "",
+    userPicture: "",
+    uid: "",
+  });
 
   const linkToUser = () => {
     router.push("/user");
@@ -37,6 +46,31 @@ export default function Sidebar() {
     router.push("/map");
   };
 
+  //ログインしているユーザーを取得する関数
+  const loginUserFromFirebase = async () => {
+    await onAuthStateChanged(auth, (user) => {
+      if (user) {
+        const currentUser = auth.currentUser;
+        // console.log("sidebar", currentUser);
+        const uid = user.uid;
+        // console.log("sidebar", uid);
+        setUser({
+          userName: currentUser?.displayName,
+          email: currentUser?.email,
+          userPicture: currentUser?.photoURL,
+          uid: currentUser?.uid,
+        });
+      } else {
+        console.log("else");
+      }
+    });
+  };
+  // console.log("sidebar", user);
+
+  useEffect(() => {
+    loginUserFromFirebase();
+  }, []);
+
   return (
     <div>
       <Flex>
@@ -53,14 +87,14 @@ export default function Sidebar() {
             <Wrap>
               <WrapItem>
                 <Avatar
-                  name="Tarou"
+                  name={user.userName}
                   size="md"
-                  src="https://bit.ly/dan-abramov"
+                  src={user.userPicture}
                 ></Avatar>
               </WrapItem>
             </Wrap>
             <Text fontSize="2xl" ml="3">
-              アカウント名
+              {user.userName}
             </Text>
           </Box>
           {/* アカウント表示 */}

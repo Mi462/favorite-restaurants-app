@@ -25,15 +25,15 @@ export type AuthProps = {
 
 const AuthContext = createContext<Partial<AuthContextProps>>({});
 
-const pathname = usePathname();
-
 export const useAuthContext = () => {
   return useContext(AuthContext);
 };
 
 export const AuthProvider = ({ children }: AuthProps) => {
   const router = useRouter();
+  const pathname = usePathname();
   const [user, setUser] = useState<UserType>(null);
+  console.log(user);
   const isAvailableForViewing =
     pathname === "/top" ||
     pathname === "/user" ||
@@ -51,7 +51,9 @@ export const AuthProvider = ({ children }: AuthProps) => {
   useEffect(() => {
     const authStateChanged = onAuthStateChanged(auth, async (user) => {
       setUser(user);
-      !user && !isAvailableForViewing && (await router.push("/login"));
+      console.log(user);
+      //現在未ログインで、閲覧可能のページに入っていた場合は、ログインページに遷移
+      !user && isAvailableForViewing && (await router.push("/login"));
     });
     return () => {
       authStateChanged();

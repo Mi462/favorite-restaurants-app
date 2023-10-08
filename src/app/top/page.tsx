@@ -26,14 +26,17 @@ import Sidebar from "../components/sidebar/sidebar";
 import { useEffect, useState } from "react";
 import {
   collection,
+  collectionGroup,
   deleteDoc,
   doc,
   getDocs,
   orderBy,
   query,
+  where,
 } from "firebase/firestore";
-import { db } from "@/lib/FirebaseConfig";
+import { auth, db } from "@/lib/FirebaseConfig";
 import { format } from "date-fns";
+import { onAuthStateChanged } from "firebase/auth";
 
 export default function Top() {
   //画面遷移
@@ -43,11 +46,15 @@ export default function Top() {
   //上のプルダウンの状態
   const [selectCategory, setSelectCategory] = useState("全て");
 
+  //Postの内容を取得する関数
   const postDataFromFirebase = async () => {
     //データベースからデータを取得
-    const postsData = collection(db, "posts");
+    // const postsData = collection(db, "posts");
+    const postsData = collection(db, "users");
     //Updateを基準に降順で取得
-    const q = query(postsData, orderBy("updatedAt", "desc"));
+    // const q = query(postsData, orderBy("updatedAt", "desc"));
+    // const q = query(collection(db, "users"));
+    const q = query(collectionGroup(db, "posts"), where("id", "!=", ""));
     await getDocs(q).then((snapShot) => {
       const getPostsData: any = snapShot.docs.map((doc) => {
         const { id, text, category, createdAt, updatedAt, picture } =
@@ -56,8 +63,8 @@ export default function Top() {
           id,
           text,
           category,
-          createdAt: format(createdAt.toDate(), "yyyy/MM/dd HH:mm"),
-          updatedAt: format(updatedAt.toDate(), "yyyy/MM/dd HH:mm"),
+          // createdAt: format(createdAt.toDate(), "yyyy/MM/dd HH:mm"),
+          // updatedAt: format(updatedAt.toDate(), "yyyy/MM/dd HH:mm"),
           picture,
         };
       });
@@ -66,7 +73,22 @@ export default function Top() {
     });
   };
 
+  //ログインしているユーザーを取得する関数
+  const loginUserFromFirebase = async () => {
+    await onAuthStateChanged(auth, (user) => {
+      if (user) {
+        const currentUser = auth.currentUser;
+        // console.log("top", currentUser);
+        const uid = user.uid;
+        // console.log("top", uid);
+      } else {
+        console.log("else");
+      }
+    });
+  };
+
   useEffect(() => {
+    loginUserFromFirebase();
     postDataFromFirebase();
   }, []);
 
@@ -217,7 +239,7 @@ export default function Top() {
                                 アカウント名
                               </Text>
                             </Box>
-                            <Text>{post.updatedAt}</Text>
+                            {/* <Text>{post.updatedAt}</Text> */}
                           </Flex>
                           {/* アカウント */}
 

@@ -51,7 +51,7 @@ export default function Login() {
     //Storageからユーザー画像をダウンロードする
     await getDownloadURL(ref(storage, "/image" + file.name))
       .then((url) => {
-        console.log(url);
+        // console.log(url);
         setCreateUserPictureURL(url);
       })
       .catch((error) => {
@@ -81,17 +81,24 @@ export default function Login() {
           photoURL: createUserPictureURL,
         })
           .then(() => {
-            console.log("Profile updated!");
+            // console.log("Profile updated!");
           })
           .catch((error) => {
             console.log(error);
           });
+        // //Databaseに登録
+        await setDoc(doc(db, "users", currentUser.uid), {
+          userName: user.userName,
+          password: user.password,
+          email: user.email,
+          userPicture: createUserPictureURL,
+        });
         //Loginページに遷移
         router.push("/login");
       })
       .catch((error) => {
-        console.log(error.code);
-        console.log(error.message);
+        // console.log(error.code);
+        // console.log(error.message);
         switch (error.code) {
           case "auth/weak-password":
             alert("パスワードが短すぎます。6文字以上を入力してください。");

@@ -21,11 +21,12 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { useRouter } from "next/navigation";
 import Sidebar from "../components/sidebar/sidebar";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import { Timestamp, doc, setDoc } from "firebase/firestore";
-import { db } from "@/lib/FirebaseConfig";
+import { auth, db } from "@/lib/FirebaseConfig";
 import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
+import { onAuthStateChanged } from "firebase/auth";
 
 export default function Create() {
   //画面遷移用
@@ -36,6 +37,13 @@ export default function Create() {
   const [image, setImage] = useState<any>();
   //categoryの状態
   const [selectCategory, setSelectCategory] = useState("日本料理");
+
+  const [user, setUser] = useState<any>({
+    userName: "",
+    email: "",
+    userPicture: "",
+    uid: "",
+  });
 
   const postData = {
     id: uuidv4(),
@@ -48,6 +56,31 @@ export default function Create() {
 
   //状態
   const [post, setPost] = useState(postData);
+
+  //ログインしているユーザーを取得する関数
+  const loginUserFromFirebase = async () => {
+    await onAuthStateChanged(auth, (user) => {
+      if (user) {
+        const currentUser = auth.currentUser;
+        // console.log("create", currentUser);
+        const uid = user.uid;
+        // console.log("create", uid);
+        setUser({
+          userName: currentUser?.displayName,
+          email: currentUser?.email,
+          userPicture: currentUser?.photoURL,
+          uid: uid,
+        });
+      } else {
+        console.log("else");
+      }
+    });
+  };
+  // console.log("create", user);
+
+  useEffect(() => {
+    loginUserFromFirebase();
+  }, []);
 
   //投稿ボタン押下時にFirebaseにデータが登録され、Top画面に遷移する関数
   const createPost = async (e: any) => {
@@ -64,7 +97,7 @@ export default function Create() {
       return;
     }
     //Firebaseにデータを登録する
-    await setDoc(doc(db, "posts", post.id), {
+    await setDoc(doc(db, "users", user.uid, "posts", post.id), {
       id: post.id,
       text: post.text,
       category: selectCategory,
@@ -74,7 +107,7 @@ export default function Create() {
     });
     //textの中身を空にする
     setPost(postData);
-    console.log(post);
+    // console.log(post);
 
     //Top画面に遷移する
     router.push("/top");
@@ -96,7 +129,7 @@ export default function Create() {
     const storageRef = ref(storage, "/image" + file.name);
     await uploadBytes(storageRef, file)
       .then((snapshot) => {
-        console.log("Uploaded a blob or file!");
+        // console.log("Uploaded a blob or file!");
       })
       .catch((error) => {
         console.log(error);
@@ -105,7 +138,7 @@ export default function Create() {
     //Storageから画像をダウンロードする
     await getDownloadURL(ref(storage, "/image" + file.name))
       .then((url) => {
-        console.log(url);
+        // console.log(url);
         setCreateObjectURL(url);
       })
       .catch((error) => {
@@ -187,14 +220,14 @@ export default function Create() {
                     <Wrap>
                       <WrapItem>
                         <Avatar
-                          name="Tarou"
+                          name={user.userName}
                           size="sm"
-                          src="https://bit.ly/dan-abramov"
+                          src={user.userPicture}
                         ></Avatar>
                       </WrapItem>
                     </Wrap>
                     <Text fontSize="lg" ml="3">
-                      アカウント名
+                      {user.userName}
                     </Text>
                   </Flex>
                   {/* アカウント */}

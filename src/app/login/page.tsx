@@ -1,6 +1,6 @@
 "use client";
 
-import { auth } from "@/lib/FirebaseConfig";
+import { auth, db } from "@/lib/FirebaseConfig";
 import {
   Box,
   Button,
@@ -11,6 +11,7 @@ import {
   Text,
 } from "@chakra-ui/react";
 import { signInWithEmailAndPassword } from "firebase/auth";
+import { doc, setDoc } from "firebase/firestore";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
@@ -20,39 +21,26 @@ export default function Login() {
     userName: "",
     password: "",
     email: "",
-    userPicture: "",
+    userPhoto: "",
   });
 
   const handleSubmit = async () => {
     await signInWithEmailAndPassword(auth, user.email, user.password)
       .then((userCredential) => {
-        //Sign in 成功！
-        const user = userCredential.user;
-        console.log(user);
-        // const uid = userCredential.user.uid;
+        //Login 成功！
+        const loginUser = userCredential.user;
+        // console.log(loginUser);
+        const uid = userCredential.user.uid;
         // console.log(uid);
-        const logInUser = auth.currentUser;
-        if (logInUser !== null) {
-          // const displayName: any = logInUser.displayName;
-          // const email = logInUser.email;
-          // const photoURL: any = logInUser.photoURL;
-          // const emailVerified = logInUser.emailVerified;
-          // const uid = logInUser.uid;
-          // setUser({
-          //   userName: displayName,
-          //   password: user.password,
-          //   email: user.email,
-          //   userPicture: photoURL,
-          // });
-        }
+
         //Top画面へ遷移
-        // router.push("/top");
+        router.push("/top");
       })
       .catch((error) => {
         const errorCode = error.code;
         const errorMessage = error.message;
-        console.log(errorCode);
-        console.log(errorMessage);
+        // console.log(errorCode);
+        // console.log(errorMessage);
         switch (errorCode) {
           case "auth/wrong-password":
             alert("パスワードが正しくありません。");

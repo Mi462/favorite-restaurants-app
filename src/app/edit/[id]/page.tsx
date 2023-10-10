@@ -23,6 +23,7 @@ import { useEffect, useState } from "react";
 import { Timestamp, doc, getDoc, updateDoc } from "firebase/firestore";
 import { auth, db } from "@/lib/FirebaseConfig";
 import { onAuthStateChanged } from "firebase/auth";
+import { format } from "date-fns";
 
 export default function Edit({ params }: { params: { id: string } }) {
   //画面遷移用
@@ -38,6 +39,13 @@ export default function Edit({ params }: { params: { id: string } }) {
   });
   //ログインユーザー
   const [userUid, setUserUid] = useState("");
+  console.log(userUid);
+  console.log(params.id);
+
+  useEffect(() => {
+    loginUserFromFirebase();
+    postDataFromFirebase();
+  }, []);
 
   //再投稿ボタン押下時にFirebaseにあるデータが更新され、Top画面に遷移する関数
   const onClickEditPost = async (
@@ -57,27 +65,6 @@ export default function Edit({ params }: { params: { id: string } }) {
     router.push("/top");
   };
 
-  const postDataFromFirebase = async () => {
-    //渡ってきたidを元にデータベースからデータを取り出してきた
-    // const docRef = doc(db, "users", params.id);
-    const docRef2 = doc(db, "users", userUid, "posts", params.id);
-
-    const docSnap = await getDoc(docRef2);
-    const { text, category, createdAt, updatedAt, picture } =
-      docSnap.data() || {};
-    //取り出したデータをsetEditTodoに設定する
-    setEditPost({
-      id: params.id,
-      text,
-      category,
-      createdAt,
-      updatedAt,
-      picture,
-    });
-    // console.log(editPost);
-  };
-  console.log(editPost);
-
   //ログインしているユーザーを取得する関数
   const loginUserFromFirebase = async () => {
     await onAuthStateChanged(auth, (user) => {
@@ -86,6 +73,7 @@ export default function Edit({ params }: { params: { id: string } }) {
         // console.log("top", currentUser);
         const uid = user.uid;
         setUserUid(uid);
+        console.log(1);
         // console.log("top", uid);
         // setUser({
         //   userName: currentUser?.displayName,
@@ -99,10 +87,29 @@ export default function Edit({ params }: { params: { id: string } }) {
     });
   };
 
-  useEffect(() => {
-    loginUserFromFirebase();
-    postDataFromFirebase();
-  }, []);
+  const postDataFromFirebase = async () => {
+    //渡ってきたidを元にデータベースからデータを取り出してきた
+    // const docRef = doc(db, "users", params.id);
+    console.log(2);
+    const docRef2 = doc(db, "users", userUid, "posts", params.id);
+    console.log(3);
+
+    const docSnap = await getDoc(docRef2);
+    // const { text, category, createdAt, updatedAt, picture } =
+    //   docSnap.data() || {};
+    //取り出したデータをsetEditTodoに設定する
+    setEditPost({
+      id: params.id,
+      text: docSnap.data()?.text,
+      category: docSnap.data()?.category,
+      createdAt: format(docSnap.data()?.createdAt.toDate(), "yyyy/MM/dd HH:mm"),
+      updatedAt: format(docSnap.data()?.updatedAt.toDate(), "yyyy/MM/dd HH:mm"),
+      picture: docSnap.data()?.picture,
+    });
+    // console.log(editPost);
+    console.log(4);
+  };
+  console.log(editPost);
 
   return (
     <div>

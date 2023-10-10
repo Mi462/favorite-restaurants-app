@@ -53,7 +53,7 @@ export default function Comment({ params }: { params: { id: string } }) {
   //Firebaseからデータを取り出す
   const postDataFromFirebase = async () => {
     //渡ってきたidを元にデータベースからデータを取り出す
-    const docRef = doc(db, "posts", params.id);
+    const docRef = doc(db, "users", params.id);
     const docSnap = await getDoc(docRef);
     const { text, category, createdAt, updatedAt, picture } =
       docSnap.data() || {};
@@ -62,11 +62,11 @@ export default function Comment({ params }: { params: { id: string } }) {
       id: params.id,
       text,
       category,
-      createdAt: format(createdAt.toDate(), "yyyy/MM/dd HH:mm"),
-      updatedAt: format(updatedAt.toDate(), "yyyy/MM/dd HH:mm"),
+      // createdAt: format(createdAt.toDate(), "yyyy/MM/dd HH:mm"),
+      // updatedAt: format(updatedAt.toDate(), "yyyy/MM/dd HH:mm"),
       picture,
     });
-    // console.log(subPost);
+    console.log(subPost);
   };
 
   useEffect(() => {

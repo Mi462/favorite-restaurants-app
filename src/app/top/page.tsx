@@ -45,6 +45,13 @@ export default function Top() {
   const [posts, setPosts] = useState([]);
   //上のプルダウンの状態
   const [selectCategory, setSelectCategory] = useState("全て");
+  //ログインユーザーの情報
+  const [user, setUser] = useState<any>({
+    userName: "",
+    email: "",
+    userPicture: "",
+    uid: "",
+  });
 
   //Postの内容を取得する関数
   const postDataFromFirebase = async () => {
@@ -54,7 +61,11 @@ export default function Top() {
     //Updateを基準に降順で取得
     // const q = query(postsData, orderBy("updatedAt", "desc"));
     // const q = query(collection(db, "users"));
-    const q = query(collectionGroup(db, "posts"), where("id", "!=", ""));
+    const q = query(
+      collectionGroup(db, "posts"),
+      where("updatedAt", "!=", ""),
+      orderBy("updatedAt", "desc")
+    );
     await getDocs(q).then((snapShot) => {
       const getPostsData: any = snapShot.docs.map((doc) => {
         const { id, text, category, createdAt, updatedAt, picture } =
@@ -63,15 +74,16 @@ export default function Top() {
           id,
           text,
           category,
-          // createdAt: format(createdAt.toDate(), "yyyy/MM/dd HH:mm"),
-          // updatedAt: format(updatedAt.toDate(), "yyyy/MM/dd HH:mm"),
+          createdAt: format(createdAt.toDate(), "yyyy/MM/dd HH:mm"),
+          updatedAt: format(updatedAt.toDate(), "yyyy/MM/dd HH:mm"),
           picture,
         };
       });
       setPosts(getPostsData);
-      // console.log(posts);
+      console.log(posts);
     });
   };
+  console.log(posts);
 
   //ログインしているユーザーを取得する関数
   const loginUserFromFirebase = async () => {
@@ -81,6 +93,12 @@ export default function Top() {
         // console.log("top", currentUser);
         const uid = user.uid;
         // console.log("top", uid);
+        // setUser({
+        //   userName: currentUser?.displayName,
+        //   email: currentUser?.email,
+        //   userPicture: currentUser?.photoURL,
+        //   uid: currentUser?.uid,
+        // });
       } else {
         console.log("else");
       }
@@ -93,6 +111,7 @@ export default function Top() {
   }, []);
 
   const linkToComment = (id: string) => {
+    console.log("linkToComment", id);
     router.push(`/comment/${id}`);
   };
 
@@ -237,9 +256,10 @@ export default function Top() {
                               </Wrap>
                               <Text fontSize="lg" ml="3">
                                 アカウント名
+                                {/* {post.userName} */}
                               </Text>
                             </Box>
-                            {/* <Text>{post.updatedAt}</Text> */}
+                            <Text>{post.updatedAt}</Text>
                           </Flex>
                           {/* アカウント */}
 

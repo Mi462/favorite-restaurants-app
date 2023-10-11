@@ -37,6 +37,8 @@ import {
 import { auth, db } from "@/lib/FirebaseConfig";
 import { format } from "date-fns";
 import { onAuthStateChanged } from "firebase/auth";
+import { useRecoilState } from "recoil";
+import { loginUser } from "@/states/loginUser";
 
 export default function Top() {
   //画面遷移
@@ -46,12 +48,8 @@ export default function Top() {
   //上のプルダウンの状態
   const [selectCategory, setSelectCategory] = useState("全て");
   //ログインユーザーの情報
-  const [user, setUser] = useState<any>({
-    userName: "",
-    email: "",
-    userPicture: "",
-    uid: "",
-  });
+  const [user, setUser] = useRecoilState(loginUser);
+  // console.log("top", user);
 
   //Postの内容を取得する関数
   const postDataFromFirebase = async () => {
@@ -85,28 +83,7 @@ export default function Top() {
   };
   console.log(posts);
 
-  //ログインしているユーザーを取得する関数
-  const loginUserFromFirebase = async () => {
-    await onAuthStateChanged(auth, (user) => {
-      if (user) {
-        const currentUser = auth.currentUser;
-        // console.log("top", currentUser);
-        const uid = user.uid;
-        // console.log("top", uid);
-        // setUser({
-        //   userName: currentUser?.displayName,
-        //   email: currentUser?.email,
-        //   userPicture: currentUser?.photoURL,
-        //   uid: currentUser?.uid,
-        // });
-      } else {
-        console.log("else");
-      }
-    });
-  };
-
   useEffect(() => {
-    loginUserFromFirebase();
     postDataFromFirebase();
   }, []);
 
@@ -134,7 +111,7 @@ export default function Top() {
 
   const clickDelete = async (id: string) => {
     //firebaseの中のデータを削除する（バック側）
-    await deleteDoc(doc(db, "posts", id));
+    await deleteDoc(doc(db, "users", user.userUid, "posts", id));
     //表示するための処理（フロント側）
     const deletePost = posts.filter((post: any) => post.id !== id);
     setPosts(deletePost);
@@ -156,7 +133,7 @@ export default function Top() {
         <Box width="60%" height="100%" mb="16">
           <Flex direction="column">
             <Flex justifyContent="space-between">
-              <Box mt="3" width="20%" display="flex">
+              <Box mt="3" width="30%" display="flex">
                 {/* 上のプルダウンリスト */}
                 <Select
                   name="status"

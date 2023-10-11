@@ -21,9 +21,10 @@ import { useRouter } from "next/navigation";
 import Sidebar from "../../components/sidebar/sidebar";
 import { useEffect, useState } from "react";
 import { Timestamp, doc, getDoc, updateDoc } from "firebase/firestore";
-import { auth, db } from "@/lib/FirebaseConfig";
-import { onAuthStateChanged } from "firebase/auth";
+import { db } from "@/lib/FirebaseConfig";
 import { format } from "date-fns";
+import { useRecoilState } from "recoil";
+import { loginUser } from "@/states/loginUser";
 
 export default function Edit({ params }: { params: { id: string } }) {
   //画面遷移用
@@ -38,12 +39,11 @@ export default function Edit({ params }: { params: { id: string } }) {
     picture: "",
   });
   //ログインユーザー
-  const [userUid, setUserUid] = useState("");
-  console.log(userUid);
-  console.log(params.id);
+  const [user, setUser] = useRecoilState(loginUser);
+  // console.log("edit", user);
+  // console.log(params.id);
 
   useEffect(() => {
-    loginUserFromFirebase();
     postDataFromFirebase();
   }, []);
 
@@ -56,7 +56,7 @@ export default function Edit({ params }: { params: { id: string } }) {
     //textに何も記入されていない場合は反映されない
     if (editPost.text === "") return;
     //Firebaseでデータを更新する
-    await updateDoc(doc(db, "posts", id), {
+    await updateDoc(doc(db, "users", user.userUid, "posts", id), {
       text: editPost.text,
       category: editPost.category,
       updatedAt: Timestamp.now(),
@@ -65,49 +65,27 @@ export default function Edit({ params }: { params: { id: string } }) {
     router.push("/top");
   };
 
-  //ログインしているユーザーを取得する関数
-  const loginUserFromFirebase = async () => {
-    await onAuthStateChanged(auth, (user) => {
-      if (user) {
-        const currentUser = auth.currentUser;
-        // console.log("top", currentUser);
-        const uid = user.uid;
-        setUserUid(uid);
-        console.log(1);
-        // console.log("top", uid);
-        // setUser({
-        //   userName: currentUser?.displayName,
-        //   email: currentUser?.email,
-        //   userPicture: currentUser?.photoURL,
-        //   uid: currentUser?.uid,
-        // });
-      } else {
-        console.log("else");
-      }
-    });
-  };
-
   const postDataFromFirebase = async () => {
-    //渡ってきたidを元にデータベースからデータを取り出してきた
-    // const docRef = doc(db, "users", params.id);
-    console.log(2);
-    const docRef2 = doc(db, "users", userUid, "posts", params.id);
-    console.log(3);
-
-    const docSnap = await getDoc(docRef2);
-    // const { text, category, createdAt, updatedAt, picture } =
-    //   docSnap.data() || {};
-    //取り出したデータをsetEditTodoに設定する
-    setEditPost({
-      id: params.id,
-      text: docSnap.data()?.text,
-      category: docSnap.data()?.category,
-      createdAt: format(docSnap.data()?.createdAt.toDate(), "yyyy/MM/dd HH:mm"),
-      updatedAt: format(docSnap.data()?.updatedAt.toDate(), "yyyy/MM/dd HH:mm"),
-      picture: docSnap.data()?.picture,
-    });
-    // console.log(editPost);
-    console.log(4);
+    try {
+      //渡ってきたidを元にデータベースからデータを取り出してきた
+      const docSnap = await getDoc(
+        doc(db, "users", user.userUid, "posts", params.id)
+      );
+      const { text, category, createdAt, updatedAt, picture } =
+        docSnap.data() || {};
+      //取り出したデータをsetEditTodoに設定する
+      setEditPost({
+        id: params.id,
+        text,
+        category,
+        createdAt: format(createdAt.toDate(), "yyyy/MM/dd HH:mm"),
+        updatedAt: format(updatedAt.toDate(), "yyyy/MM/dd HH:mm"),
+        picture,
+      });
+      // console.log(editPost);
+    } catch (error) {
+      alert("Post作成者ではないため、編集できません。");
+    }
   };
   console.log(editPost);
 

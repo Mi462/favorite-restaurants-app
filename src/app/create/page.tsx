@@ -21,12 +21,13 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { useRouter } from "next/navigation";
 import Sidebar from "../components/sidebar/sidebar";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import { Timestamp, doc, setDoc } from "firebase/firestore";
-import { auth, db } from "@/lib/FirebaseConfig";
+import { db } from "@/lib/FirebaseConfig";
 import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
-import { onAuthStateChanged } from "firebase/auth";
+import { useRecoilState } from "recoil";
+import { loginUser } from "@/states/loginUser";
 
 export default function Create() {
   //画面遷移用
@@ -37,13 +38,8 @@ export default function Create() {
   const [image, setImage] = useState<any>();
   //categoryの状態
   const [selectCategory, setSelectCategory] = useState("日本料理");
-
-  const [user, setUser] = useState<any>({
-    userName: "",
-    email: "",
-    userPicture: "",
-    uid: "",
-  });
+  //ログインユーザー
+  const [user, setUser] = useRecoilState(loginUser);
 
   const postData = {
     id: uuidv4(),
@@ -54,33 +50,8 @@ export default function Create() {
     picture: "",
   };
 
-  //状態
+  //投稿内容
   const [post, setPost] = useState(postData);
-
-  //ログインしているユーザーを取得する関数
-  const loginUserFromFirebase = async () => {
-    await onAuthStateChanged(auth, (user) => {
-      if (user) {
-        const currentUser = auth.currentUser;
-        // console.log("create", currentUser);
-        const uid = user.uid;
-        // console.log("create", uid);
-        setUser({
-          userName: currentUser?.displayName,
-          email: currentUser?.email,
-          userPicture: currentUser?.photoURL,
-          uid: uid,
-        });
-      } else {
-        console.log("else");
-      }
-    });
-  };
-  // console.log("create", user);
-
-  useEffect(() => {
-    loginUserFromFirebase();
-  }, []);
 
   //投稿ボタン押下時にFirebaseにデータが登録され、Top画面に遷移する関数
   const createPost = async (e: any) => {
@@ -97,7 +68,7 @@ export default function Create() {
       return;
     }
     //Firebaseにデータを登録する
-    await setDoc(doc(db, "users", user.uid, "posts", post.id), {
+    await setDoc(doc(db, "users", user.userUid, "posts", post.id), {
       id: post.id,
       text: post.text,
       category: selectCategory,

@@ -1,6 +1,6 @@
 "use client";
 
-import { auth } from "@/lib/FirebaseConfig";
+import { loginUser } from "@/states/loginUser";
 import {
   Avatar,
   Box,
@@ -17,18 +17,14 @@ import {
   faUser,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { onAuthStateChanged } from "firebase/auth";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useRecoilState } from "recoil";
 
 export default function Sidebar() {
   const router = useRouter();
-  const [user, setUser] = useState<any>({
-    userName: "",
-    email: "",
-    userPicture: "",
-    uid: "",
-  });
+  //ログインユーザー
+  const [user, setUser] = useRecoilState(loginUser);
+  // console.log("sidebar", user);
 
   const linkToUser = () => {
     router.push("/user");
@@ -45,31 +41,6 @@ export default function Sidebar() {
   const linkToMap = () => {
     router.push("/map");
   };
-
-  //ログインしているユーザーを取得する関数
-  const loginUserFromFirebase = async () => {
-    await onAuthStateChanged(auth, (user) => {
-      if (user) {
-        const currentUser = auth.currentUser;
-        // console.log("sidebar", currentUser);
-        const uid = user.uid;
-        // console.log("sidebar", uid);
-        setUser({
-          userName: currentUser?.displayName,
-          email: currentUser?.email,
-          userPicture: currentUser?.photoURL,
-          uid: currentUser?.uid,
-        });
-      } else {
-        console.log("else");
-      }
-    });
-  };
-  // console.log("sidebar", user);
-
-  useEffect(() => {
-    loginUserFromFirebase();
-  }, []);
 
   return (
     <div>

@@ -17,17 +17,20 @@ import {
   faLocationDot,
   faPenToSquare,
   faReply,
-  faTrashCan,
 } from "@fortawesome/free-solid-svg-icons";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import Sidebar from "../../components/sidebar/sidebar";
-import { deleteDoc, doc, getDoc } from "firebase/firestore";
+import { doc, getDoc } from "firebase/firestore";
 import { db } from "@/lib/FirebaseConfig";
 import { format } from "date-fns";
+import { useRecoilState } from "recoil";
+import { loginUser } from "@/states/loginUser";
 
 export default function Comment({ params }: { params: { id: string } }) {
   const router = useRouter();
+  //ログインユーザー
+  const [user, setUser] = useRecoilState(loginUser);
   //状態
   const [subPost, setSubPost] = useState<any>({
     id: params.id,
@@ -53,8 +56,9 @@ export default function Comment({ params }: { params: { id: string } }) {
   //Firebaseからデータを取り出す
   const postDataFromFirebase = async () => {
     //渡ってきたidを元にデータベースからデータを取り出す
-    const docRef = doc(db, "users", params.id);
-    const docSnap = await getDoc(docRef);
+    const docSnap = await getDoc(
+      doc(db, "users", user.userUid, "posts", params.id)
+    );
     const { text, category, createdAt, updatedAt, picture } =
       docSnap.data() || {};
     //取り出したデータをsetEditTodoに設定する
@@ -62,12 +66,12 @@ export default function Comment({ params }: { params: { id: string } }) {
       id: params.id,
       text,
       category,
-      // createdAt: format(createdAt.toDate(), "yyyy/MM/dd HH:mm"),
-      // updatedAt: format(updatedAt.toDate(), "yyyy/MM/dd HH:mm"),
+      createdAt: format(createdAt.toDate(), "yyyy/MM/dd HH:mm"),
+      updatedAt: format(updatedAt.toDate(), "yyyy/MM/dd HH:mm"),
       picture,
     });
-    console.log(subPost);
   };
+  console.log(subPost);
 
   useEffect(() => {
     postDataFromFirebase();

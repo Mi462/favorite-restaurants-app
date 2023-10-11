@@ -2,21 +2,23 @@
 
 import { CacheProvider } from "@chakra-ui/next-js";
 import { ChakraProvider } from "@chakra-ui/react";
+import { RecoilRoot } from "recoil";
 // import { AuthProvider } from "@/context/AuthContext";
 // import Header from "./components/header/header";
 // import type { AppProps } from "next/app";
-// import { RecoilRoot } from "recoil";
 
 // export function Providers({ Component, pageProps }: AppProps) {
 export function Providers({ children }: { children: React.ReactNode }) {
   return (
-    <CacheProvider>
-      <ChakraProvider>
-        {/* <AuthProvider> */}
-        {/* <Component {...pageProps} /> */}
-        {children}
-        {/* </AuthProvider> */}
-      </ChakraProvider>
-    </CacheProvider>
+    <RecoilRoot>
+      <CacheProvider>
+        <ChakraProvider>
+          {/* <AuthProvider> */}
+          {/* <Component {...pageProps} /> */}
+          {children}
+          {/* </AuthProvider> */}
+        </ChakraProvider>
+      </CacheProvider>
+    </RecoilRoot>
   );
 }

@@ -1,6 +1,7 @@
 "use client";
 
-import { auth, db } from "@/lib/FirebaseConfig";
+import { auth } from "@/lib/FirebaseConfig";
+import { loginUser } from "@/states/loginUser";
 import {
   Box,
   Button,
@@ -10,29 +11,33 @@ import {
   Link,
   Text,
 } from "@chakra-ui/react";
-import { signInWithEmailAndPassword } from "firebase/auth";
-import { doc, setDoc } from "firebase/firestore";
+import { onAuthStateChanged, signInWithEmailAndPassword } from "firebase/auth";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useRecoilState } from "recoil";
 
 export default function Login() {
   const router = useRouter();
-  const [user, setUser] = useState({
-    userName: "",
-    password: "",
-    email: "",
-    userPhoto: "",
-  });
+  const [user, setUser] = useRecoilState(loginUser);
 
   const handleSubmit = async () => {
     await signInWithEmailAndPassword(auth, user.email, user.password)
-      .then((userCredential) => {
+      .then(async (userCredential) => {
         //Login 成功！
-        const loginUser = userCredential.user;
-        // console.log(loginUser);
-        const uid = userCredential.user.uid;
-        // console.log(uid);
-
+        // console.log(userCredential);
+        await onAuthStateChanged(auth, (userData) => {
+          if (userData) {
+            setUser({
+              userName: userData.displayName,
+              userPicture: userData.photoURL,
+              email: userData.email,
+              password: user.password,
+              userUid: userData.uid,
+            });
+          } else {
+            console.log("login error");
+          }
+        });
+        // console.log("login", user);
         //Top画面へ遷移
         router.push("/top");
       })

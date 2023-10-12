@@ -66,26 +66,22 @@ export default function Edit({ params }: { params: { id: string } }) {
   };
 
   const postDataFromFirebase = async () => {
-    try {
-      //渡ってきたidを元にデータベースからデータを取り出してきた
-      const docSnap = await getDoc(
-        doc(db, "users", user.userUid, "posts", params.id)
-      );
-      const { text, category, createdAt, updatedAt, picture } =
-        docSnap.data() || {};
-      //取り出したデータをsetEditTodoに設定する
-      setEditPost({
-        id: params.id,
-        text,
-        category,
-        createdAt: format(createdAt.toDate(), "yyyy/MM/dd HH:mm"),
-        updatedAt: format(updatedAt.toDate(), "yyyy/MM/dd HH:mm"),
-        picture,
-      });
-      // console.log(editPost);
-    } catch (error) {
-      alert("Post作成者ではないため、編集できません。");
-    }
+    //渡ってきたidを元にデータベースからデータを取り出してきた
+    const docSnap = await getDoc(
+      doc(db, "users", user.userUid, "posts", params.id)
+    );
+    const { text, category, createdAt, updatedAt, picture } =
+      docSnap.data() || {};
+    //取り出したデータをsetEditTodoに設定する
+    setEditPost({
+      id: params.id,
+      text,
+      category,
+      createdAt: format(createdAt.toDate(), "yyyy/MM/dd HH:mm"),
+      updatedAt: format(updatedAt.toDate(), "yyyy/MM/dd HH:mm"),
+      picture,
+    });
+    // console.log(editPost);
   };
   console.log(editPost);
 

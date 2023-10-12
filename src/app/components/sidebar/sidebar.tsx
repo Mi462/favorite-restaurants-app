@@ -11,6 +11,7 @@ import {
   WrapItem,
 } from "@chakra-ui/react";
 import {
+  faFolder,
   faHouse,
   faLocationDot,
   faPlus,
@@ -28,6 +29,10 @@ export default function Sidebar() {
 
   const linkToUser = () => {
     router.push("/user");
+  };
+
+  const linkToMyPosts = () => {
+    router.push("/myPosts");
   };
 
   const linkToTop = () => {
@@ -76,6 +81,13 @@ export default function Sidebar() {
             <Text ml="5">ユーザー</Text>
           </Button>
           {/* ユーザーボタン */}
+
+          {/* My Postsボタン */}
+          <Button ml="1" mr="3" mb="1" onClick={linkToMyPosts}>
+            <FontAwesomeIcon icon={faFolder} size="lg" color="#fe9611" />
+            <Text ml="5">My Posts</Text>
+          </Button>
+          {/* My Postsボタン */}
 
           {/* ホームボタン */}
           <Button ml="1" mr="3" mb="1" onClick={linkToTop}>

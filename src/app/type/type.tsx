@@ -8,9 +8,10 @@ export type Post = {
   updatedAt: Timestamp;
 };
 
-export type userData = {
+export type loginUserType = {
   userName: string;
   password: string;
   email: string;
   userPicture: string;
+  userUid: string;
 };

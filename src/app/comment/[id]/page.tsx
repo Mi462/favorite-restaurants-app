@@ -185,18 +185,6 @@ export default function Comment({ params }: { params: { id: string } }) {
                         cursor="pointer"
                       />
                       {/* マップボタン */}
-
-                      {/* 編集ボタン */}
-                      <FontAwesomeIcon
-                        icon={faPenToSquare}
-                        size="lg"
-                        color="#4299E1"
-                        cursor="pointer"
-                        onClick={() => {
-                          linkToEdit(params.id);
-                        }}
-                      />
-                      {/* 編集ボタン */}
                     </Box>
                     {/* ボタン */}
                   </Flex>

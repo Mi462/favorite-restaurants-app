@@ -17,25 +17,27 @@ import {
   faComment,
   faHeart,
   faLocationDot,
+  faPenToSquare,
   faPlus,
+  faTrashCan,
 } from "@fortawesome/free-solid-svg-icons";
 import { useRouter } from "next/navigation";
 import Sidebar from "../components/sidebar/sidebar";
 import { useEffect, useState } from "react";
 import {
   collection,
-  collectionGroup,
+  deleteDoc,
+  doc,
   getDocs,
   orderBy,
   query,
-  where,
 } from "firebase/firestore";
 import { db } from "@/lib/FirebaseConfig";
 import { format } from "date-fns";
 import { useRecoilState } from "recoil";
 import { loginUser } from "@/states/loginUser";
 
-export default function Top() {
+export default function myPosts() {
   //画面遷移
   const router = useRouter();
   //状態
@@ -49,16 +51,9 @@ export default function Top() {
   //Postの内容を取得する関数
   const postDataFromFirebase = async () => {
     //データベースからデータを取得
-    // const postsData = collection(db, "posts");
-    const postsData = collection(db, "users");
+    const postsData = collection(db, "users", user.userUid, "posts");
     //Updateを基準に降順で取得
-    // const q = query(postsData, orderBy("updatedAt", "desc"));
-    // const q = query(collection(db, "users"));
-    const q = query(
-      collectionGroup(db, "posts"),
-      where("updatedAt", "!=", ""),
-      orderBy("updatedAt", "desc")
-    );
+    const q = query(postsData, orderBy("updatedAt", "desc"));
     await getDocs(q).then((snapShot) => {
       const getPostsData: any = snapShot.docs.map((doc) => {
         const { id, text, category, createdAt, updatedAt, picture } =
@@ -83,7 +78,12 @@ export default function Top() {
   }, []);
 
   const linkToComment = (id: string) => {
+    console.log("linkToComment", id);
     router.push(`/comment/${id}`);
+  };
+
+  const linkToEdit = (id: string) => {
+    router.push(`/edit/${id}`);
   };
 
   const linkToMap = () => {
@@ -97,6 +97,14 @@ export default function Top() {
   //上のcategoryの内容を変更できる
   const onChangePostCategory = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectCategory(e.target.value);
+  };
+
+  const clickDelete = async (id: string) => {
+    //firebaseの中のデータを削除する（バック側）
+    await deleteDoc(doc(db, "users", user.userUid, "posts", id));
+    //表示するための処理（フロント側）
+    const deletePost = posts.filter((post: any) => post.id !== id);
+    setPosts(deletePost);
   };
 
   return (
@@ -173,7 +181,7 @@ export default function Top() {
                 <Box
                   height="300"
                   borderRadius="20"
-                  background="orange.100"
+                  //   background="orange.100"
                   border="2px"
                   borderColor="orange.500"
                   mt="5"
@@ -269,6 +277,30 @@ export default function Top() {
                             onClick={linkToMap}
                           />
                           {/* マップボタン */}
+
+                          {/* Editボタン */}
+                          <FontAwesomeIcon
+                            icon={faPenToSquare}
+                            size="lg"
+                            color="#4299E1"
+                            onClick={() => {
+                              linkToEdit(post.id);
+                            }}
+                            cursor="pointer"
+                          />
+                          {/* Editボタン */}
+
+                          {/* 削除ボタン */}
+                          <FontAwesomeIcon
+                            icon={faTrashCan}
+                            size="lg"
+                            color="#4299E1"
+                            onClick={() => {
+                              clickDelete(post.id);
+                            }}
+                            cursor="pointer"
+                          />
+                          {/* 削除ボタン */}
                         </Box>
                         {/* ボタン */}
                       </Flex>

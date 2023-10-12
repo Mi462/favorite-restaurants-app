@@ -15,7 +15,6 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { auth, db } from "@/lib/FirebaseConfig";
-import { userData } from "../type/type";
 import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
 import { doc, setDoc } from "firebase/firestore";
 
@@ -24,7 +23,7 @@ export default function Login() {
   //ユーザー画像
   const [userImage, setUserImage] = useState();
   const [createUserPictureURL, setCreateUserPictureURL] = useState<string>();
-  const [user, setUser] = useState<userData>({
+  const [user, setUser] = useState<any>({
     userName: "",
     password: "",
     email: "",

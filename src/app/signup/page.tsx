@@ -13,7 +13,7 @@ import {
 } from "@chakra-ui/react";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
+import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth, db } from "@/lib/FirebaseConfig";
 import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
 import { doc, setDoc } from "firebase/firestore";
@@ -39,13 +39,7 @@ export default function Login() {
     //Storageにユーザー画像をアップロードする
     const storage = getStorage();
     const storageRef = ref(storage, "/image" + file.name);
-    await uploadBytes(storageRef, file)
-      .then((snapshot) => {
-        console.log("Uploaded a blob or file!");
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+    await uploadBytes(storageRef, file);
 
     //Storageからユーザー画像をダウンロードする
     await getDownloadURL(ref(storage, "/image" + file.name))
@@ -63,7 +57,7 @@ export default function Login() {
     await createUserWithEmailAndPassword(auth, user.email, user.password)
       .then(async (userCredential) => {
         // Signed in 成功！
-        console.log(userCredential.user);
+        // console.log(userCredential.user);
         //ユーザー画像のURLとユーザー名を登録
         if (user.userName === "") {
           alert("ユーザー名が記入されていません。");
@@ -73,24 +67,15 @@ export default function Login() {
           alert("ユーザー画像が登録されていません。");
           return;
         }
-        //ユーザー名とユーザー画像のアップロード
+        // //ユーザー名とユーザー画像のアップロード
         const currentUser: any = auth.currentUser;
-        await updateProfile(currentUser, {
-          displayName: user.userName,
-          photoURL: createUserPictureURL,
-        })
-          .then(() => {
-            // console.log("Profile updated!");
-          })
-          .catch((error) => {
-            console.log(error);
-          });
         // //Databaseに登録
         await setDoc(doc(db, "users", currentUser.uid), {
           userName: user.userName,
           password: user.password,
           email: user.email,
           userPicture: createUserPictureURL,
+          userUid: currentUser.uid,
         });
         //Loginページに遷移
         router.push("/login");

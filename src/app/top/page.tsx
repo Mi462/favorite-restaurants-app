@@ -34,32 +34,34 @@ import { db } from "@/lib/FirebaseConfig";
 import { format } from "date-fns";
 import { useRecoilState } from "recoil";
 import { loginUser } from "@/states/loginUser";
+import { PostType } from "../type/type";
 
 export default function Top() {
   //画面遷移
   const router = useRouter();
-  //状態
-  const [posts, setPosts] = useState([]);
+  //Post
+  const [posts, setPosts] = useState<PostType[]>();
   //上のプルダウンの状態
   const [selectCategory, setSelectCategory] = useState("全て");
   //ログインユーザーの情報
   const [user, setUser] = useRecoilState(loginUser);
   // console.log("top", user);
+  //Postしたユーザーの情報
+  const [postUsers, setPostUsers] = useState();
 
   //Postの内容を取得する関数
   const postDataFromFirebase = async () => {
     //データベースからデータを取得
     // const postsData = collection(db, "posts");
-    const postsData = collection(db, "users");
+    // const postsData = collection(db, "users");
     //Updateを基準に降順で取得
     // const q = query(postsData, orderBy("updatedAt", "desc"));
     // const q = query(collection(db, "users"));
-    const q = query(
+    const queryPosts = query(
       collectionGroup(db, "posts"),
-      where("updatedAt", "!=", ""),
       orderBy("updatedAt", "desc")
     );
-    await getDocs(q).then((snapShot) => {
+    await getDocs(queryPosts).then((snapShot) => {
       const getPostsData: any = snapShot.docs.map((doc) => {
         const { id, text, category, createdAt, updatedAt, picture } =
           doc.data();
@@ -73,10 +75,26 @@ export default function Top() {
         };
       });
       setPosts(getPostsData);
-      console.log(posts);
+    });
+
+    // const postsData = collection(db, "users");
+    const queryUser = query(
+      collectionGroup(db, "users"),
+      where("userUid", "==", "autherUid"),
+      where("updatedAt", "!=", ""),
+      orderBy("updatedAt", "desc")
+    );
+    await getDocs(queryUser).then((snapShot) => {
+      const getUsersData: any = snapShot.docs.map((doc) => {
+        const { userPicture, userName } = doc.data();
+        return { userPicture, userName };
+      });
+      setPostUsers(getUsersData);
+      // console.log(posts);
     });
   };
   console.log(posts);
+  console.log(postUsers);
 
   useEffect(() => {
     postDataFromFirebase();

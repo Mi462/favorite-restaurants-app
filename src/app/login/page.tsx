@@ -1,6 +1,6 @@
 "use client";
 
-import { auth } from "@/lib/FirebaseConfig";
+import { auth, db } from "@/lib/FirebaseConfig";
 import { loginUser } from "@/states/loginUser";
 import {
   Box,
@@ -11,7 +11,8 @@ import {
   Link,
   Text,
 } from "@chakra-ui/react";
-import { onAuthStateChanged, signInWithEmailAndPassword } from "firebase/auth";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { doc, getDoc } from "firebase/firestore";
 import { useRouter } from "next/navigation";
 import { useRecoilState } from "recoil";
 
@@ -23,19 +24,17 @@ export default function Login() {
     await signInWithEmailAndPassword(auth, user.email, user.password)
       .then(async (userCredential) => {
         //Login 成功！
-        // console.log(userCredential);
-        await onAuthStateChanged(auth, (userData) => {
-          if (userData) {
-            setUser({
-              userName: userData.displayName,
-              userPicture: userData.photoURL,
-              email: userData.email,
-              password: user.password,
-              userUid: userData.uid,
-            });
-          } else {
-            console.log("login error");
-          }
+        const currentUser: any = auth.currentUser;
+        // console.log(currentUser);
+        const docSnap = await getDoc(doc(db, "users", currentUser.uid));
+        const { userName, userPicture, email, password, userUid } =
+          docSnap.data() || {};
+        setUser({
+          userName,
+          userPicture,
+          email,
+          password,
+          userUid,
         });
         // console.log("login", user);
         //Top画面へ遷移

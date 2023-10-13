@@ -34,37 +34,47 @@ import { db } from "@/lib/FirebaseConfig";
 import { format } from "date-fns";
 import { useRecoilState } from "recoil";
 import { loginUser } from "@/states/loginUser";
-import { PostType } from "../type/type";
+import { v4 as uuidv4 } from "uuid";
 
 export default function Top() {
   //画面遷移
   const router = useRouter();
   //Post
-  const [posts, setPosts] = useState<PostType[]>();
+  const [posts, setPosts] = useState<any>([]);
   //上のプルダウンの状態
   const [selectCategory, setSelectCategory] = useState("全て");
   //ログインユーザーの情報
   const [user, setUser] = useRecoilState(loginUser);
   // console.log("top", user);
   //Postしたユーザーの情報
-  const [postUsers, setPostUsers] = useState();
+  const [postUsers, setPostUsers] = useState({
+    userPicture: "",
+    userName: "",
+    userUid: "",
+  });
+  // const [combinededPosts, setCombinededPosts] = useState<any>([]);
 
   //Postの内容を取得する関数
   const postDataFromFirebase = async () => {
-    //データベースからデータを取得
-    // const postsData = collection(db, "posts");
-    // const postsData = collection(db, "users");
-    //Updateを基準に降順で取得
-    // const q = query(postsData, orderBy("updatedAt", "desc"));
-    // const q = query(collection(db, "users"));
+    //ユーザーデータを取得
+    const queryUser = query(collection(db, "users"));
+    await getDocs(queryUser).then((snapShot) => {
+      const getUsersData: any = snapShot.docs.map((doc) => {
+        const { userPicture, userName, userUid } = doc.data();
+        return { userPicture, userName, userUid };
+      });
+      setPostUsers(getUsersData);
+    });
+    //Postを取得
     const queryPosts = query(
       collectionGroup(db, "posts"),
+      //Updateを基準に降順で取得
       orderBy("updatedAt", "desc")
     );
     await getDocs(queryPosts).then((snapShot) => {
       const getPostsData: any = snapShot.docs.map((doc) => {
-        const { id, text, category, createdAt, updatedAt, picture } =
-          doc.data();
+        const { id, text, category, createdAt, updatedAt, picture, autherUid } =
+          doc.data() || {};
         return {
           id,
           text,
@@ -72,26 +82,35 @@ export default function Top() {
           createdAt: format(createdAt.toDate(), "yyyy/MM/dd HH:mm"),
           updatedAt: format(updatedAt.toDate(), "yyyy/MM/dd HH:mm"),
           picture,
+          autherUid,
         };
       });
       setPosts(getPostsData);
     });
 
-    // const postsData = collection(db, "users");
-    const queryUser = query(
-      collectionGroup(db, "users"),
-      where("userUid", "==", "autherUid"),
-      where("updatedAt", "!=", ""),
-      orderBy("updatedAt", "desc")
+    // const combinedPosts = posts.map((post: any) => {
+    //   const postUser = postUsers.find(
+    //     (post: any) => post.autherUid === post.userUid
+    //   );
+    //   if (postUser) {
+    //     delete postUser.autherUid;
+    //     posts.userData = postUser;
+    //   }
+    //   return posts;
+    // });
+
+    const combinedPosts = posts.flatMap((post: any) =>
+      post.autherUid === postUsers.userUid ? [...post, postUsers] : post
     );
-    await getDocs(queryUser).then((snapShot) => {
-      const getUsersData: any = snapShot.docs.map((doc) => {
-        const { userPicture, userName } = doc.data();
-        return { userPicture, userName };
-      });
-      setPostUsers(getUsersData);
-      // console.log(posts);
-    });
+    setPosts(combinedPosts);
+    // posts.filter((post: any) => post.id !== id);
+    // const postsData = collection(db, "users");
+    // const queryUser = query(
+    //   collectionGroup(db, "users"),
+    //   where("userUid", "==", "autherUid"),
+    //   where("updatedAt", "!=", ""),
+    //   orderBy("updatedAt", "desc")
+    // );
   };
   console.log(posts);
   console.log(postUsers);
@@ -162,7 +181,7 @@ export default function Top() {
               </Box>
             </Flex>
 
-            {posts?.map((post: any) => {
+            {posts.map((post: any) => {
               if (selectCategory === "日本料理" && post.category !== "日本料理")
                 return;
               if (selectCategory === "中国料理" && post.category !== "中国料理")

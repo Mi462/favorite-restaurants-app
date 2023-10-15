@@ -42,12 +42,12 @@ export default function Top() {
   //Post
   const [posts, setPosts] = useState<any>([]);
   //上のプルダウンの状態
-  const [selectCategory, setSelectCategory] = useState("全て");
+  const [selectCategory, setSelectCategory] = useState<string>("全て");
   //ログインユーザーの情報
   const [user, setUser] = useRecoilState(loginUser);
   // console.log("top", user);
   //Postしたユーザーの情報
-  const [postUsers, setPostUsers] = useState({
+  const [postUsers, setPostUsers] = useState<any>({
     userPicture: "",
     userName: "",
     userUid: "",
@@ -55,7 +55,8 @@ export default function Top() {
   // const [combinededPosts, setCombinededPosts] = useState<any>([]);
 
   //Postの内容を取得する関数
-  const postDataFromFirebase = async () => {
+  const postsDataFromFirebase = async () => {
+    //1, ユーザーの情報が入った配列とPostの情報が入った配列を用意
     //ユーザーデータを取得
     const queryUser = query(collection(db, "users"));
     await getDocs(queryUser).then((snapShot) => {
@@ -88,35 +89,23 @@ export default function Top() {
       setPosts(getPostsData);
     });
 
-    // const combinedPosts = posts.map((post: any) => {
-    //   const postUser = postUsers.find(
-    //     (post: any) => post.autherUid === post.userUid
-    //   );
-    //   if (postUser) {
-    //     delete postUser.autherUid;
-    //     posts.userData = postUser;
-    //   }
-    //   return posts;
-    // });
-
-    const combinedPosts = posts.flatMap((post: any) =>
-      post.autherUid === postUsers.userUid ? [...post, postUsers] : post
-    );
+    const combinedPosts = await posts.map((post: any) => {
+      //2, ユーザーの情報が入った配列の中のuserUidと、Postの情報が入った配列の中のautherUidを照らし合わせる
+      const postUser = postUsers.find((p: any) => p.userUid === post.autherUid);
+      //3, 一致したものをPostの配列の方にユーザー情報を追加して新たな配列を作る
+      if (postUser) {
+        delete postUser.userUid;
+        post.userData = postUser;
+      }
+      return post;
+    });
     setPosts(combinedPosts);
-    // posts.filter((post: any) => post.id !== id);
-    // const postsData = collection(db, "users");
-    // const queryUser = query(
-    //   collectionGroup(db, "users"),
-    //   where("userUid", "==", "autherUid"),
-    //   where("updatedAt", "!=", ""),
-    //   orderBy("updatedAt", "desc")
-    // );
   };
-  console.log(posts);
+  console.log("post + usersData", posts);
   console.log(postUsers);
 
   useEffect(() => {
-    postDataFromFirebase();
+    postsDataFromFirebase();
   }, []);
 
   const linkToComment = (id: string) => {

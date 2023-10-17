@@ -75,7 +75,7 @@ export default function Create() {
       createdAt: Timestamp.now(),
       updatedAt: Timestamp.now(),
       picture: createObjectURL,
-      autherUid: user.userUid,
+      authorUid: user.userUid,
     });
     //textの中身を空にする
     setPost(postData);

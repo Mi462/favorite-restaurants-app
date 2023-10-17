@@ -46,18 +46,42 @@ export default function myPosts() {
   const [selectCategory, setSelectCategory] = useState("全て");
   //ログインユーザーの情報
   const [user, setUser] = useRecoilState(loginUser);
-  // console.log("top", user);
+  //Postしたユーザーの情報
+  const [postUsers, setPostUsers] = useState<any>([]);
+
+  useEffect(() => {
+    postUsersDataFromFirebase();
+  }, []);
+
+  useEffect(() => {
+    postsDataFromFirebase();
+  }, [postUsers]);
+
+  //1, ユーザーの情報が入った配列とPostの情報が入った配列を用意
+  //ユーザーの情報が入った配列の取得
+  const postUsersDataFromFirebase = async () => {
+    const q = collection(db, "users");
+    await getDocs(q).then((snapShot) => {
+      const getUsersData: any = snapShot.docs.map((doc) => {
+        const { userPicture, userName, userUid } = doc.data();
+        return { userPicture, userName, userUid };
+      });
+      setPostUsers(getUsersData);
+    });
+  };
+  console.log("外2", postUsers);
 
   //Postの内容を取得する関数
-  const postDataFromFirebase = async () => {
-    //データベースからデータを取得
+  const postsDataFromFirebase = async () => {
     const postsData = collection(db, "users", user.userUid, "posts");
     //Updateを基準に降順で取得
     const q = query(postsData, orderBy("updatedAt", "desc"));
     await getDocs(q).then((snapShot) => {
       const getPostsData: any = snapShot.docs.map((doc) => {
-        const { id, text, category, createdAt, updatedAt, picture } =
+        const { id, text, category, createdAt, updatedAt, picture, authorUid } =
           doc.data();
+        const postUser = postUsers.find((p: any) => p.userUid === authorUid);
+        const { userName, userPicture } = postUser || {};
         return {
           id,
           text,
@@ -65,17 +89,15 @@ export default function myPosts() {
           createdAt: format(createdAt.toDate(), "yyyy/MM/dd HH:mm"),
           updatedAt: format(updatedAt.toDate(), "yyyy/MM/dd HH:mm"),
           picture,
+          authorUid,
+          userName,
+          userPicture,
         };
       });
       setPosts(getPostsData);
-      console.log(posts);
     });
   };
-  console.log(posts);
-
-  useEffect(() => {
-    postDataFromFirebase();
-  }, []);
+  console.log("ラスト2", posts);
 
   const linkToComment = (id: string) => {
     console.log("linkToComment", id);
@@ -211,21 +233,20 @@ export default function myPosts() {
                             m="3"
                             justifyContent="space-between"
                           >
-                            <Box display="flex">
+                            <Flex alignItems="center">
                               <Wrap>
                                 <WrapItem>
                                   <Avatar
-                                    name="Tarou"
-                                    size="sm"
-                                    src="https://bit.ly/dan-abramov"
+                                    name={post.userName}
+                                    size="md"
+                                    src={post.userPicture}
                                   ></Avatar>
                                 </WrapItem>
                               </Wrap>
                               <Text fontSize="lg" ml="3">
-                                アカウント名
-                                {/* {post.userName} */}
+                                {post.userName}
                               </Text>
-                            </Box>
+                            </Flex>
                             <Text>{post.updatedAt}</Text>
                           </Flex>
                           {/* アカウント */}

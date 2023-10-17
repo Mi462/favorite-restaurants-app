@@ -25,6 +25,8 @@ export type CombinededPostsType = {
   updatedAt: Timestamp;
   picture: string;
   autherUid: string;
-  userPicture: string;
-  userName: string;
+  userData: {
+    userPicture: string;
+    userName: string;
+  };
 };

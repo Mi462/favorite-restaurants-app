@@ -41,8 +41,8 @@ export default function Top() {
   const [posts, setPosts] = useState<any>([]);
   //上のプルダウンの状態
   const [selectCategory, setSelectCategory] = useState<string>("全て");
-  //ログインユーザーの情報
-  const [user, setUser] = useRecoilState(loginUser);
+  // //ログインユーザーの情報
+  // const [user, setUser] = useRecoilState(loginUser);
   // console.log("top", user);
   //Postしたユーザーの情報
   const [postUsers, setPostUsers] = useState<any>([]);

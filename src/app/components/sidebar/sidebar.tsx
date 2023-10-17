@@ -24,8 +24,8 @@ import { useRecoilState } from "recoil";
 export default function Sidebar() {
   const router = useRouter();
   //ログインユーザー
-  const [user, setUser] = useRecoilState(loginUser);
-  // console.log("sidebar", user);
+  const [loginUserData, setLoginUserData] = useRecoilState(loginUser);
+  // console.log("sidebar", loginUserData);
 
   const linkToUser = () => {
     router.push("/user");
@@ -63,14 +63,14 @@ export default function Sidebar() {
             <Wrap>
               <WrapItem>
                 <Avatar
-                  name={user.userName}
+                  name={loginUserData.userName}
                   size="md"
-                  src={user.userPicture}
+                  src={loginUserData.userPicture}
                 ></Avatar>
               </WrapItem>
             </Wrap>
             <Text fontSize="2xl" ml="3">
-              {user.userName}
+              {loginUserData.userName}
             </Text>
           </Box>
           {/* アカウント表示 */}

@@ -14,11 +14,18 @@ import {
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { useRecoilState } from "recoil";
 
 export default function Login() {
   const router = useRouter();
-  const [user, setUser] = useRecoilState(loginUser);
+  //ログイン時の情報
+  const [user, setUser] = useState({
+    email: "",
+    password: "",
+  });
+  //ログイン成功時のログイン情報
+  const [loginUserData, setLoginUserData] = useRecoilState(loginUser);
 
   const handleSubmit = async () => {
     await signInWithEmailAndPassword(auth, user.email, user.password)
@@ -27,13 +34,11 @@ export default function Login() {
         const currentUser: any = auth.currentUser;
         // console.log(currentUser);
         const docSnap = await getDoc(doc(db, "users", currentUser.uid));
-        const { userName, userPicture, email, password, userUid } =
-          docSnap.data() || {};
-        setUser({
+        const { userName, userPicture, email, userUid } = docSnap.data() || {};
+        setLoginUserData({
           userName,
           userPicture,
           email,
-          password,
           userUid,
         });
         // console.log("login", user);

@@ -11,7 +11,7 @@ export type PostType = {
 
 export type loginUserType = {
   userName: string;
-  password: string;
+
   email: string;
   userPicture: string;
   userUid: string;

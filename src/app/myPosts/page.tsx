@@ -69,7 +69,7 @@ export default function myPosts() {
       setPostUsers(getUsersData);
     });
   };
-  console.log("外2", postUsers);
+  // console.log("外2", postUsers);
 
   //Postの内容を取得する関数
   const postsDataFromFirebase = async () => {
@@ -97,7 +97,7 @@ export default function myPosts() {
       setPosts(getPostsData);
     });
   };
-  console.log("ラスト2", posts);
+  // console.log("ラスト2", posts);
 
   const linkToComment = (id: string) => {
     console.log("linkToComment", id);

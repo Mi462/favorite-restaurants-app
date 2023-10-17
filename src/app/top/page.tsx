@@ -67,7 +67,6 @@ export default function Top() {
       setPostUsers(getUsersData);
     });
   };
-  console.log("外", postUsers);
 
   const postsDataFromFirebase = async () => {
     //Postの情報が入った配列の取得
@@ -76,7 +75,6 @@ export default function Top() {
       //Updateを基準に降順で取得
       orderBy("updatedAt", "desc")
     );
-    console.log("内 Post", postUsers);
     await getDocs(queryPosts).then((snapShot) => {
       const getPostsData: any = snapShot.docs.map((doc) => {
         const { id, text, category, createdAt, updatedAt, picture, authorUid } =
@@ -98,9 +96,8 @@ export default function Top() {
       setPosts(getPostsData);
     });
   };
-  console.log("ラスト", posts);
 
-  const linkToComment = (id: string) => {
+  const linkToComment = (id: string, uid: string) => {
     router.push(`/comment/${id}`);
   };
 
@@ -265,7 +262,7 @@ export default function Top() {
                             size="lg"
                             color="#4299E1"
                             onClick={() => {
-                              linkToComment(post.id);
+                              linkToComment(post.id, post.userUid);
                             }}
                             cursor="pointer"
                           />

@@ -21,16 +21,19 @@ import {
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import Sidebar from "../../components/sidebar/sidebar";
-import { doc, getDoc } from "firebase/firestore";
+import { collection, doc, getDoc, getDocs } from "firebase/firestore";
 import { db } from "@/lib/FirebaseConfig";
 import { format } from "date-fns";
 import { useRecoilState } from "recoil";
 import { loginUser } from "@/states/loginUser";
 
 export default function Comment({ params }: { params: { id: string } }) {
+  // { params }: { params: { id: string } }
   const router = useRouter();
   //ログインユーザー
   const [user, setUser] = useRecoilState(loginUser);
+  //Postしたユーザーの情報
+  const [postUsers, setPostUsers] = useState<any>([]);
   //状態
   const [subPost, setSubPost] = useState<any>({
     id: params.id,
@@ -53,13 +56,35 @@ export default function Comment({ params }: { params: { id: string } }) {
     router.push("/commentCreate");
   };
 
-  //Firebaseからデータを取り出す
+  useEffect(() => {
+    postUsersDataFromFirebase();
+  }, []);
+
+  useEffect(() => {
+    postDataFromFirebase();
+  }, [postUsers]);
+
+  //1, ユーザーの情報が入った配列とPostの情報が入った配列を用意
+  //ユーザーの情報が入った配列の取得
+  const postUsersDataFromFirebase = async () => {
+    const q = collection(db, "users");
+    await getDocs(q).then((snapShot) => {
+      const getUsersData: any = snapShot.docs.map((doc) => {
+        const { userPicture, userName, userUid } = doc.data();
+        return { userPicture, userName, userUid };
+      });
+      setPostUsers(getUsersData);
+    });
+  };
+  console.log("外4", postUsers);
+
+  //Postの情報の取得
   const postDataFromFirebase = async () => {
     //渡ってきたidを元にデータベースからデータを取り出す
     const docSnap = await getDoc(
       doc(db, "users", user.userUid, "posts", params.id)
     );
-    const { text, category, createdAt, updatedAt, picture } =
+    const { text, category, createdAt, updatedAt, picture, authorUid } =
       docSnap.data() || {};
     //取り出したデータをsetEditTodoに設定する
     setSubPost({
@@ -69,13 +94,14 @@ export default function Comment({ params }: { params: { id: string } }) {
       createdAt: format(createdAt.toDate(), "yyyy/MM/dd HH:mm"),
       updatedAt: format(updatedAt.toDate(), "yyyy/MM/dd HH:mm"),
       picture,
+      authorUid,
     });
   };
-  console.log(subPost);
+  console.log("ラスト4", subPost);
 
-  useEffect(() => {
-    postDataFromFirebase();
-  }, []);
+  // useEffect(() => {
+  //   postDataFromFirebase();
+  // }, []);
 
   return (
     <div>

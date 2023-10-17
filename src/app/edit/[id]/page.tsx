@@ -20,7 +20,14 @@ import {
 import { useRouter } from "next/navigation";
 import Sidebar from "../../components/sidebar/sidebar";
 import { useEffect, useState } from "react";
-import { Timestamp, doc, getDoc, updateDoc } from "firebase/firestore";
+import {
+  Timestamp,
+  collection,
+  doc,
+  getDoc,
+  getDocs,
+  updateDoc,
+} from "firebase/firestore";
 import { db } from "@/lib/FirebaseConfig";
 import { format } from "date-fns";
 import { useRecoilState } from "recoil";
@@ -37,15 +44,62 @@ export default function Edit({ params }: { params: { id: string } }) {
     createdAt: "",
     updatedAt: "",
     picture: "",
+    authorUid: "",
+    userName: "",
+    userPicture: "",
   });
   //ログインユーザー
   const [user, setUser] = useRecoilState(loginUser);
   // console.log("edit", user);
   // console.log(params.id);
+  //Postしたユーザーの情報
+  const [postUsers, setPostUsers] = useState<any>([]);
+
+  useEffect(() => {
+    postUsersDataFromFirebase();
+  }, []);
 
   useEffect(() => {
     postDataFromFirebase();
-  }, []);
+  }, [postUsers]);
+
+  //1, ユーザーの情報が入った配列とPostの情報が入った配列を用意
+  //ユーザーの情報が入った配列の取得
+  const postUsersDataFromFirebase = async () => {
+    const q = collection(db, "users");
+    await getDocs(q).then((snapShot) => {
+      const getUsersData: any = snapShot.docs.map((doc) => {
+        const { userPicture, userName, userUid } = doc.data();
+        return { userPicture, userName, userUid };
+      });
+      setPostUsers(getUsersData);
+    });
+  };
+  // console.log("外3", postUsers);
+
+  const postDataFromFirebase = async () => {
+    //渡ってきたidを元にデータベースからデータを取り出してきた
+    const docSnap = await getDoc(
+      doc(db, "users", user.userUid, "posts", params.id)
+    );
+    const { text, category, createdAt, updatedAt, picture, authorUid } =
+      docSnap.data() || {};
+    const postUser = postUsers.find((p: any) => p.userUid === authorUid);
+    const { userName, userPicture } = postUser || {};
+    //取り出したデータをsetEditTodoに設定する
+    setEditPost({
+      id: params.id,
+      text,
+      category,
+      createdAt: format(createdAt.toDate(), "yyyy/MM/dd HH:mm"),
+      updatedAt: format(updatedAt.toDate(), "yyyy/MM/dd HH:mm"),
+      picture,
+      authorUid,
+      userName,
+      userPicture,
+    });
+  };
+  // console.log("ラスト3", editPost);
 
   //再投稿ボタン押下時にFirebaseにあるデータが更新され、Top画面に遷移する関数
   const onClickEditPost = async (
@@ -54,7 +108,10 @@ export default function Edit({ params }: { params: { id: string } }) {
   ) => {
     e.preventDefault();
     //textに何も記入されていない場合は反映されない
-    if (editPost.text === "") return;
+    if (editPost.text === "") {
+      alert("テキストが入力されていません。");
+      return;
+    }
     //Firebaseでデータを更新する
     await updateDoc(doc(db, "users", user.userUid, "posts", id), {
       text: editPost.text,
@@ -64,26 +121,6 @@ export default function Edit({ params }: { params: { id: string } }) {
     //Top画面に遷移する
     router.push("/top");
   };
-
-  const postDataFromFirebase = async () => {
-    //渡ってきたidを元にデータベースからデータを取り出してきた
-    const docSnap = await getDoc(
-      doc(db, "users", user.userUid, "posts", params.id)
-    );
-    const { text, category, createdAt, updatedAt, picture } =
-      docSnap.data() || {};
-    //取り出したデータをsetEditTodoに設定する
-    setEditPost({
-      id: params.id,
-      text,
-      category,
-      createdAt: format(createdAt.toDate(), "yyyy/MM/dd HH:mm"),
-      updatedAt: format(updatedAt.toDate(), "yyyy/MM/dd HH:mm"),
-      picture,
-    });
-    // console.log(editPost);
-  };
-  console.log(editPost);
 
   return (
     <div>
@@ -129,14 +166,14 @@ export default function Edit({ params }: { params: { id: string } }) {
                     <Wrap>
                       <WrapItem>
                         <Avatar
-                          name="Tarou"
+                          name={editPost.userName}
                           size="sm"
-                          src="https://bit.ly/dan-abramov"
+                          src={editPost.userPicture}
                         ></Avatar>
                       </WrapItem>
                     </Wrap>
                     <Text fontSize="lg" ml="3">
-                      アカウント名
+                      {editPost.userName}
                     </Text>
                   </Flex>
                   {/* アカウント */}

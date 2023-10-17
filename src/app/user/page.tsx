@@ -84,12 +84,10 @@ export default function Top() {
     //Top画面に遷移する
     router.push("/top");
   };
-  console.log("ユーザー情報編集後", editUser);
-  console.log("userImage", userImage);
+
   //アカウント画像登録
   const userPictureUploadToFirebase = async (e: any) => {
     const file = e.target.files[0];
-    console.log(file);
     setUserImage(file);
 
     //Storageにユーザー画像をアップロードする

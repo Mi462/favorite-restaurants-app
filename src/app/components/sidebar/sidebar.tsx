@@ -1,6 +1,6 @@
 "use client";
 
-import { loginUser } from "@/states/loginUser";
+import { loginUser } from "@/states/states";
 import {
   Avatar,
   Box,

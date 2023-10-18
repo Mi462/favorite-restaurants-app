@@ -32,7 +32,7 @@ import {
 import { db } from "@/lib/FirebaseConfig";
 import { format } from "date-fns";
 import { useRecoilState } from "recoil";
-import { loginUser } from "@/states/loginUser";
+import { commentPost, loginUser } from "@/states/states";
 
 export default function Top() {
   //画面遷移
@@ -46,6 +46,8 @@ export default function Top() {
   // console.log("top", user);
   //Postしたユーザーの情報
   const [postUsers, setPostUsers] = useState<any>([]);
+  //Comment画面遷移時のPost作成者の情報
+  const [commentPostUser, setCommentPostUser] = useRecoilState(commentPost);
 
   useEffect(() => {
     postUsersDataFromFirebase();
@@ -72,7 +74,7 @@ export default function Top() {
     //Postの情報が入った配列の取得
     const queryPosts = query(
       collectionGroup(db, "posts"),
-      //Updateを基準に降順で取得
+      //updatedAtを基準に降順で取得
       orderBy("updatedAt", "desc")
     );
     await getDocs(queryPosts).then((snapShot) => {
@@ -97,9 +99,20 @@ export default function Top() {
     });
   };
 
-  const linkToComment = (id: string, uid: string) => {
+  const linkToComment = (
+    id: string,
+    userName: string,
+    userPicture: string,
+    authorUid: string
+  ) => {
     router.push(`/comment/${id}`);
+    setCommentPostUser({
+      userName: userName,
+      userPicture: userPicture,
+      authorUid: authorUid,
+    });
   };
+  console.log(commentPostUser);
 
   const linkToMap = () => {
     router.push("/map");
@@ -262,7 +275,12 @@ export default function Top() {
                             size="lg"
                             color="#4299E1"
                             onClick={() => {
-                              linkToComment(post.id, post.userUid);
+                              linkToComment(
+                                post.id,
+                                post.userName,
+                                post.userPicture,
+                                post.authorUid
+                              );
                             }}
                             cursor="pointer"
                           />

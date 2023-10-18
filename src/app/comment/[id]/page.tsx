@@ -21,20 +21,29 @@ import {
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import Sidebar from "../../components/sidebar/sidebar";
-import { collection, doc, getDoc, getDocs } from "firebase/firestore";
+import {
+  collection,
+  collectionGroup,
+  doc,
+  getDoc,
+  getDocs,
+  orderBy,
+  query,
+} from "firebase/firestore";
 import { db } from "@/lib/FirebaseConfig";
 import { format } from "date-fns";
 import { useRecoilState } from "recoil";
-import { loginUser } from "@/states/loginUser";
+import { commentPost, loginUser } from "@/states/states";
 
 export default function Comment({ params }: { params: { id: string } }) {
-  // { params }: { params: { id: string } }
   const router = useRouter();
   //ログインユーザー
   const [user, setUser] = useRecoilState(loginUser);
-  //Postしたユーザーの情報
-  const [postUsers, setPostUsers] = useState<any>([]);
-  //状態
+  //Comment画面遷移時のPost作成者の情報
+  const [commentPostUser, setCommentPostUser] = useRecoilState(commentPost);
+  //コメントしたユーザーの情報
+  const [commentUsers, setCommentUsers] = useState<any>([]);
+  //Postの状態
   const [subPost, setSubPost] = useState<any>({
     id: params.id,
     text: "",
@@ -42,51 +51,49 @@ export default function Comment({ params }: { params: { id: string } }) {
     createdAt: "",
     updatedAt: "",
     picture: "",
+    authorUid: "",
+    userName: "",
+    userPicture: "",
   });
+  //コメントの状態
+  const [comments, setComments] = useState<any>([]);
 
   const linkToMap = () => {
     router.push("/map");
   };
 
-  const linkToEdit = (id: string) => {
-    router.push(`/edit/${id}`);
+  const linkToCommentCreate = (id: string) => {
+    router.push(`/commentCreate/${id}`);
   };
 
-  const linkToCommentCreate = () => {
-    router.push("/commentCreate");
-  };
-
-  useEffect(() => {
-    postUsersDataFromFirebase();
-  }, []);
-
+  //Postの取得用useEffect
   useEffect(() => {
     postDataFromFirebase();
-  }, [postUsers]);
+  }, [commentPostUser]);
 
-  //1, ユーザーの情報が入った配列とPostの情報が入った配列を用意
-  //ユーザーの情報が入った配列の取得
-  const postUsersDataFromFirebase = async () => {
-    const q = collection(db, "users");
-    await getDocs(q).then((snapShot) => {
-      const getUsersData: any = snapShot.docs.map((doc) => {
-        const { userPicture, userName, userUid } = doc.data();
-        return { userPicture, userName, userUid };
-      });
-      setPostUsers(getUsersData);
-    });
-  };
-  console.log("外4", postUsers);
+  //コメントしたユーザーの情報取得用useEffect
+  useEffect(() => {
+    commentUsersDataFromFirebase();
+  }, []);
+
+  //コメントの取得用useEffect
+  useEffect(() => {
+    commentsDataFromFirebase();
+  }, [commentUsers]);
+
+  //Postに関して
+  //1, ユーザーの情報が入ったstateとPostの情報が入ったstateを用意
+  // → ユーザーの情報は commentPostUser にある
 
   //Postの情報の取得
   const postDataFromFirebase = async () => {
     //渡ってきたidを元にデータベースからデータを取り出す
     const docSnap = await getDoc(
-      doc(db, "users", user.userUid, "posts", params.id)
+      doc(db, "users", commentPostUser.authorUid, "posts", params.id)
     );
     const { text, category, createdAt, updatedAt, picture, authorUid } =
       docSnap.data() || {};
-    //取り出したデータをsetEditTodoに設定する
+    const { userName, userPicture } = commentPostUser;
     setSubPost({
       id: params.id,
       text,
@@ -95,13 +102,54 @@ export default function Comment({ params }: { params: { id: string } }) {
       updatedAt: format(updatedAt.toDate(), "yyyy/MM/dd HH:mm"),
       picture,
       authorUid,
+      userName,
+      userPicture,
     });
   };
   console.log("ラスト4", subPost);
 
-  // useEffect(() => {
-  //   postDataFromFirebase();
-  // }, []);
+  //コメントに関して
+  //1, ユーザーの情報が入った配列とコメントの情報が入った配列を用意
+  //ユーザーの情報が入った配列の取得
+  const commentUsersDataFromFirebase = async () => {
+    const q = collection(db, "users");
+    await getDocs(q).then((snapShot) => {
+      const getCommentUsersData: any = snapShot.docs.map((doc) => {
+        const { userPicture, userName, userUid } = doc.data();
+        return { userPicture, userName, userUid };
+      });
+      setCommentUsers(getCommentUsersData);
+    });
+  };
+
+  //コメントの取得
+  const commentsDataFromFirebase = async () => {
+    const queryComments = query(
+      collectionGroup(db, "comments"),
+      //createdAtを基準に昇順で取得
+      orderBy("createdAt")
+    );
+    await getDocs(queryComments).then((snapShot) => {
+      const getCommentsData: any = snapShot.docs.map((doc) => {
+        const { commentId, text, createdAt, commentAuthorUid } =
+          doc.data() || {};
+        const commentUser = commentUsers.find(
+          (p: any) => p.userUid === commentAuthorUid
+        );
+        const { userName, userPicture } = commentUser || {};
+        return {
+          commentId,
+          text,
+          createdAt: format(createdAt.toDate(), "yyyy/MM/dd HH:mm"),
+          commentAuthorUid,
+          userName,
+          userPicture,
+        };
+      });
+      setComments(getCommentsData);
+    });
+  };
+  console.log(comments);
 
   return (
     <div>
@@ -149,20 +197,20 @@ export default function Comment({ params }: { params: { id: string } }) {
                         m="3"
                         justifyContent="space-between"
                       >
-                        <Box display="flex">
+                        <Flex alignItems="center">
                           <Wrap>
                             <WrapItem>
                               <Avatar
-                                name="Tarou"
-                                size="sm"
-                                src="https://bit.ly/dan-abramov"
+                                name={subPost.userName}
+                                size="md"
+                                src={subPost.userPicture}
                               ></Avatar>
                             </WrapItem>
                           </Wrap>
                           <Text fontSize="lg" ml="3">
-                            アカウント名
+                            {subPost.userName}
                           </Text>
-                        </Box>
+                        </Flex>
                         <Text>{subPost.updatedAt}</Text>
                       </Flex>
                       {/* アカウント */}
@@ -189,7 +237,9 @@ export default function Comment({ params }: { params: { id: string } }) {
                         icon={faReply}
                         size="lg"
                         color="#4299E1"
-                        onClick={linkToCommentCreate}
+                        onClick={() => {
+                          linkToCommentCreate(params.id);
+                        }}
                         cursor="pointer"
                       />
                       {/* 返信ボタン */}
@@ -220,116 +270,63 @@ export default function Comment({ params }: { params: { id: string } }) {
             </Box>
             {/* Posts */}
 
-            {/* Comment1 */}
-            <Box
-              width="95%"
-              height="200"
-              borderRadius="20"
-              background="orange.100"
-              border="2px"
-              borderColor="orange.500"
-              mt="5"
-              ml="5"
-            >
-              <Flex>
-                {/* 写真横のアカウント・コメント・ボタンなど */}
-                <Box height="190" mr="5" ml="5">
-                  <Flex direction="column">
-                    {/* 写真横のアカウント・コメント */}
-                    <Box height="160">
-                      {/* アカウント */}
-                      <Flex
-                        alignItems="center"
-                        m="3"
-                        justifyContent="space-between"
-                      >
-                        <Box display="flex">
-                          <Wrap>
-                            <WrapItem>
-                              <Avatar
-                                name="Zirou"
-                                size="sm"
-                                src="https://bit.ly/kent-c-dodds"
-                              ></Avatar>
-                            </WrapItem>
-                          </Wrap>
-                          <Text fontSize="lg" ml="3">
-                            アカウント名
-                          </Text>
-                        </Box>
-                        <Text>2023/00/00 00:00:00</Text>
-                      </Flex>
-                      {/* アカウント */}
+            {/* Comments */}
+            {comments.map((comment: any) => {
+              return (
+                <Box
+                  width="95%"
+                  height="200"
+                  borderRadius="20"
+                  background="orange.100"
+                  border="2px"
+                  borderColor="orange.500"
+                  mt="5"
+                  ml="5"
+                  key={comment.commentId}
+                >
+                  <Flex>
+                    {/* 写真横のアカウント・コメント・ボタンなど */}
+                    <Box height="190" mr="5" ml="5">
+                      <Flex direction="column">
+                        {/* 写真横のアカウント・コメント */}
+                        <Box height="160">
+                          {/* アカウント */}
+                          <Flex
+                            alignItems="center"
+                            m="3"
+                            justifyContent="space-between"
+                          >
+                            <Box display="flex" alignItems="center">
+                              <Wrap>
+                                <WrapItem>
+                                  <Avatar
+                                    name={comment.userName}
+                                    size="md"
+                                    src={comment.userPicture}
+                                  ></Avatar>
+                                </WrapItem>
+                              </Wrap>
+                              <Text fontSize="lg" ml="3">
+                                {comment.userName}
+                              </Text>
+                            </Box>
+                            <Text>{comment.createdAt}</Text>
+                          </Flex>
+                          {/* アカウント */}
 
-                      {/* コメント */}
-                      <Text>
-                        ここにテキストが入ります。ここにテキストが入ります。ここにテキストが入ります。ここにテキストが入ります。
-                        ここにテキストが入ります。ここにテキストが入ります。ここにテキストが入ります。ここにテキストが入ります。ここにテキストが入ります。ここにテキストが入ります。ここにテキストが入ります。ここにテキストが入ります。スタバしか勝たん。
-                      </Text>
-                      {/* コメント */}
+                          {/* コメント */}
+                          <Text>{comment.text}</Text>
+                          {/* コメント */}
+                        </Box>
+                        {/* 写真横のアカウント・コメント */}
+                      </Flex>
                     </Box>
-                    {/* 写真横のアカウント・コメント */}
+                    {/* 写真横のアカウント・コメント・ボタンなど */}
                   </Flex>
                 </Box>
-                {/* 写真横のアカウント・コメント・ボタンなど */}
-              </Flex>
-            </Box>
-            {/* Comment1 */}
-            {/* Comment2 */}
-            <Box
-              width="95%"
-              height="200"
-              borderRadius="20"
-              background="orange.100"
-              border="2px"
-              borderColor="orange.500"
-              mt="5"
-              ml="5"
-            >
-              <Flex>
-                {/* 写真横のアカウント・コメント・ボタンなど */}
-                <Box height="190" mr="5" ml="5">
-                  <Flex direction="column">
-                    {/* 写真横のアカウント・コメント */}
-                    <Box height="160">
-                      {/* アカウント */}
-                      <Flex
-                        alignItems="center"
-                        m="3"
-                        justifyContent="space-between"
-                      >
-                        <Box display="flex">
-                          <Wrap>
-                            <WrapItem>
-                              <Avatar
-                                name="Tarou"
-                                size="sm"
-                                src="https://bit.ly/dan-abramov"
-                              ></Avatar>
-                            </WrapItem>
-                          </Wrap>
-                          <Text fontSize="lg" ml="3">
-                            アカウント名
-                          </Text>
-                        </Box>
-                        <Text>2023/00/00 00:00:00</Text>
-                      </Flex>
-                      {/* アカウント */}
-
-                      {/* コメント */}
-                      <Text>
-                        ここにテキストが入ります。ここにテキストが入ります。ここにテキストが入ります。ここにテキストが入ります。
-                        ここにテキストが入ります。ここにテキストが入ります。ここにテキストが入ります。ここにテキストが入ります。ここにテキストが入ります。ここにテキストが入ります。ここにテキストが入ります。ここにテキストが入ります。よな。
-                      </Text>
-                      {/* コメント */}
-                    </Box>
-                    {/* 写真横のアカウント・コメント */}
-                  </Flex>
-                </Box>
-                {/* 写真横のアカウント・コメント・ボタンなど */}
-              </Flex>
-            </Box>
-            {/* Comment2 */}
+              );
+            })}
+            {/* Comments */}
           </Flex>
         </Box>
       </Flex>

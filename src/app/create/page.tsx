@@ -27,7 +27,7 @@ import { Timestamp, doc, setDoc } from "firebase/firestore";
 import { db } from "@/lib/FirebaseConfig";
 import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
 import { useRecoilState } from "recoil";
-import { loginUser } from "@/states/loginUser";
+import { loginUser } from "@/states/states";
 
 export default function Create() {
   //画面遷移用

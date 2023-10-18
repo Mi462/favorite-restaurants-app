@@ -15,7 +15,7 @@ import { faRotateRight } from "@fortawesome/free-solid-svg-icons";
 import { useRouter } from "next/navigation";
 import Sidebar from "../components/sidebar/sidebar";
 import { useRecoilState } from "recoil";
-import { loginUser } from "@/states/loginUser";
+import { loginUser } from "@/states/states";
 import { useEffect, useState } from "react";
 import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
 import { auth, db } from "@/lib/FirebaseConfig";

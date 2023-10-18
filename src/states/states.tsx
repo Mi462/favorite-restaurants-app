@@ -10,3 +10,12 @@ export const loginUser = atom<any>({
     userUid: "",
   },
 });
+
+export const commentPost = atom<any>({
+  key: "commentPost",
+  default: {
+    userName: "",
+    userPicture: "",
+    authorUid: "",
+  },
+});

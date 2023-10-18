@@ -1,7 +1,7 @@
 "use client";
 
 import { auth, db } from "@/lib/FirebaseConfig";
-import { loginUser } from "@/states/loginUser";
+import { loginUser } from "@/states/states";
 import {
   Box,
   Button,

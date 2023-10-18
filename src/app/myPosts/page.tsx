@@ -35,7 +35,7 @@ import {
 import { db } from "@/lib/FirebaseConfig";
 import { format } from "date-fns";
 import { useRecoilState } from "recoil";
-import { loginUser } from "@/states/loginUser";
+import { loginUser } from "@/states/states";
 
 export default function myPosts() {
   //画面遷移

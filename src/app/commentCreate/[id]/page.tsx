@@ -9,18 +9,63 @@ import {
   Wrap,
   WrapItem,
 } from "@chakra-ui/react";
-import Header from "../components/header/header";
+import Header from "../../components/header/header";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCirclePlus, faLocationDot } from "@fortawesome/free-solid-svg-icons";
 import { useRouter } from "next/navigation";
-import Sidebar from "../components/sidebar/sidebar";
+import Sidebar from "../../components/sidebar/sidebar";
+import { useRecoilState } from "recoil";
+import { commentPost, loginUser } from "@/states/states";
+import { useState } from "react";
+import { Timestamp, doc, setDoc } from "firebase/firestore";
+import { db } from "@/lib/FirebaseConfig";
+import { v4 as uuidv4 } from "uuid";
 
-export default function CommentCreate() {
+export default function CommentCreate({ params }: { params: { id: string } }) {
   const router = useRouter();
-
-  const linkToComment = () => {
-    router.push("/show");
+  //ログインユーザーの情報
+  const [user, setUser] = useRecoilState(loginUser);
+  //Comment画面遷移時のPost作成者の情報
+  const [commentPostUser, setCommentPostUser] = useRecoilState(commentPost);
+  const commentData = {
+    commentId: uuidv4(),
+    text: "",
+    createdAt: "",
+    commentAuthorUid: "",
   };
+  //コメントの内容
+  const [comment, setCommentData] = useState(commentData);
+
+  const createComment = async (id: string, e: any) => {
+    e.preventDefault();
+    if (comment.text === "") {
+      alert(" コメントが入力されていません。");
+      return;
+    }
+    //Firebaseにデータを登録する
+    await setDoc(
+      doc(
+        db,
+        "users",
+        commentPostUser.authorUid,
+        "posts",
+        params.id,
+        "comments",
+        comment.commentId
+      ),
+      {
+        commentId: uuidv4(),
+        text: comment.text,
+        createdAt: Timestamp.now(),
+        commentAuthorUid: user.userUid,
+      }
+    );
+    //コメントの中を空にする
+    setCommentData(commentData);
+    //comment画面に遷移
+    router.push(`/comment/${id}`);
+  };
+  console.log(comment);
 
   return (
     <div>
@@ -53,14 +98,14 @@ export default function CommentCreate() {
                   <Wrap>
                     <WrapItem>
                       <Avatar
-                        name="Tarou"
+                        name={user.userName}
                         size="sm"
-                        src="https://bit.ly/dan-abramov"
+                        src={user.userPicture}
                       ></Avatar>
                     </WrapItem>
                   </Wrap>
                   <Text fontSize="lg" ml="3">
-                    アカウント名
+                    {user.userName}
                   </Text>
                 </Flex>
                 {/* アカウント */}
@@ -73,6 +118,9 @@ export default function CommentCreate() {
                   size="md"
                   rows={5}
                   mt={1}
+                  onChange={(e) =>
+                    setCommentData({ ...comment, text: e.target.value })
+                  }
                 />
                 {/* コメント */}
               </Box>
@@ -98,7 +146,11 @@ export default function CommentCreate() {
                 {/* マップボタン */}
 
                 {/* 投稿ボタン */}
-                <button onClick={linkToComment}>
+                <button
+                  onClick={(e) => {
+                    createComment(params.id, e);
+                  }}
+                >
                   <Box
                     height="6"
                     display="flex"

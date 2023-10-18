@@ -271,7 +271,7 @@ export default function myPosts() {
                           mt="1"
                         >
                           {/* コメントボタン */}
-                          <FontAwesomeIcon
+                          {/* <FontAwesomeIcon
                             icon={faComment}
                             size="lg"
                             color="#4299E1"
@@ -279,24 +279,24 @@ export default function myPosts() {
                               linkToComment(post.id);
                             }}
                             cursor="pointer"
-                          />
+                          /> */}
                           {/* コメントボタン */}
 
                           {/* いいねボタン */}
-                          <FontAwesomeIcon
+                          {/* <FontAwesomeIcon
                             icon={faHeart}
                             size="lg"
                             color="#D53F8C"
-                          />
+                          /> */}
                           {/* いいねボタン */}
 
                           {/* マップボタン */}
-                          <FontAwesomeIcon
+                          {/* <FontAwesomeIcon
                             icon={faLocationDot}
                             size="lg"
                             color="#4299E1"
                             onClick={linkToMap}
-                          />
+                          /> */}
                           {/* マップボタン */}
 
                           {/* Editボタン */}

@@ -125,7 +125,14 @@ export default function Comment({ params }: { params: { id: string } }) {
   //コメントの取得
   const commentsDataFromFirebase = async () => {
     const queryComments = query(
-      collectionGroup(db, "comments"),
+      collection(
+        db,
+        "users",
+        commentPostUser.authorUid,
+        "posts",
+        params.id,
+        "comments"
+      ),
       //createdAtを基準に昇順で取得
       orderBy("createdAt")
     );
@@ -296,7 +303,7 @@ export default function Comment({ params }: { params: { id: string } }) {
                             m="3"
                             justifyContent="space-between"
                           >
-                            <Box display="flex" alignItems="center">
+                            <Flex alignItems="center">
                               <Wrap>
                                 <WrapItem>
                                   <Avatar
@@ -309,7 +316,7 @@ export default function Comment({ params }: { params: { id: string } }) {
                               <Text fontSize="lg" ml="3">
                                 {comment.userName}
                               </Text>
-                            </Box>
+                            </Flex>
                             <Text>{comment.createdAt}</Text>
                           </Flex>
                           {/* アカウント */}

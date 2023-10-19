@@ -293,7 +293,7 @@ export default function Comment({ params }: { params: { id: string } }) {
                 >
                   <Flex>
                     {/* 写真横のアカウント・コメント・ボタンなど */}
-                    <Box height="190" mr="5" ml="5">
+                    <Box width="100%" height="190" mr="5" ml="5">
                       <Flex direction="column">
                         {/* 写真横のアカウント・コメント */}
                         <Box height="160">

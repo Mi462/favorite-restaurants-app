@@ -7,38 +7,43 @@ import {
   Text,
   Wrap,
   WrapItem,
-  Button,
   Image,
+  Button,
 } from "@chakra-ui/react";
 import Header from "../../components/header/header";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faHeart,
   faLocationDot,
-  faPenToSquare,
   faReply,
 } from "@fortawesome/free-solid-svg-icons";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Sidebar from "../../components/sidebar/sidebar";
 import {
   collection,
-  collectionGroup,
+  deleteDoc,
   doc,
   getDoc,
   getDocs,
+  onSnapshot,
   orderBy,
   query,
+  setDoc,
 } from "firebase/firestore";
 import { db } from "@/lib/FirebaseConfig";
 import { format } from "date-fns";
 import { useRecoilState } from "recoil";
-import { commentPost, loginUser } from "@/states/states";
+import { commentPost, likeStatus, loginUser } from "@/states/states";
 
 export default function Comment({ params }: { params: { id: string } }) {
   const router = useRouter();
   //ログインユーザー
   const [user, setUser] = useRecoilState(loginUser);
+  // 「いいね」の状態管理
+  const [isLiked, setIsLiked] = useState<boolean | null>(null);
+  // 「いいね」数の状態管理
+  const [likeCount, setLikeCount] = useState<number>(0);
   //Comment画面遷移時のPost作成者の情報
   const [commentPostUser, setCommentPostUser] = useRecoilState(commentPost);
   //コメントしたユーザーの情報
@@ -106,7 +111,7 @@ export default function Comment({ params }: { params: { id: string } }) {
       userPicture,
     });
   };
-  console.log("ラスト4", subPost);
+  // console.log("ラスト4", subPost);
 
   //コメントに関して
   //1, ユーザーの情報が入った配列とコメントの情報が入った配列を用意
@@ -156,7 +161,86 @@ export default function Comment({ params }: { params: { id: string } }) {
       setComments(getCommentsData);
     });
   };
-  console.log(comments);
+  // console.log(comments);
+
+  //この投稿に対して既にlikeしたかどうかを判別する
+  //いいね機能
+  useEffect(() => {
+    if (!user.userUid) return;
+
+    const postRef = doc(
+      db,
+      "users",
+      commentPostUser.authorUid,
+      "posts",
+      params.id
+    );
+    const likedUserRef = doc(postRef, "LikedUsers", user.userUid);
+
+    const unsubscribeLikedUser = onSnapshot(likedUserRef, (doc) => {
+      setIsLiked(doc.exists());
+    });
+
+    //「いいね」数の監視＆データ更新
+    const likedUsersRef = collection(
+      db,
+      "users",
+      commentPostUser.authorUid,
+      "posts",
+      params.id,
+      "LikedUsers"
+    );
+    const unsubscribeLikedCount = onSnapshot(likedUsersRef, (snapShot) => {
+      setLikeCount(snapShot.size);
+    });
+
+    return () => {
+      unsubscribeLikedUser();
+      unsubscribeLikedCount();
+    };
+  }, [user.userUid, params.id]);
+
+  console.log(isLiked);
+
+  // 「いいね」ボタンのクリックイベント
+  const handleClick = useCallback(async () => {
+    if (!user.userUid || isLiked === null) return;
+
+    //「いいね」ボタン押下時のFirebaseのデータ構造の準備
+    const postRef = doc(
+      db,
+      "users",
+      commentPostUser.authorUid,
+      "posts",
+      params.id
+    );
+    //Postに対して残すサブコレクション（LikedUsers）
+    const likedUserRef = doc(postRef, "LikedUsers", user.userUid);
+
+    const userDoc = doc(db, "users", user.userUid);
+    const userSnapshot = await getDoc(userDoc);
+    const userData = userSnapshot.data();
+    const userName = userData?.userName;
+    const userUid = userData?.userUid;
+    const userPicture = userData?.userPicture;
+
+    //Usersに対して残すサブコレクション（likePosts）
+    const userLikePostRef = doc(userDoc, "likePosts", params.id);
+
+    if (isLiked) {
+      //isLikeを使って、既にlikeしたか確認して、もししていたら解除する
+      await deleteDoc(likedUserRef);
+      await deleteDoc(userLikePostRef);
+    } else {
+      //isLikeを使って、既にlikeしたか確認したあと、いいねする（重複させない）
+      await setDoc(likedUserRef, { userUid, userName, userPicture });
+      await setDoc(userLikePostRef, { slug: params.id });
+    }
+  }, [user.userUid, params.id, isLiked]);
+
+  // 「いいね」機能のためのレンダリング
+  if (!user.userUid) return null;
+  if (isLiked === null) return null;
 
   return (
     <div>
@@ -252,11 +336,16 @@ export default function Comment({ params }: { params: { id: string } }) {
                       {/* 返信ボタン */}
 
                       {/* いいねボタン */}
-                      <FontAwesomeIcon
-                        icon={faHeart}
-                        size="lg"
-                        color="#4299E1"
-                      />
+                      <button onClick={handleClick}>
+                        <Flex alignItems="center">
+                          <FontAwesomeIcon
+                            icon={faHeart}
+                            color={isLiked ? "red" : "#4299E1"}
+                            size="lg"
+                          />
+                          <Text ml="1">{likeCount}</Text>
+                        </Flex>
+                      </button>
                       {/* いいねボタン */}
 
                       {/* マップボタン */}

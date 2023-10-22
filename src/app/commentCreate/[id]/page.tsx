@@ -65,7 +65,7 @@ export default function CommentCreate({ params }: { params: { id: string } }) {
     //comment画面に遷移
     router.push(`/comment/${id}`);
   };
-  console.log(comment);
+  // console.log(comment);
 
   return (
     <div>

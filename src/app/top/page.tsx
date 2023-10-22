@@ -21,18 +21,23 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { useRouter } from "next/navigation";
 import Sidebar from "../components/sidebar/sidebar";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {
   collection,
   collectionGroup,
+  deleteDoc,
+  doc,
+  getDoc,
   getDocs,
+  onSnapshot,
   orderBy,
   query,
+  setDoc,
 } from "firebase/firestore";
 import { db } from "@/lib/FirebaseConfig";
 import { format } from "date-fns";
 import { useRecoilState } from "recoil";
-import { commentPost, loginUser } from "@/states/states";
+import { commentPost, likeStatus, loginUser } from "@/states/states";
 
 export default function Top() {
   //画面遷移
@@ -42,12 +47,16 @@ export default function Top() {
   //上のプルダウンの状態
   const [selectCategory, setSelectCategory] = useState<string>("全て");
   // //ログインユーザーの情報
-  // const [user, setUser] = useRecoilState(loginUser);
+  const [user, setUser] = useRecoilState(loginUser);
   // console.log("top", user);
   //Postしたユーザーの情報
   const [postUsers, setPostUsers] = useState<any>([]);
   //Comment画面遷移時のPost作成者の情報
   const [commentPostUser, setCommentPostUser] = useRecoilState(commentPost);
+  // 「いいね」の状態管理
+  const [isLiked, setIsLiked] = useState<boolean | null>(null);
+  // 「いいね」数の状態管理
+  const [likeCount, setLikeCount] = useState<number>(0);
 
   useEffect(() => {
     postUsersDataFromFirebase();
@@ -112,7 +121,83 @@ export default function Top() {
       authorUid: authorUid,
     });
   };
-  console.log(commentPostUser);
+  // console.log(commentPostUser);
+
+  //この投稿に対して既にlikeしたかどうかを判別する
+  //いいね機能
+  useEffect(() => {
+    if (!user.userUid) return;
+
+    const postRef = doc(
+      db,
+      "users",
+      commentPostUser.authorUid,
+      "posts",
+      params.id
+    );
+    const likedUserRef = doc(postRef, "LikedUsers", user.userUid);
+
+    const unsubscribeLikedUser = onSnapshot(likedUserRef, (doc) => {
+      setIsLiked(doc.exists());
+    });
+
+    //「いいね」数の監視＆データ更新
+    const likedUsersRef = collection(
+      db,
+      "users",
+      commentPostUser.authorUid,
+      "posts",
+      params.id,
+      "LikedUsers"
+    );
+    const unsubscribeLikedCount = onSnapshot(likedUsersRef, (snapShot) => {
+      setLikeCount(snapShot.size);
+    });
+
+    return () => {
+      unsubscribeLikedUser();
+      unsubscribeLikedCount();
+    };
+  }, [user.userUid, params.id]);
+
+  console.log(isLiked);
+
+  // 「いいね」ボタンのクリックイベント
+  const handleClick = useCallback(
+    async (id: string) => {
+      if (!user.userUid || isLiked === null) return;
+
+      //「いいね」ボタン押下時のFirebaseのデータ構造の準備
+      const postRef = doc(db, "users", commentPostUser.authorUid, "posts", id);
+      //Postに対して残すサブコレクション（LikedUsers）
+      const likedUserRef = doc(postRef, "LikedUsers", user.userUid);
+
+      const userDoc = doc(db, "users", user.userUid);
+      const userSnapshot = await getDoc(userDoc);
+      const userData = userSnapshot.data();
+      const userName = userData?.userName;
+      const userUid = userData?.userUid;
+      const userPicture = userData?.userPicture;
+
+      //Usersに対して残すサブコレクション（likePosts）
+      const userLikePostRef = doc(userDoc, "likePosts", id);
+
+      if (isLiked) {
+        //isLikeを使って、既にlikeしたか確認して、もししていたら解除する
+        await deleteDoc(likedUserRef);
+        await deleteDoc(userLikePostRef);
+      } else {
+        //isLikeを使って、既にlikeしたか確認したあと、いいねする（重複させない）
+        await setDoc(likedUserRef, { userUid, userName, userPicture });
+        await setDoc(userLikePostRef, { slug: id });
+      }
+    },
+    [user.userUid, posts.id, isLiked]
+  );
+
+  // 「いいね」機能のためのレンダリング
+  if (!user.userUid) return null;
+  if (isLiked === null) return null;
 
   const linkToMap = () => {
     router.push("/map");
@@ -287,11 +372,17 @@ export default function Top() {
                           {/* コメントボタン */}
 
                           {/* いいねボタン */}
-                          <FontAwesomeIcon
-                            icon={faHeart}
-                            size="lg"
-                            color="#D53F8C"
-                          />
+                          <button
+                            onClick={() => {
+                              handleClick(post.id);
+                            }}
+                          >
+                            <FontAwesomeIcon
+                              icon={faHeart}
+                              size="lg"
+                              color="#4299E1"
+                            />
+                          </button>
                           {/* いいねボタン */}
 
                           {/* マップボタン */}

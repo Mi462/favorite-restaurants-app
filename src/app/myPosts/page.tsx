@@ -174,7 +174,7 @@ export default function myPosts() {
               </Box>
             </Flex>
 
-            {posts?.map((post: any) => {
+            {posts.map((post: any) => {
               if (selectCategory === "日本料理" && post.category !== "日本料理")
                 return;
               if (selectCategory === "中国料理" && post.category !== "中国料理")
@@ -203,7 +203,6 @@ export default function myPosts() {
                 <Box
                   height="300"
                   borderRadius="20"
-                  //   background="orange.100"
                   border="2px"
                   borderColor="orange.500"
                   mt="5"

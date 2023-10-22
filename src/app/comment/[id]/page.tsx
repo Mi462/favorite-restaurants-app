@@ -34,7 +34,7 @@ import {
 import { db } from "@/lib/FirebaseConfig";
 import { format } from "date-fns";
 import { useRecoilState } from "recoil";
-import { commentPost, likeStatus, loginUser } from "@/states/states";
+import { commentPost, loginUser } from "@/states/states";
 
 export default function Comment({ params }: { params: { id: string } }) {
   const router = useRouter();

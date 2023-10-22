@@ -37,7 +37,7 @@ import {
 import { db } from "@/lib/FirebaseConfig";
 import { format } from "date-fns";
 import { useRecoilState } from "recoil";
-import { commentPost, likeStatus, loginUser } from "@/states/states";
+import { commentPost, loginUser } from "@/states/states";
 
 export default function Top() {
   //画面遷移
@@ -123,19 +123,19 @@ export default function Top() {
   };
   // console.log(commentPostUser);
 
-  //この投稿に対して既にlikeしたかどうかを判別する
+  //全てのPostに対して既にlikeしたかどうかを判別する
   //いいね機能
   useEffect(() => {
     if (!user.userUid) return;
 
-    const postRef = doc(
-      db,
-      "users",
-      commentPostUser.authorUid,
-      "posts",
-      params.id
+    //Postの情報が入った配列の取得
+    const queryPosts = query(
+      collectionGroup(db, "posts"),
+      //updatedAtを基準に降順で取得
+      orderBy("updatedAt", "desc")
     );
-    const likedUserRef = doc(postRef, "LikedUsers", user.userUid);
+
+    const likedUserRef = doc(queryPosts, "LikedUsers", user.userUid);
 
     const unsubscribeLikedUser = onSnapshot(likedUserRef, (doc) => {
       setIsLiked(doc.exists());

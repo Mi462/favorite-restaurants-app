@@ -53,6 +53,8 @@ export default function Top() {
   const [postUsers, setPostUsers] = useState<any>([]);
   //Comment画面遷移時のPost作成者の情報
   const [commentPostUser, setCommentPostUser] = useRecoilState(commentPost);
+  //いいねしたユーザーの情報
+  const [likedUsers, setLikedUsers] = useState<any>([]);
   // 「いいね」の状態管理
   const [isLiked, setIsLiked] = useState<boolean | null>(null);
   // 「いいね」数の状態管理
@@ -61,6 +63,10 @@ export default function Top() {
   useEffect(() => {
     postUsersDataFromFirebase();
   }, []);
+
+  // useEffect(() => {
+  //   likedUsersDataFromFirebase();
+  // }, []);
 
   useEffect(() => {
     postsDataFromFirebase();
@@ -78,6 +84,25 @@ export default function Top() {
       setPostUsers(getUsersData);
     });
   };
+
+  // //LikedUsersの情報が入った配列の取得
+  // const likedUsersDataFromFirebase = async () => {
+  //   // const q = collection(db, "users");
+  //   //Postの情報が入った配列の取得
+  //   const queryLikedUsers = query(collectionGroup(db, "LikedUsers"));
+  //   await getDocs(queryLikedUsers).then((snapShot) => {
+  //     const getLikedUsersData: any = snapShot.docs.map((doc) => {
+  //       // const { userPicture, userName, userUid } = doc.data();
+  //       // return { userPicture, userName, userUid };
+  //       return {
+  //         likedUsersExist: doc.exists(),
+  //         likedPostId: doc.data().likedPostId,
+  //       };
+  //     });
+  //     setLikedUsers(getLikedUsersData);
+  //   });
+  // };
+  // console.log(likedUsers);
 
   const postsDataFromFirebase = async () => {
     //Postの情報が入った配列の取得
@@ -107,6 +132,7 @@ export default function Top() {
       setPosts(getPostsData);
     });
   };
+  console.log(posts);
 
   const linkToComment = (
     id: string,
@@ -128,56 +154,75 @@ export default function Top() {
   useEffect(() => {
     if (!user.userUid) return;
 
-    //Postの情報が入った配列の取得
-    const queryPosts = query(
-      collectionGroup(db, "posts"),
-      //updatedAtを基準に降順で取得
-      orderBy("updatedAt", "desc")
-    );
+    // //Postの情報が入った配列の取得
+    // const queryPosts = query(
+    //   collectionGroup(db, "posts"),
+    //   //updatedAtを基準に降順で取得
+    //   orderBy("updatedAt", "desc")
+    // );
 
-    const likedUserRef = doc(queryPosts, "LikedUsers", user.userUid);
-
-    const unsubscribeLikedUser = onSnapshot(likedUserRef, (doc) => {
-      setIsLiked(doc.exists());
+    // const likedUserRef = doc(queryPosts, "LikedUsers", user.userUid);
+    const likedUserRefs = query(collectionGroup(db, "LikedUsers"));
+    console.log(likedUserRefs);
+    const unsubscribeLikedUser = onSnapshot(likedUserRefs, (querySnapshot) => {
+      const like: any = [];
+      const getLikedData = querySnapshot.forEach((doc) => {
+        like.push(doc.data().userName);
+      });
+      console.log(like);
+      // setIsLiked(getLikedData);
     });
 
     //「いいね」数の監視＆データ更新
-    const likedUsersRef = collection(
-      db,
-      "users",
-      commentPostUser.authorUid,
-      "posts",
-      params.id,
-      "LikedUsers"
-    );
-    const unsubscribeLikedCount = onSnapshot(likedUsersRef, (snapShot) => {
-      setLikeCount(snapShot.size);
+    // const likedUsersRef = collection(
+    //   db,
+    //   "users",
+    //   commentPostUser.authorUid,
+    //   "posts",
+    //   params.id,
+    //   "LikedUsers"
+    // );
+    const likedUsersRefs = collection(db, "LikedUsers");
+
+    const unsubscribeLikedCount = onSnapshot(likedUsersRefs, (snapShot) => {
+      const likedUsers: any = [];
+      const getLikedData = snapShot.forEach((doc) => {
+        likedUsers.push(doc.data().userName);
+        // setIsLiked(querySnapshot.exists());
+      });
+      console.log(likedUsers);
+      // setLikeCount(snapShot.size);
     });
 
     return () => {
       unsubscribeLikedUser();
       unsubscribeLikedCount();
     };
-  }, [user.userUid, params.id]);
+  }, [user.userUid]);
 
   console.log(isLiked);
 
   // 「いいね」ボタンのクリックイベント
   const handleClick = useCallback(
-    async (id: string) => {
-      if (!user.userUid || isLiked === null) return;
+    async (id: string, authorUid: string, likedUsersExist: boolean) => {
+      if (!user.userUid || likedUsersExist === null) return;
 
       //「いいね」ボタン押下時のFirebaseのデータ構造の準備
-      const postRef = doc(db, "users", commentPostUser.authorUid, "posts", id);
+      const postRef = doc(db, "users", authorUid, "posts", id);
       //Postに対して残すサブコレクション（LikedUsers）
       const likedUserRef = doc(postRef, "LikedUsers", user.userUid);
 
+      // const userSnapshot = await getDoc(userDoc);
+      // const userData = userSnapshot.data();
+      // const userName = userData?.userName;
+      // const userUid = userData?.userUid;
+      // const userPicture = userData?.userPicture;
+      // const likedPostId = id;
+
       const userDoc = doc(db, "users", user.userUid);
-      const userSnapshot = await getDoc(userDoc);
-      const userData = userSnapshot.data();
-      const userName = userData?.userName;
-      const userUid = userData?.userUid;
-      const userPicture = userData?.userPicture;
+      const userSnapshot = await getDoc(doc(db, "users", user.userUid));
+      const { userName, userUid, userPicture } = userSnapshot.data() || {};
+      const likedPostId = id;
 
       //Usersに対して残すサブコレクション（likePosts）
       const userLikePostRef = doc(userDoc, "likePosts", id);
@@ -188,8 +233,13 @@ export default function Top() {
         await deleteDoc(userLikePostRef);
       } else {
         //isLikeを使って、既にlikeしたか確認したあと、いいねする（重複させない）
-        await setDoc(likedUserRef, { userUid, userName, userPicture });
-        await setDoc(userLikePostRef, { slug: id });
+        await setDoc(likedUserRef, {
+          userUid,
+          userName,
+          userPicture,
+          likedPostId,
+        });
+        await setDoc(userLikePostRef, { postId: id });
       }
     },
     [user.userUid, posts.id, isLiked]
@@ -374,13 +424,17 @@ export default function Top() {
                           {/* いいねボタン */}
                           <button
                             onClick={() => {
-                              handleClick(post.id);
+                              handleClick(
+                                post.id,
+                                post.authorUid,
+                                post.likedUsersExist
+                              );
                             }}
                           >
                             <FontAwesomeIcon
                               icon={faHeart}
                               size="lg"
-                              color="#4299E1"
+                              color={post.likedUsersExist ? "red" : "#4299E1"}
                             />
                           </button>
                           {/* いいねボタン */}

@@ -218,11 +218,9 @@ export default function Comment({ params }: { params: { id: string } }) {
     const likedUserRef = doc(postRef, "LikedUsers", user.userUid);
 
     const userDoc = doc(db, "users", user.userUid);
-    const userSnapshot = await getDoc(userDoc);
-    const userData = userSnapshot.data();
-    const userName = userData?.userName;
-    const userUid = userData?.userUid;
-    const userPicture = userData?.userPicture;
+    const userSnapshot = await getDoc(doc(db, "users", user.userUid));
+    const { userName, userUid, userPicture } = userSnapshot.data() || {};
+    const likedPostId = params.id;
 
     //Usersに対して残すサブコレクション（likePosts）
     const userLikePostRef = doc(userDoc, "likePosts", params.id);
@@ -233,8 +231,13 @@ export default function Comment({ params }: { params: { id: string } }) {
       await deleteDoc(userLikePostRef);
     } else {
       //isLikeを使って、既にlikeしたか確認したあと、いいねする（重複させない）
-      await setDoc(likedUserRef, { userUid, userName, userPicture });
-      await setDoc(userLikePostRef, { slug: params.id });
+      await setDoc(likedUserRef, {
+        userUid,
+        userName,
+        userPicture,
+        likedPostId,
+      });
+      await setDoc(userLikePostRef, { postId: params.id });
     }
   }, [user.userUid, params.id, isLiked]);
 

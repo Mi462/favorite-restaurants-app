@@ -27,6 +27,7 @@ import {
   collectionGroup,
   deleteDoc,
   doc,
+  getCountFromServer,
   getDoc,
   getDocs,
   onSnapshot,
@@ -93,11 +94,11 @@ export default function Top() {
   //   const queryLikedUsers = query(collectionGroup(db, "LikedUsers"));
   //   await getDocs(queryLikedUsers).then((snapShot) => {
   //     const getLikedUsersData: any = snapShot.docs.map((doc) => {
-  //       // const { userPicture, userName, userUid } = doc.data();
+  //       const { likedUsersExist, likedPostId } = doc.data() || {};
   //       // return { userPicture, userName, userUid };
   //       return {
-  //         likedUsersExist: doc.exists(),
-  //         likedPostId: doc.data().likedPostId,
+  //         likedUsersExist,
+  //         likedPostId,
   //       };
   //     });
   //     setLikedUsers(getLikedUsersData);
@@ -153,22 +154,27 @@ export default function Top() {
   //全てのPostに対して既にlikeしたかどうかを判別する
   //いいね機能
   useEffect(() => {
-    if (!user.userUid) return;
     const likedUserRefs = query(collectionGroup(db, "LikedUsers"));
     const unsubscribeLikedUser = onSnapshot(likedUserRefs, (querySnapshot) => {
-      const like: any = [];
+      // const like: any = [];
+      // querySnapshot.forEach((doc) => {
+      //   like.push(doc.data().likedPostId);
+      // });
       const getLikedData = querySnapshot.docs.map((doc) => {
-        //いいねを押されたPostのidを取得
-        const { likedPostId } = doc.data() || {};
-        console.log(posts);
-        //いいねを押されたPostのidと全てのPostのidを比べて一致したらtrueを返す
-        const likedUserExist = posts.find((p: any) => p.id === likedPostId)
-          ? true
-          : false;
-        return { likedPostId, likedUserExist };
+        // //いいねを押されたPostのidを取得
+        // const { likedPostId } = doc.data() || {};
+        // console.log(posts);
+        // //いいねを押されたPostのidと全てのPostのidを比べて一致したらtrueを返す
+        // const likedUserExist = posts.find((p: any) => p.id === likedPostId)
+        //   ? true
+        //   : false;
+        // return { likedPostId, likedUserExist };
+        const { likedPostId, userUid } = doc.data() || {};
+        return { likedPostId, userUid };
       });
       setLikedUsers(getLikedData);
       console.log(likedUsers);
+      //   setLikedUsers(getLikedData);
     });
     // console.log(isLiked);
 
@@ -185,13 +191,14 @@ export default function Top() {
 
     const unsubscribeLikedCount = onSnapshot(likedUsersRefs, (snapShot) => {
       const likedUsers: any = [];
+
       const getLikedData = snapShot.forEach((doc) => {
         // likedUsers.push(doc.data().userName);
-        likedUsers.push(doc.data().size);
+        likedUsers.push(doc.data().count);
 
         // setIsLiked(querySnapshot.exists());
       });
-      console.log(likedUsers);
+      console.log(getLikedData);
       // setLikeCount(snapShot.size);
     });
 
@@ -206,7 +213,7 @@ export default function Top() {
   // 「いいね」ボタンのクリックイベント
   const handleClick = useCallback(
     async (id: string, authorUid: string) => {
-      if (!user.userUid || likedUsers.likedUserExist === null) return;
+      if (!user.userUid || likedUsers === null) return;
 
       //「いいね」ボタン押下時のFirebaseのデータ構造の準備
       const postRef = doc(db, "users", authorUid, "posts", id);
@@ -216,22 +223,28 @@ export default function Top() {
       const userDoc = doc(db, "users", user.userUid);
       const userSnapshot = await getDoc(doc(db, "users", user.userUid));
       const { userName, userUid, userPicture } = userSnapshot.data() || {};
-      const likedPostId = id;
 
       //Usersに対して残すサブコレクション（likePosts）
       const userLikePostRef = doc(userDoc, "likePosts", id);
-
-      if (likedUsers.find((p: any) => p.likedPostId === id) ? true : false) {
-        //isLikeを使って、既にlikeしたか確認して、もししていたら解除する
+      // (likedUsers.find((p: any) => p.likedPostId === id))
+      // (likedUsers.find((p: any) => p.userUid === user.userUid))
+      // (likedUsers.likedPostId.includes(id))
+      //likedUsersの中のlikedPostIdたちと、クリックしたPostのidを照らし合わせて
+      //なおかつ、likedUsersの中のuserUidがログインユーザーで、合ったらtrue
+      if (
+        likedUsers.find((p: any) => p.likedPostId === id) &&
+        likedUsers.find((p: any) => p.userUid === user.userUid)
+      ) {
+        //既にlikeしたか確認して、もししていたら解除する
         await deleteDoc(likedUserRef);
         await deleteDoc(userLikePostRef);
       } else {
-        //isLikeを使って、既にlikeしたか確認したあと、いいねする（重複させない）
+        //既にlikeしたか確認したあと、いいねする（重複させない）
         await setDoc(likedUserRef, {
           userUid,
           userName,
           userPicture,
-          likedPostId,
+          likedPostId: id,
         });
         await setDoc(userLikePostRef, { postId: id });
       }
@@ -241,7 +254,7 @@ export default function Top() {
 
   // 「いいね」機能のためのレンダリング
   if (!user.userUid) return null;
-  if (likedUsers.likedUserExist === null) return null;
+  if (likedUsers === null) return null;
 
   const linkToMap = () => {
     router.push("/map");
@@ -425,7 +438,7 @@ export default function Top() {
                               icon={faHeart}
                               size="lg"
                               color={
-                                likedUsers.likedUserExist ? "red" : "#4299E1"
+                                likedUsers.includes(post.id) ? "red" : "#4299E1"
                               }
                             />
                           </button>

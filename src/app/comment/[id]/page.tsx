@@ -220,7 +220,6 @@ export default function Comment({ params }: { params: { id: string } }) {
     const userDoc = doc(db, "users", user.userUid);
     const userSnapshot = await getDoc(doc(db, "users", user.userUid));
     const { userName, userUid, userPicture } = userSnapshot.data() || {};
-    const likedPostId = params.id;
 
     //Usersに対して残すサブコレクション（likePosts）
     const userLikePostRef = doc(userDoc, "likePosts", params.id);
@@ -235,7 +234,7 @@ export default function Comment({ params }: { params: { id: string } }) {
         userUid,
         userName,
         userPicture,
-        likedPostId,
+        likedPostId: params.id,
       });
       await setDoc(userLikePostRef, { postId: params.id });
     }

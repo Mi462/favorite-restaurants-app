@@ -216,19 +216,29 @@ export default function Top() {
       if (!user.userUid || likedUsers === null) return;
 
       //「いいね」ボタン押下時のFirebaseのデータ構造の準備
-      const postRef = doc(db, "users", authorUid, "posts", id);
+      // const postRef = doc(db, "users", authorUid, "posts", id);
       //Postに対して残すサブコレクション（LikedUsers）
-      const likedUserRef = doc(postRef, "LikedUsers", user.userUid);
+      const likedUserRef = doc(
+        db,
+        "users",
+        authorUid,
+        "posts",
+        id,
+        "LikedUsers",
+        user.userUid
+      );
 
-      const userDoc = doc(db, "users", user.userUid);
+      // const userDoc = doc(db, "users", user.userUid);
       const userSnapshot = await getDoc(doc(db, "users", user.userUid));
       const { userName, userUid, userPicture } = userSnapshot.data() || {};
 
       //Usersに対して残すサブコレクション（likePosts）
-      const userLikePostRef = doc(userDoc, "likePosts", id);
+      const userLikePostRef = doc(db, "users", user.userUid, "likePosts", id);
       // (likedUsers.find((p: any) => p.likedPostId === id))
       // (likedUsers.find((p: any) => p.userUid === user.userUid))
       // (likedUsers.likedPostId.includes(id))
+      await deleteDoc(likedUserRef);
+      await deleteDoc(userLikePostRef);
       //likedUsersの中のlikedPostIdたちと、クリックしたPostのidを照らし合わせて
       //なおかつ、likedUsersの中のuserUidがログインユーザーで、合ったらtrue
       if (
@@ -249,7 +259,7 @@ export default function Top() {
         await setDoc(userLikePostRef, { postId: id });
       }
     },
-    [user.userUid, posts.id, likedUsers.likedUserExist]
+    [user.userUid, posts.id, likedUsers]
   );
 
   // 「いいね」機能のためのレンダリング

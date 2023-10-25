@@ -60,7 +60,7 @@ export default function Top() {
   // const [isLiked, setIsLiked] = useState<boolean | null>(null);
   const [isLiked, setIsLiked] = useState<boolean[] | null>(null);
   // 「いいね」数の状態管理
-  const [likeCount, setLikeCount] = useState<number>(0);
+  const [likeCounts, setLikeCounts] = useState<any>([]);
 
   useEffect(() => {
     postUsersDataFromFirebase();
@@ -192,14 +192,15 @@ export default function Top() {
     const unsubscribeLikedCount = onSnapshot(likedUsersRefs, (snapShot) => {
       const likedUsers: any = [];
 
-      const getLikedData = snapShot.forEach((doc) => {
+      const getLikedUsersCountData = snapShot.forEach((doc) => {
         // likedUsers.push(doc.data().userName);
-        likedUsers.push(doc.data().count);
-
+        const likedUsersCount = snapShot.size;
+        const { likedUsersPostId } = doc.data() || {};
+        return { likedUsersCount, likedUsersPostId };
         // setIsLiked(querySnapshot.exists());
       });
-      console.log(getLikedData);
-      // setLikeCount(snapShot.size);
+      setLikeCounts(getLikedUsersCountData);
+      console.log(likeCounts);
     });
 
     return () => {

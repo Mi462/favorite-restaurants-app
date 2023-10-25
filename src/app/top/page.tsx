@@ -237,8 +237,8 @@ export default function Top() {
       // (likedUsers.find((p: any) => p.likedPostId === id))
       // (likedUsers.find((p: any) => p.userUid === user.userUid))
       // (likedUsers.likedPostId.includes(id))
-      await deleteDoc(likedUserRef);
-      await deleteDoc(userLikePostRef);
+      // await deleteDoc(likedUserRef);
+      // await deleteDoc(userLikePostRef);
       //likedUsersの中のlikedPostIdたちと、クリックしたPostのidを照らし合わせて
       //なおかつ、likedUsersの中のuserUidがログインユーザーで、合ったらtrue
       if (
@@ -448,7 +448,14 @@ export default function Top() {
                               icon={faHeart}
                               size="lg"
                               color={
-                                likedUsers.includes(post.id) ? "red" : "#4299E1"
+                                likedUsers.find(
+                                  (p: any) => p.likedPostId === post.id
+                                ) &&
+                                likedUsers.find(
+                                  (p: any) => p.userUid === user.userUid
+                                )
+                                  ? "red"
+                                  : "#4299E1"
                               }
                             />
                           </button>

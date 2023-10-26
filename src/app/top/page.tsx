@@ -33,6 +33,7 @@ import {
   onSnapshot,
   orderBy,
   query,
+  runTransaction,
   setDoc,
 } from "firebase/firestore";
 import { db } from "@/lib/FirebaseConfig";
@@ -230,37 +231,65 @@ export default function Top() {
       );
 
       // const userDoc = doc(db, "users", user.userUid);
-      const userSnapshot = await getDoc(doc(db, "users", user.userUid));
-      const { userName, userUid, userPicture } = userSnapshot.data() || {};
+      // const userSnapshot = await getDoc(doc(db, "users", user.userUid));
+      await runTransaction(db, async (transaction) => {
+        const userSnapshot = await transaction.get(
+          doc(db, "users", user.userUid)
+        );
+        const { userName, userUid, userPicture } = userSnapshot.data() || {};
 
-      //Usersに対して残すサブコレクション（likePosts）
-      const userLikePostRef = doc(db, "users", user.userUid, "likePosts", id);
-      // (likedUsers.find((p: any) => p.likedPostId === id))
-      // (likedUsers.find((p: any) => p.userUid === user.userUid))
-      // (likedUsers.likedPostId.includes(id))
-      // await deleteDoc(likedUserRef);
-      // await deleteDoc(userLikePostRef);
-      //likedUsersの中のlikedPostIdたちと、クリックしたPostのidを照らし合わせて
-      //なおかつ、likedUsersの中のuserUidがログインユーザーで、合ったらtrue
-      if (
-        likedUsers.find((p: any) => p.likedPostId === id) &&
-        likedUsers.find((p: any) => p.userUid === user.userUid)
-      ) {
-        //既にlikeしたか確認して、もししていたら解除する
-        await deleteDoc(likedUserRef);
-        await deleteDoc(userLikePostRef);
-      } else {
-        //既にlikeしたか確認したあと、いいねする（重複させない）
-        await setDoc(likedUserRef, {
-          userUid,
-          userName,
-          userPicture,
-          likedPostId: id,
-        });
-        await setDoc(userLikePostRef, { postId: id });
-      }
+        const userLikePostRef = doc(db, "users", user.userUid, "likePosts", id);
+
+        //Usersに対して残すサブコレクション（likePosts）
+
+        // (likedUsers.find((p: any) => p.likedPostId === id))
+        // (likedUsers.find((p: any) => p.userUid === user.userUid))
+        // (likedUsers.likedPostId.includes(id))
+        // await deleteDoc(likedUserRef);
+        // await deleteDoc(userLikePostRef);
+        //likedUsersの中のlikedPostIdたちと、クリックしたPostのidを照らし合わせて
+        //なおかつ、likedUsersの中のuserUidがログインユーザーで、合ったらtrue
+        if (
+          likedUsers.find((p: any) => p.likedPostId === id) &&
+          likedUsers.find((p: any) => p.userUid === user.userUid)
+        ) {
+          //既にlikeしたか確認して、もししていたら解除する
+          try {
+            await runTransaction(db, async (transaction) => {
+              await transaction.delete(likedUserRef);
+              await transaction.delete(userLikePostRef);
+            });
+          } catch (e) {
+            console.log("error 1");
+          }
+          // await deleteDoc(likedUserRef);
+          // await deleteDoc(userLikePostRef);
+        } else {
+          //既にlikeしたか確認したあと、いいねする（重複させない）
+          try {
+            await runTransaction(db, async (transaction) => {
+              await transaction.set(likedUserRef, {
+                userUid,
+                userName,
+                userPicture,
+                likedPostId: id,
+              });
+              await transaction.set(userLikePostRef, { postId: id });
+            });
+          } catch (e) {
+            console.log("error 2");
+          }
+          // await setDoc(likedUserRef, {
+          //   userUid,
+          //   userName,
+          //   userPicture,
+          //   likedPostId: id,
+          // });
+          // await setDoc(userLikePostRef, { postId: id });
+        }
+      });
     },
-    [user.userUid, posts.id, likedUsers]
+    [user.userUid, posts, likedUsers]
   );
 
   // 「いいね」機能のためのレンダリング

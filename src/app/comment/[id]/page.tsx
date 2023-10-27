@@ -13,6 +13,7 @@ import {
 import Header from "../../components/header/header";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
+  faComment,
   faHeart,
   faLocationDot,
   faReply,
@@ -327,7 +328,7 @@ export default function Comment({ params }: { params: { id: string } }) {
                     >
                       {/* 返信ボタン */}
                       <FontAwesomeIcon
-                        icon={faReply}
+                        icon={faComment}
                         size="lg"
                         color="#4299E1"
                         onClick={() => {
@@ -338,16 +339,18 @@ export default function Comment({ params }: { params: { id: string } }) {
                       {/* 返信ボタン */}
 
                       {/* いいねボタン */}
-                      <button onClick={handleClick}>
-                        <Flex alignItems="center">
-                          <FontAwesomeIcon
-                            icon={faHeart}
-                            color={isLiked ? "red" : "#4299E1"}
-                            size="lg"
-                          />
-                          <Text ml="1">{likeCount}</Text>
-                        </Flex>
-                      </button>
+                      {/* <button onClick={handleClick}> */}
+                      <Flex alignItems="center">
+                        <FontAwesomeIcon
+                          icon={faHeart}
+                          color={isLiked ? "red" : "#4299E1"}
+                          size="lg"
+                          onClick={handleClick}
+                          cursor="pointer"
+                        />
+                        <Text ml="1">{likeCount}</Text>
+                      </Flex>
+                      {/* </button> */}
                       {/* いいねボタン */}
 
                       {/* マップボタン */}

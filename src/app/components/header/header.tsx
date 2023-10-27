@@ -1,15 +1,14 @@
 "use client";
 
-import { Box, Button, Heading } from "@chakra-ui/react";
+import { Box, Heading } from "@chakra-ui/react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import Logout from "../logout/page";
+import { signOut } from "firebase/auth";
+import { auth } from "@/lib/FirebaseConfig";
 
 export default function Header() {
   const router = useRouter();
-
-  const linkToLogin = () => {
-    router.push("/login");
-  };
 
   return (
     <div>
@@ -25,7 +24,7 @@ export default function Header() {
         <Link href="/top">
           <Heading textColor="white">Favorite Restaurants App</Heading>
         </Link>
-        <Button onClick={linkToLogin}>LOGOUT</Button>
+        <Logout />
       </Box>
       {/* header */}
     </div>

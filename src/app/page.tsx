@@ -1,5 +1,6 @@
 "use client";
 
+import { loginUser } from "@/states/states";
 import {
   Box,
   Button,
@@ -11,27 +12,18 @@ import {
 } from "@chakra-ui/react";
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 import { useRouter } from "next/navigation";
+import { useRecoilState } from "recoil";
 
 export default function Login() {
   const router = useRouter();
-  // const auth = getAuth();
+  // //ログインユーザーの情報
+  const [user, setUser] = useRecoilState(loginUser);
+
+  // if (user.userUid) {router.replace("/top");} // ログイン済みであればマイページへ転送
 
   const linkToTop = () => {
     router.push("/top");
   };
-
-  // signInWithEmailAndPassword(auth, email, password)
-  //   .then((userCredential) => {
-  //     // Signed in
-  //     console.log("ログイン成功！")
-  //     // const user = userCredential.user;
-  //     // ...
-  //   })
-  //   .catch((error) => {
-  //     console.log("エラーです")
-  //     // const errorCode = error.code;
-  //     // const errorMessage = error.message;
-  //   });
 
   return (
     <div>

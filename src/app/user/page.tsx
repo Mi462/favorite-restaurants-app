@@ -64,6 +64,10 @@ export default function Top() {
       alert("ユーザー名が入力されていません。");
       return;
     }
+    if (editUser.userName.replace(/\n/g, "").length > 7) {
+      alert("入力できる文字数は7までです。");
+      return;
+    }
     //画像がセットされていない場合は反映されない
     if (userImage === undefined) {
       alert("ユーザー画像が新たに選択されていません。");

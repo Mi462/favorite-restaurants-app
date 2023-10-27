@@ -4,8 +4,6 @@ import { Box, Heading } from "@chakra-ui/react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import Logout from "../logout/page";
-import { signOut } from "firebase/auth";
-import { auth } from "@/lib/FirebaseConfig";
 
 export default function Header() {
   const router = useRouter();

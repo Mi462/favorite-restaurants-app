@@ -270,14 +270,20 @@ export default function Top() {
                               </Text>
                             </Flex>
 
-                            <Text>{post.updatedAt}</Text>
+                            {/* <Text>{post.updatedAt}</Text> */}
                           </Flex>
                           {/* アカウント */}
 
                           {/* コメント */}
-                          <Text mb="3">カテゴリ：{post.category}</Text>
-                          {/* <Box width="100%" height="55%" overflowY="scroll"> */}
-                          <Text>{post.text}</Text>
+                          <Box height="155">
+                            <Text mb="3">カテゴリ：{post.category}</Text>
+                            {/* <Box width="100%" height="55%" overflowY="scroll"> */}
+                            <Text>{post.text}</Text>
+                          </Box>
+                          <Flex justifyContent="flex-end">
+                            <Text>{post.updatedAt}</Text>
+                          </Flex>
+
                           {/* </Box> */}
                           {/* コメント */}
                         </Box>

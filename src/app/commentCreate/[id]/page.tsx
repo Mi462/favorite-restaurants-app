@@ -14,7 +14,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCirclePlus, faLocationDot } from "@fortawesome/free-solid-svg-icons";
 import { useRouter } from "next/navigation";
 import Sidebar from "../../components/sidebar/sidebar";
-import { useRecoilState } from "recoil";
+import { useRecoilValue } from "recoil";
 import { commentPost, loginUser } from "@/states/states";
 import { useState } from "react";
 import { Timestamp, doc, setDoc } from "firebase/firestore";
@@ -24,9 +24,9 @@ import { v4 as uuidv4 } from "uuid";
 export default function CommentCreate({ params }: { params: { id: string } }) {
   const router = useRouter();
   //ログインユーザーの情報
-  const [user, setUser] = useRecoilState(loginUser);
+  const user = useRecoilValue(loginUser);
   //Comment画面遷移時のPost作成者の情報
-  const [commentPostUser, setCommentPostUser] = useRecoilState(commentPost);
+  const commentPostUser = useRecoilValue(commentPost);
   const commentData = {
     commentId: uuidv4(),
     text: "",

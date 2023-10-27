@@ -13,32 +13,20 @@ import {
 } from "@chakra-ui/react";
 import Header from "../components/header/header";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faComment,
-  faHeart,
-  faLocationDot,
-  faPlus,
-} from "@fortawesome/free-solid-svg-icons";
+import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { useRouter } from "next/navigation";
 import Sidebar from "../components/sidebar/sidebar";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   collection,
   collectionGroup,
-  deleteDoc,
-  doc,
-  getCountFromServer,
-  getDoc,
   getDocs,
-  onSnapshot,
   orderBy,
   query,
-  runTransaction,
-  setDoc,
 } from "firebase/firestore";
 import { db } from "@/lib/FirebaseConfig";
 import { format } from "date-fns";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import { commentPost, loginUser } from "@/states/states";
 
 export default function Top() {
@@ -48,20 +36,13 @@ export default function Top() {
   const [posts, setPosts] = useState<any>([]);
   //上のプルダウンの状態
   const [selectCategory, setSelectCategory] = useState<string>("全て");
-  // //ログインユーザーの情報
+  //ログインユーザーの情報
   const [user, setUser] = useRecoilState(loginUser);
   // console.log("top", user);
   //Postしたユーザーの情報
   const [postUsers, setPostUsers] = useState<any>([]);
   //Comment画面遷移時のPost作成者の情報
-  const [commentPostUser, setCommentPostUser] = useRecoilState(commentPost);
-  //いいねしたユーザーの情報
-  const [likedUsers, setLikedUsers] = useState<any>([]);
-  // 「いいね」の状態管理
-  // const [isLiked, setIsLiked] = useState<boolean | null>(null);
-  const [isLiked, setIsLiked] = useState<boolean[] | null>(null);
-  // 「いいね」数の状態管理
-  const [likeCounts, setLikeCounts] = useState<any>([]);
+  const setCommentPostUser = useSetRecoilState(commentPost);
 
   useEffect(() => {
     postUsersDataFromFirebase();
@@ -128,10 +109,6 @@ export default function Top() {
     });
   };
   // console.log(commentPostUser);
-
-  const linkToMap = () => {
-    router.push("/map");
-  };
 
   const linkToCreate = () => {
     router.push("/create");
@@ -269,8 +246,6 @@ export default function Top() {
                                 {post.userName}
                               </Text>
                             </Flex>
-
-                            {/* <Text>{post.updatedAt}</Text> */}
                           </Flex>
                           {/* アカウント */}
 

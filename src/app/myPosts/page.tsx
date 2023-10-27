@@ -14,9 +14,6 @@ import {
 import Header from "../components/header/header";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-  faComment,
-  faHeart,
-  faLocationDot,
   faPenToSquare,
   faPlus,
   faTrashCan,
@@ -34,7 +31,7 @@ import {
 } from "firebase/firestore";
 import { db } from "@/lib/FirebaseConfig";
 import { format } from "date-fns";
-import { useRecoilState } from "recoil";
+import { useRecoilValue } from "recoil";
 import { loginUser } from "@/states/states";
 
 export default function myPosts() {
@@ -45,7 +42,7 @@ export default function myPosts() {
   //上のプルダウンの状態
   const [selectCategory, setSelectCategory] = useState("全て");
   //ログインユーザーの情報
-  const [user, setUser] = useRecoilState(loginUser);
+  const user = useRecoilValue(loginUser);
   //Postしたユーザーの情報
   const [postUsers, setPostUsers] = useState<any>([]);
 
@@ -123,10 +120,12 @@ export default function myPosts() {
 
   const clickDelete = async (id: string) => {
     //firebaseの中のデータを削除する（バック側）
-    await deleteDoc(doc(db, "users", user.userUid, "posts", id));
-    //表示するための処理（フロント側）
-    const deletePost = posts.filter((post: any) => post.id !== id);
-    setPosts(deletePost);
+    if (confirm("Postを削除します。よろしいですか？")) {
+      await deleteDoc(doc(db, "users", user.userUid, "posts", id));
+      //表示するための処理（フロント側）
+      const deletePost = posts.filter((post: any) => post.id !== id);
+      setPosts(deletePost);
+    }
   };
 
   return (

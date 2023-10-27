@@ -78,7 +78,7 @@ export default function Login() {
           userUid: currentUser.uid,
         });
         //Loginページに遷移
-        router.push("/login");
+        router.push("/");
       })
       .catch((error) => {
         // console.log(error.code);

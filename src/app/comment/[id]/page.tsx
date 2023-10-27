@@ -8,7 +8,6 @@ import {
   Wrap,
   WrapItem,
   Image,
-  Button,
 } from "@chakra-ui/react";
 import Header from "../../components/header/header";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -16,7 +15,6 @@ import {
   faComment,
   faHeart,
   faLocationDot,
-  faReply,
 } from "@fortawesome/free-solid-svg-icons";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
@@ -34,19 +32,19 @@ import {
 } from "firebase/firestore";
 import { db } from "@/lib/FirebaseConfig";
 import { format } from "date-fns";
-import { useRecoilState } from "recoil";
+import { useRecoilValue } from "recoil";
 import { commentPost, loginUser } from "@/states/states";
 
 export default function Comment({ params }: { params: { id: string } }) {
   const router = useRouter();
   //ログインユーザー
-  const [user, setUser] = useRecoilState(loginUser);
+  const user = useRecoilValue(loginUser);
   // 「いいね」の状態管理
   const [isLiked, setIsLiked] = useState<boolean | null>(null);
   // 「いいね」数の状態管理
   const [likeCount, setLikeCount] = useState<number>(0);
   //Comment画面遷移時のPost作成者の情報
-  const [commentPostUser, setCommentPostUser] = useRecoilState(commentPost);
+  const commentPostUser = useRecoilValue(commentPost);
   //コメントしたユーザーの情報
   const [commentUsers, setCommentUsers] = useState<any>([]);
   //Postの状態

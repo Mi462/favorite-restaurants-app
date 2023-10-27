@@ -26,7 +26,7 @@ import { v4 as uuidv4 } from "uuid";
 import { Timestamp, doc, setDoc } from "firebase/firestore";
 import { db } from "@/lib/FirebaseConfig";
 import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
-import { useRecoilState } from "recoil";
+import { useRecoilValue } from "recoil";
 import { loginUser } from "@/states/states";
 
 export default function Create() {
@@ -39,7 +39,7 @@ export default function Create() {
   //categoryの状態
   const [selectCategory, setSelectCategory] = useState("日本料理");
   //ログインユーザー
-  const [user, setUser] = useRecoilState(loginUser);
+  const user = useRecoilValue(loginUser);
 
   const postData = {
     id: uuidv4(),

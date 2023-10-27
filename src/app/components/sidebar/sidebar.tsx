@@ -19,12 +19,12 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useRouter } from "next/navigation";
-import { useRecoilState } from "recoil";
+import { useRecoilValue } from "recoil";
 
 export default function Sidebar() {
   const router = useRouter();
   //ログインユーザー
-  const [loginUserData, setLoginUserData] = useRecoilState(loginUser);
+  const loginUserData = useRecoilValue(loginUser);
   // console.log("sidebar", loginUserData);
 
   const linkToUser = () => {

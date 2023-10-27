@@ -30,7 +30,7 @@ import {
 } from "firebase/firestore";
 import { db } from "@/lib/FirebaseConfig";
 import { format } from "date-fns";
-import { useRecoilState } from "recoil";
+import { useRecoilValue } from "recoil";
 import { loginUser } from "@/states/states";
 
 export default function Edit({ params }: { params: { id: string } }) {
@@ -49,7 +49,7 @@ export default function Edit({ params }: { params: { id: string } }) {
     userPicture: "",
   });
   //ログインユーザー
-  const [user, setUser] = useRecoilState(loginUser);
+  const user = useRecoilValue(loginUser);
   // console.log("edit", user);
   // console.log(params.id);
   //Postしたユーザーの情報

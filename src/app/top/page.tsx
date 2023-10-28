@@ -13,7 +13,7 @@ import {
 } from "@chakra-ui/react";
 import Header from "../components/header/header";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPlus } from "@fortawesome/free-solid-svg-icons";
+import { faHeart, faPlus } from "@fortawesome/free-solid-svg-icons";
 import { useRouter } from "next/navigation";
 import Sidebar from "../components/sidebar/sidebar";
 import { useEffect, useState } from "react";
@@ -246,6 +246,7 @@ export default function Top() {
                                 {post.userName}
                               </Text>
                             </Flex>
+                            <Text>{post.updatedAt}</Text>
                           </Flex>
                           {/* アカウント */}
 
@@ -255,10 +256,6 @@ export default function Top() {
                             {/* <Box width="100%" height="55%" overflowY="scroll"> */}
                             <Text>{post.text}</Text>
                           </Box>
-                          <Flex justifyContent="flex-end">
-                            <Text>{post.updatedAt}</Text>
-                          </Flex>
-
                           {/* </Box> */}
                           {/* コメント */}
                         </Box>

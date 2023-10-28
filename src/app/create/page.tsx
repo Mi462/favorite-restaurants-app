@@ -3,6 +3,7 @@
 import {
   Avatar,
   Box,
+  Button,
   Flex,
   Image,
   Input,
@@ -143,43 +144,47 @@ export default function Create() {
         >
           <Flex>
             {/* 写真 */}
-            {createObjectURL === undefined ? (
-              <Box
-                width="50%"
-                height="250"
-                background="#FEFCBF"
-                ml="5"
-                mr="5"
-                mt="5"
-                display="flex"
-                justifyContent="center"
-                alignItems="center"
-              >
+            <Box width="50%" height="250" mr="10">
+              {createObjectURL === undefined ? (
                 <label htmlFor="form-image" style={{ cursor: "pointer" }}>
-                  <FontAwesomeIcon icon={faImage} size="lg" color="#4299E1" />
-                  画像を選択
+                  <Box
+                    width="100%"
+                    height="250"
+                    background="#FEFCBF"
+                    ml="5"
+                    mr="5"
+                    mt="5"
+                    display="flex"
+                    justifyContent="center"
+                    alignItems="center"
+                  >
+                    <FontAwesomeIcon icon={faImage} size="lg" color="#4299E1" />
+                    画像を選択
+                  </Box>
+                  <Input
+                    display="none"
+                    multiple
+                    name="imageURL"
+                    type="file"
+                    id="form-image"
+                    accept=".png, .jpeg, .jpg"
+                    onChange={onFileUploadToFirebase}
+                  />
                 </label>
-                <Input
-                  display="none"
-                  multiple
-                  name="imageURL"
-                  type="file"
-                  id="form-image"
-                  accept=".png, .jpeg, .jpg"
-                  onChange={onFileUploadToFirebase}
+              ) : (
+                // </Box>
+                <Image
+                  src={createObjectURL}
+                  alt="imageDataPost"
+                  width="100%"
+                  height="250"
+                  ml="5"
+                  mr="5"
+                  mt="5"
                 />
-              </Box>
-            ) : (
-              <Image
-                src={createObjectURL}
-                alt="imageDataPost"
-                width="50%"
-                height="250"
-                ml="5"
-                mr="5"
-                mt="5"
-              />
-            )}
+              )}
+            </Box>
+
             {/* 写真 */}
 
             {/* 写真横のアカウント・コメント・ボタンなど */}

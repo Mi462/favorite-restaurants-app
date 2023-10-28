@@ -130,7 +130,7 @@ export default function Login() {
             placeholder="sample@sample.com"
             background="white"
             mb="3"
-            type="email"
+            type="sample@sample.com"
             onChange={(e) => setUser({ ...user, email: e.target.value })}
           />
           <Input
@@ -140,7 +140,11 @@ export default function Login() {
             type="password"
             onChange={(e) => setUser({ ...user, password: e.target.value })}
           />
-
+          <Box mb="6">
+            <Text textAlign="center">デモユーザー</Text>
+            <Text>Email: sample@gmail.com</Text>
+            <Text>password: 123456</Text>
+          </Box>
           <Button
             mb="6"
             colorScheme="orange"

@@ -68,23 +68,32 @@ export default function Top() {
       alert("入力できる文字数は7までです。");
       return;
     }
-    //画像がセットされていない場合は反映されない
-    if (userImage === undefined) {
-      alert("ユーザー画像が新たに選択されていません。");
-      return;
-    }
     //Firebaseでデータを更新する
-    await updateDoc(doc(db, "users", editUser.userUid), {
-      userName: editUser.userName,
-      userPicture: editUserPictureURL,
-      updatedAt: Timestamp.now(),
-    });
-    //Recoilで設定したログインユーザーも更新させる
-    setLoginUserData({
-      ...loginUserData,
-      userName: editUser.userName,
-      userPicture: editUserPictureURL,
-    });
+    if (userImage === undefined) {
+      //画像が新たに登録されていない場合
+      await updateDoc(doc(db, "users", editUser.userUid), {
+        userName: editUser.userName,
+        updatedAt: Timestamp.now(),
+      });
+      //Recoilで設定したログインユーザーも更新させる
+      setLoginUserData({
+        ...loginUserData,
+        userName: editUser.userName,
+      });
+    } else {
+      //画像が新たに登録された場合
+      await updateDoc(doc(db, "users", editUser.userUid), {
+        userName: editUser.userName,
+        userPicture: editUserPictureURL,
+        updatedAt: Timestamp.now(),
+      });
+      //Recoilで設定したログインユーザーも更新させる
+      setLoginUserData({
+        ...loginUserData,
+        userName: editUser.userName,
+        userPicture: editUserPictureURL,
+      });
+    }
     //Top画面に遷移する
     router.push("/top");
   };

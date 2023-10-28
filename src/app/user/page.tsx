@@ -146,12 +146,14 @@ export default function Top() {
                 <Wrap display="flex" justifyContent="center">
                   <WrapItem>
                     {userImage === undefined ? (
-                      <Avatar
-                        name="t"
-                        size="2xl"
-                        m="3"
-                        src={editUser.userPicture}
-                      ></Avatar>
+                      <label htmlFor="form-image" style={{ cursor: "pointer" }}>
+                        <Avatar
+                          name="t"
+                          size="2xl"
+                          m="3"
+                          src={editUser.userPicture}
+                        ></Avatar>
+                      </label>
                     ) : (
                       <Avatar
                         name="s"
@@ -162,16 +164,14 @@ export default function Top() {
                     )}
                   </WrapItem>
                 </Wrap>
-                <label htmlFor="form-image" style={{ cursor: "pointer" }}>
-                  <Text
-                    display="flex"
-                    justifyContent="center"
-                    fontSize="md"
-                    mb="3"
-                  >
-                    画像の選択
-                  </Text>
-                </label>
+                <Text
+                  display="flex"
+                  justifyContent="center"
+                  fontSize="md"
+                  mb="3"
+                >
+                  画像の選択
+                </Text>
                 <Input
                   display="none"
                   multiple
@@ -183,7 +183,10 @@ export default function Top() {
                 />
               </Box>
               {/* アカウント画像の編集 */}
+
+              {/* アカウント画像の右横 */}
               <Box mr="3" width="85%" height="180">
+                {/* ユーザー名編集 */}
                 <Text mt="5">ユーザー名</Text>
                 <Input
                   value={editUser.userName}
@@ -197,8 +200,12 @@ export default function Top() {
                     })
                   }
                 />
+                {/* ユーザー名編集 */}
+
+                {/* ユーザーのメール */}
                 <Text>メール</Text>
                 <Text>{loginUserData.email}</Text>
+                {/* ユーザーのメール */}
 
                 {/* 更新ボタン */}
                 <Flex justifyContent="end">
@@ -213,9 +220,9 @@ export default function Top() {
                     </Box>
                   </button>
                 </Flex>
-
-                {/* 投稿ボタン */}
+                {/* 更新ボタン */}
               </Box>
+              {/* アカウント画像の右横 */}
             </Flex>
           </Box>
           {/* 囲いの中 */}

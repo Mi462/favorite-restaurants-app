@@ -129,30 +129,26 @@ export default function Login() {
           <Heading textAlign="center" mb="6">
             Sign up
           </Heading>
+
           {/* ユーザー写真 */}
           {createUserPictureURL === undefined ? (
             <Box>
               <Box display="flex" justifyContent="center">
                 <Wrap>
                   <WrapItem>
-                    <Avatar
-                      name="Tarou"
-                      size="2xl"
-                      src="https://bit.ly/dan-abramov"
-                    ></Avatar>
+                    <label htmlFor="form-image" style={{ cursor: "pointer" }}>
+                      <Avatar
+                        name="Tarou"
+                        size="2xl"
+                        src="https://bit.ly/dan-abramov"
+                      ></Avatar>
+                    </label>
                   </WrapItem>
                 </Wrap>
               </Box>
-              <label htmlFor="form-image" style={{ cursor: "pointer" }}>
-                <Text
-                  display="flex"
-                  justifyContent="center"
-                  fontSize="md"
-                  mb="3"
-                >
-                  アカウント画像の選択
-                </Text>
-              </label>
+              <Text display="flex" justifyContent="center" fontSize="md" mb="3">
+                アカウント画像の選択
+              </Text>
               <Input
                 display="none"
                 multiple
@@ -176,7 +172,9 @@ export default function Login() {
               </Wrap>
             </Box>
           )}
+          {/* ユーザー写真 */}
 
+          {/* ユーザー名入力 */}
           <Input
             placeholder="ユーザー名"
             background="white"
@@ -184,6 +182,9 @@ export default function Login() {
             type="userName"
             onChange={(e) => setUser({ ...user, userName: e.target.value })}
           />
+          {/* ユーザー名入力 */}
+
+          {/* ユーザーのメールアドレス入力 */}
           <Input
             placeholder="sample@sample.com"
             background="white"
@@ -191,6 +192,9 @@ export default function Login() {
             type="email"
             onChange={(e) => setUser({ ...user, email: e.target.value })}
           />
+          {/* ユーザーのメールアドレス入力 */}
+
+          {/* ユーザーのパスワード */}
           <Input
             placeholder="********"
             background="white"
@@ -198,6 +202,9 @@ export default function Login() {
             type="password"
             onChange={(e) => setUser({ ...user, password: e.target.value })}
           />
+          {/* ユーザーのパスワード */}
+
+          {/* Sign up */}
           <Button
             mb="6"
             colorScheme="orange"
@@ -207,6 +214,7 @@ export default function Login() {
           >
             Sign up
           </Button>
+          {/* Sign up */}
         </Flex>
       </Flex>
       {/* ログイン */}

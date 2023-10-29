@@ -22,6 +22,7 @@ import { useRouter } from "next/navigation";
 import Sidebar from "../components/sidebar/sidebar";
 import { useEffect, useState } from "react";
 import {
+  Query,
   collection,
   collectionGroup,
   deleteDoc,
@@ -30,6 +31,7 @@ import {
   getDocs,
   orderBy,
   query,
+  where,
 } from "firebase/firestore";
 import { db } from "@/lib/FirebaseConfig";
 import { format } from "date-fns";
@@ -114,29 +116,34 @@ export default function myPosts() {
   const clickDelete = async (id: string) => {
     //firebaseの中のデータを削除する（バック側）
     if (confirm("Postを削除します。よろしいですか？")) {
-      //いいねが押されている場合、LikedUsersとlikePostsを削除する
-
-      // if(){
-      //   //likePostsの削除
-      //   await deleteDoc(doc(db, "users", user.userUid, "likePosts", id));
-      //   //LikedUsersの削除
-      //   const likedUsersRef = collection(
-      //     db,
-      //     "users",
-      //     user.userUid,
-      //     "posts",
-      //     id,
-      //     "LikedUsers"
-      //   );
-      //   // await deleteDoc(likedUsersRef)
-
-      // }
-
-      // const likedUsersRef = collection(db, "cities");
-      // await collectionGroup((db, "users", user.userUid, "posts", id, "LikedUsers"));
-      //いいねが押されていない場合、そのまま削除する
+      //いいねが押されている場合、LikedUsersを削除する
+      const likedUsersRef = collection(
+        db,
+        "users",
+        user.userUid,
+        "posts",
+        id,
+        "LikedUsers"
+      );
+      const likedUsersQuerySnapshot = await getDocs(likedUsersRef);
+      likedUsersQuerySnapshot.forEach((doc) => {
+        deleteDoc(doc.ref);
+      });
+      //Commentがある場合、Commentを削除する
+      const commentsRef = collection(
+        db,
+        "users",
+        user.userUid,
+        "posts",
+        id,
+        "comments"
+      );
+      const commentsQuerySnapshot = await getDocs(commentsRef);
+      commentsQuerySnapshot.forEach((doc) => {
+        deleteDoc(doc.ref);
+      });
+      //Postの削除
       await deleteDoc(doc(db, "users", user.userUid, "posts", id));
-
       //表示するための処理（フロント側）
       const deletePost = posts.filter((post: any) => post.id !== id);
       setPosts(deletePost);
@@ -189,10 +196,6 @@ export default function myPosts() {
             </Flex>
 
             {posts.map((post: any) => {
-              if (post.length === 0) {
-                <Text>aaa</Text>;
-              }
-
               if (selectCategory === "日本料理" && post.category !== "日本料理")
                 return;
               if (selectCategory === "中国料理" && post.category !== "中国料理")

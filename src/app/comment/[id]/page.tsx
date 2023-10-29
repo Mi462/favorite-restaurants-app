@@ -226,7 +226,7 @@ export default function Comment({ params }: { params: { id: string } }) {
     if (isLiked) {
       //isLikeを使って、既にlikeしたか確認して、もししていたら解除する
       await deleteDoc(likedUserRef);
-      await deleteDoc(userLikePostRef);
+      // await deleteDoc(userLikePostRef);
     } else {
       //isLikeを使って、既にlikeしたか確認したあと、いいねする（重複させない）
       await setDoc(likedUserRef, {
@@ -235,7 +235,7 @@ export default function Comment({ params }: { params: { id: string } }) {
         userPicture,
         likedPostId: params.id,
       });
-      await setDoc(userLikePostRef, { postId: params.id });
+      // await setDoc(userLikePostRef, { postId: params.id });
     }
   }, [user.userUid, params.id, isLiked]);
 

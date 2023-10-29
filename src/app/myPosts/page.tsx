@@ -23,8 +23,10 @@ import Sidebar from "../components/sidebar/sidebar";
 import { useEffect, useState } from "react";
 import {
   collection,
+  collectionGroup,
   deleteDoc,
   doc,
+  getDoc,
   getDocs,
   orderBy,
   query,
@@ -96,17 +98,8 @@ export default function myPosts() {
   };
   // console.log("ラスト2", posts);
 
-  const linkToComment = (id: string) => {
-    console.log("linkToComment", id);
-    router.push(`/comment/${id}`);
-  };
-
   const linkToEdit = (id: string) => {
     router.push(`/edit/${id}`);
-  };
-
-  const linkToMap = () => {
-    router.push("/map");
   };
 
   const linkToCreate = () => {
@@ -121,7 +114,29 @@ export default function myPosts() {
   const clickDelete = async (id: string) => {
     //firebaseの中のデータを削除する（バック側）
     if (confirm("Postを削除します。よろしいですか？")) {
+      //いいねが押されている場合、LikedUsersとlikePostsを削除する
+
+      // if(){
+      //   //likePostsの削除
+      //   await deleteDoc(doc(db, "users", user.userUid, "likePosts", id));
+      //   //LikedUsersの削除
+      //   const likedUsersRef = collection(
+      //     db,
+      //     "users",
+      //     user.userUid,
+      //     "posts",
+      //     id,
+      //     "LikedUsers"
+      //   );
+      //   // await deleteDoc(likedUsersRef)
+
+      // }
+
+      // const likedUsersRef = collection(db, "cities");
+      // await collectionGroup((db, "users", user.userUid, "posts", id, "LikedUsers"));
+      //いいねが押されていない場合、そのまま削除する
       await deleteDoc(doc(db, "users", user.userUid, "posts", id));
+
       //表示するための処理（フロント側）
       const deletePost = posts.filter((post: any) => post.id !== id);
       setPosts(deletePost);
@@ -174,6 +189,10 @@ export default function myPosts() {
             </Flex>
 
             {posts.map((post: any) => {
+              if (post.length === 0) {
+                <Text>aaa</Text>;
+              }
+
               if (selectCategory === "日本料理" && post.category !== "日本料理")
                 return;
               if (selectCategory === "中国料理" && post.category !== "中国料理")

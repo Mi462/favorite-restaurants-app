@@ -53,7 +53,7 @@ export const AuthProvider = ({ children }: AuthProps) => {
       setUser(user);
       console.log(user);
       //現在未ログインで、閲覧可能のページに入っていた場合は、ログインページに遷移
-      !user && isAvailableForViewing && (await router.push("/login"));
+      !user && isAvailableForViewing && (await router.push("/"));
     });
     return () => {
       authStateChanged();

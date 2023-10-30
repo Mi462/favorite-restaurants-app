@@ -98,7 +98,8 @@ export default function myPosts() {
       setPosts(getPostsData);
     });
   };
-  // console.log("ラスト2", posts);
+  console.log("ラスト2", posts);
+  console.log("ラスト2 length", posts.length);
 
   const linkToEdit = (id: string) => {
     router.push(`/edit/${id}`);
@@ -183,9 +184,9 @@ export default function myPosts() {
                 </Select>
                 {/* 上のプルダウンリスト */}
               </Box>
-              <Box mt="3" display="flex">
+              <Box mt="3" width="20%" display="flex">
                 {/* 投稿ボタン */}
-                <Button onClick={linkToCreate} borderRadius="50">
+                <Button onClick={linkToCreate} borderRadius="50" width="100%">
                   <Flex>
                     <FontAwesomeIcon icon={faPlus} size="lg" color="#fe9611" />
                     <Text ml="5">投稿</Text>
@@ -194,6 +195,14 @@ export default function myPosts() {
                 {/* 投稿ボタン */}
               </Box>
             </Flex>
+
+            {posts.length === 0 && (
+              <Flex justifyContent="center" mt="100">
+                <Flex direction="column" textAlign="center">
+                  <Text fontSize="3xl">投稿は0件です</Text>
+                </Flex>
+              </Flex>
+            )}
 
             {posts.map((post: any) => {
               if (selectCategory === "日本料理" && post.category !== "日本料理")

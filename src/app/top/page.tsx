@@ -13,7 +13,7 @@ import {
 } from "@chakra-ui/react";
 import Header from "../components/header/header";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faHeart, faPlus } from "@fortawesome/free-solid-svg-icons";
+import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { useRouter } from "next/navigation";
 import Sidebar from "../components/sidebar/sidebar";
 import { useEffect, useState } from "react";
@@ -38,7 +38,7 @@ export default function Top() {
   const [selectCategory, setSelectCategory] = useState<string>("全て");
   //ログインユーザーの情報
   const [user, setUser] = useRecoilState(loginUser);
-  // console.log("top", user);
+  console.log("top", user);
   //Postしたユーザーの情報
   const [postUsers, setPostUsers] = useState<any>([]);
   //Comment画面遷移時のPost作成者の情報
@@ -152,9 +152,9 @@ export default function Top() {
                 </Select>
                 {/* 上のプルダウンリスト */}
               </Box>
-              <Box mt="3" display="flex">
+              <Box mt="3" width="20%" display="flex">
                 {/* 投稿ボタン */}
-                <Button onClick={linkToCreate} borderRadius="50">
+                <Button onClick={linkToCreate} borderRadius="50" width="100%">
                   <Flex>
                     <FontAwesomeIcon icon={faPlus} size="lg" color="#fe9611" />
                     <Text ml="5">投稿</Text>

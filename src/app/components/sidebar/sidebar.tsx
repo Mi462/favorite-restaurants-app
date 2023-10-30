@@ -31,8 +31,8 @@ export default function Sidebar() {
     router.push("/user");
   };
 
-  const linkToMyPosts = () => {
-    router.push("/myPosts");
+  const linkToMyPage = () => {
+    router.push("/myPage");
   };
 
   const linkToTop = () => {
@@ -82,12 +82,12 @@ export default function Sidebar() {
           </Button>
           {/* ユーザーボタン */}
 
-          {/* My Postsボタン */}
-          <Button ml="1" mr="3" mb="1" onClick={linkToMyPosts}>
+          {/* My Pageボタン */}
+          <Button ml="1" mr="3" mb="1" onClick={linkToMyPage}>
             <FontAwesomeIcon icon={faFolder} size="lg" color="#fe9611" />
-            <Text ml="5">My Posts</Text>
+            <Text ml="5">マイページ</Text>
           </Button>
-          {/* My Postsボタン */}
+          {/* My Pageボタン */}
 
           {/* ホームボタン */}
           <Button ml="1" mr="3" mb="1" onClick={linkToTop}>

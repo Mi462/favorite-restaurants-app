@@ -20,7 +20,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { useRouter } from "next/navigation";
 import Sidebar from "../components/sidebar/sidebar";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   Query,
   collection,
@@ -49,7 +49,9 @@ export default function myPosts() {
   const user = useRecoilValue(loginUser);
   //Postしたユーザーの情報
   const [postUsers, setPostUsers] = useState<any>([]);
-
+  //Postの存在確認
+  const [postsExist, setPostsExist] = useState<boolean>(false);
+  // const postsExist = useRef<boolean>(false);
   useEffect(() => {
     postUsersDataFromFirebase();
   }, []);
@@ -57,6 +59,11 @@ export default function myPosts() {
   useEffect(() => {
     postsDataFromFirebase();
   }, [postUsers]);
+  // checkPostsExist();
+
+  // useEffect(() => {
+  //   checkPostsExist();
+  // }, [postUsers, posts]);
 
   //1, ユーザーの情報が入った配列とPostの情報が入った配列を用意
   //ユーザーの情報が入った配列の取得
@@ -97,9 +104,17 @@ export default function myPosts() {
       });
       setPosts(getPostsData);
     });
+    if (posts === null) {
+      setPostsExist(true);
+    }
   };
   console.log("ラスト2", posts);
   console.log("ラスト2 length", posts.length);
+
+  const checkPostsExist = () => {
+    posts.length === 0 ? setPostsExist(true) : setPostsExist(false);
+  };
+  console.log(postsExist);
 
   const linkToEdit = (id: string) => {
     router.push(`/edit/${id}`);
@@ -195,8 +210,7 @@ export default function myPosts() {
                 {/* 投稿ボタン */}
               </Box>
             </Flex>
-
-            {posts.length === 0 && (
+            {postsExist && (
               <Flex justifyContent="center" mt="100">
                 <Flex direction="column" textAlign="center">
                   <Text fontSize="3xl">投稿は0件です</Text>
@@ -301,31 +315,31 @@ export default function myPosts() {
                         >
                           {/* コメントボタン */}
                           {/* <FontAwesomeIcon
-                            icon={faComment}
-                            size="lg"
-                            color="#4299E1"
-                            onClick={() => {
-                              linkToComment(post.id);
-                            }}
-                            cursor="pointer"
-                          /> */}
+                              icon={faComment}
+                              size="lg"
+                              color="#4299E1"
+                              onClick={() => {
+                                linkToComment(post.id);
+                              }}
+                              cursor="pointer"
+                            /> */}
                           {/* コメントボタン */}
 
                           {/* いいねボタン */}
                           {/* <FontAwesomeIcon
-                            icon={faHeart}
-                            size="lg"
-                            color="#D53F8C"
-                          /> */}
+                              icon={faHeart}
+                              size="lg"
+                              color="#D53F8C"
+                            /> */}
                           {/* いいねボタン */}
 
                           {/* マップボタン */}
                           {/* <FontAwesomeIcon
-                            icon={faLocationDot}
-                            size="lg"
-                            color="#4299E1"
-                            onClick={linkToMap}
-                          /> */}
+                              icon={faLocationDot}
+                              size="lg"
+                              color="#4299E1"
+                              onClick={linkToMap}
+                            /> */}
                           {/* マップボタン */}
 
                           {/* Editボタン */}

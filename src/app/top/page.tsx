@@ -26,8 +26,9 @@ import {
 } from "firebase/firestore";
 import { db } from "@/lib/FirebaseConfig";
 import { format } from "date-fns";
-import { useRecoilState, useSetRecoilState } from "recoil";
-import { commentPost, loginUser } from "@/states/states";
+import { useSetRecoilState } from "recoil";
+import { commentPost } from "@/states/states";
+import { useAuth } from "@/useAuth/useAuth";
 
 export default function Top() {
   //画面遷移
@@ -37,8 +38,8 @@ export default function Top() {
   //上のプルダウンの状態
   const [selectCategory, setSelectCategory] = useState<string>("全て");
   //ログインユーザーの情報
-  const [user, setUser] = useRecoilState(loginUser);
-  console.log("top", user);
+  const loginUserData = useAuth();
+  // console.log("top", loginUserData);
   //Postしたユーザーの情報
   const [postUsers, setPostUsers] = useState<any>([]);
   //Comment画面遷移時のPost作成者の情報
@@ -54,9 +55,13 @@ export default function Top() {
     postsDataFromFirebase();
   }, [postUsers]);
 
-  //1, ユーザーの情報が入った配列とPostの情報が入った配列を用意
-  //ユーザーの情報が入った配列の取得
+  // ログインしていなければログインページへ転送
+  // if (!useAuth()) router.replace("/");
+
+  //ログインが成功しているか確認した後で、
+  //1,ユーザーの情報が入った配列とPostの情報が入った配列を用意
   const postUsersDataFromFirebase = async () => {
+    //ユーザーの情報が入った配列の取得
     const q = collection(db, "users");
     await getDocs(q).then((snapShot) => {
       const getUsersData: any = snapShot.docs.map((doc) => {
@@ -96,7 +101,7 @@ export default function Top() {
     });
     setLoading(false);
   };
-  console.log(posts);
+  // console.log(posts);
 
   const linkToComment = (
     id: string,

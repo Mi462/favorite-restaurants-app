@@ -20,21 +20,26 @@ import { useEffect, useState } from "react";
 import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
 import { auth, db } from "@/lib/FirebaseConfig";
 import { Timestamp, doc, getDoc, updateDoc } from "firebase/firestore";
+import { useAuth } from "@/useAuth/useAuth";
+import { updateProfile } from "firebase/auth";
 
 export default function Top() {
   const router = useRouter();
   const [userImage, setUserImage] = useState();
   const [editUserPictureURL, setEditUserPictureURL] = useState<string>();
   //ログインユーザーの情報
-  const [loginUserData, setLoginUserData] = useRecoilState(loginUser);
+  // const [loginUserData, setLoginUserData] = useRecoilState(loginUser);
+  // const [loginUserData, setLoginUserData] = useState(useAuth());
+  const loginUserData = useAuth();
+  // console.log(loginUserData);
   //編集後のログインユーザーの情報
-  const [editUser, setEditUser] = useState({
-    userName: "",
-    userPicture: "",
-    email: "",
-    userUid: "",
-    password: "",
-  });
+  // const [editUser, setEditUser] = useState({
+  //   userName: "",
+  //   userPicture: "",
+  //   email: "",
+  //   userUid: "",
+  // });
+  const [editUser, setEditUser] = useState(useAuth());
 
   useEffect(() => {
     loginUserDataFromFirebase();
@@ -51,7 +56,6 @@ export default function Top() {
       userName,
       userPicture,
       email,
-      password,
       userUid,
     });
   };
@@ -68,31 +72,73 @@ export default function Top() {
       alert("入力できる文字数は7までです。");
       return;
     }
-    //Firebaseでデータを更新する
+    //Database
     if (userImage === undefined) {
       //画像が新たに登録されていない場合
+      //AuthenticationとDatabaseでデータを更新する
+      //Authentication
+      if (auth.currentUser) {
+        await updateProfile(auth.currentUser, {
+          displayName: editUser.userName,
+        })
+          .then(() => {
+            // Profile updated!
+            console.log("Profile updated! (user Page)");
+            // ...
+          })
+          .catch((error) => {
+            // An error occurred
+            console.log(error);
+            // ...
+          });
+      } else {
+        console.log("error 1");
+      }
+
+      //Database
       await updateDoc(doc(db, "users", editUser.userUid), {
         userName: editUser.userName,
         updatedAt: Timestamp.now(),
       });
       //Recoilで設定したログインユーザーも更新させる
-      setLoginUserData({
-        ...loginUserData,
-        userName: editUser.userName,
-      });
+      // setLoginUserData({
+      //   ...loginUserData,
+      //   userName: editUser.userName,
+      // });
     } else {
       //画像が新たに登録された場合
+      //AuthenticationとDatabaseでデータを更新する
+      //Authentication
+      if (auth.currentUser) {
+        await updateProfile(auth.currentUser, {
+          displayName: editUser.userName,
+          photoURL: editUserPictureURL,
+        })
+          .then(() => {
+            // Profile updated!
+            console.log("Profile updated! (user Page)");
+            // ...
+          })
+          .catch((error) => {
+            // An error occurred
+            console.log(error);
+            // ...
+          });
+      } else {
+        console.log("error 2");
+      }
+      //Database
       await updateDoc(doc(db, "users", editUser.userUid), {
         userName: editUser.userName,
         userPicture: editUserPictureURL,
         updatedAt: Timestamp.now(),
       });
       //Recoilで設定したログインユーザーも更新させる
-      setLoginUserData({
-        ...loginUserData,
-        userName: editUser.userName,
-        userPicture: editUserPictureURL,
-      });
+      // setLoginUserData({
+      //   ...loginUserData,
+      //   userName: editUser.userName,
+      //   userPicture: editUserPictureURL,
+      // });
     }
     //Top画面に遷移する
     router.push("/top");

@@ -13,7 +13,7 @@ import {
 } from "@chakra-ui/react";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { createUserWithEmailAndPassword } from "firebase/auth";
+import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { auth, db } from "@/lib/FirebaseConfig";
 import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
 import { doc, setDoc } from "firebase/firestore";
@@ -52,24 +52,41 @@ export default function Login() {
       });
   };
 
-  //Sign in押下時の関数
+  //Sign Up押下時の関数
   const handleSubmit = async () => {
+    //Sign Upの前にユーザー名の入力と画像の登録を確認する
+    //ユーザー名の確認
+    if (user.userName === "") {
+      alert("ユーザー名が記入されていません。");
+      return;
+    }
+    //ユーザー画像の確認
+    if (userImage === undefined) {
+      alert("ユーザー画像が登録されていません。");
+      return;
+    }
+    //確認後、AuthenticationとDatabaseの両方に登録
     await createUserWithEmailAndPassword(auth, user.email, user.password)
       .then(async (userCredential) => {
         // Signed in 成功！
         // console.log(userCredential.user);
-        //ユーザー画像のURLとユーザー名を登録
-        if (user.userName === "") {
-          alert("ユーザー名が記入されていません。");
-          return;
-        }
-        if (userImage === undefined) {
-          alert("ユーザー画像が登録されていません。");
-          return;
-        }
-        // //ユーザー名とユーザー画像のアップロード
+        //Authenticationの方への登録
+        await updateProfile(userCredential.user, {
+          displayName: user.userName,
+          photoURL: createUserPictureURL,
+        })
+          .then(() => {
+            // Profile updated!
+            console.log("Profile updated!");
+            // ...
+          })
+          .catch((error) => {
+            // An error occurred
+            console.log(error);
+            // ...
+          });
+        //Databaseのusersコレクションへの登録
         const currentUser: any = auth.currentUser;
-        // //Databaseに登録
         await setDoc(doc(db, "users", currentUser.uid), {
           userName: user.userName,
           password: user.password,

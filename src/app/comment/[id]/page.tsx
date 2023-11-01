@@ -34,11 +34,14 @@ import { db } from "@/lib/FirebaseConfig";
 import { format } from "date-fns";
 import { useRecoilValue } from "recoil";
 import { commentPost, loginUser } from "@/states/states";
+import { useAuth } from "@/useAuth/useAuth";
 
 export default function Comment({ params }: { params: { id: string } }) {
   const router = useRouter();
   //ログインユーザー
-  const user = useRecoilValue(loginUser);
+  // const user = useRecoilValue(loginUser);
+  const loginUserData = useAuth();
+  // console.log(loginUserData);
   // 「いいね」の状態管理
   const [isLiked, setIsLiked] = useState<boolean | null>(null);
   // 「いいね」数の状態管理
@@ -165,7 +168,7 @@ export default function Comment({ params }: { params: { id: string } }) {
   //この投稿に対して既にlikeしたかどうかを判別する
   //いいね機能
   useEffect(() => {
-    if (!user.userUid) return;
+    if (!loginUserData.userUid) return;
 
     const postRef = doc(
       db,
@@ -174,7 +177,7 @@ export default function Comment({ params }: { params: { id: string } }) {
       "posts",
       params.id
     );
-    const likedUserRef = doc(postRef, "LikedUsers", user.userUid);
+    const likedUserRef = doc(postRef, "LikedUsers", loginUserData.userUid);
 
     const unsubscribeLikedUser = onSnapshot(likedUserRef, (doc) => {
       setIsLiked(doc.exists());
@@ -197,13 +200,13 @@ export default function Comment({ params }: { params: { id: string } }) {
       unsubscribeLikedUser();
       unsubscribeLikedCount();
     };
-  }, [user.userUid, params.id]);
+  }, [loginUserData.userUid, params.id]);
 
   console.log(isLiked);
 
   // 「いいね」ボタンのクリックイベント
   const handleClick = useCallback(async () => {
-    if (!user.userUid || isLiked === null) return;
+    if (!loginUserData.userUid || isLiked === null) return;
 
     //「いいね」ボタン押下時のFirebaseのデータ構造の準備
     const postRef = doc(
@@ -214,10 +217,10 @@ export default function Comment({ params }: { params: { id: string } }) {
       params.id
     );
     //Postに対して残すサブコレクション（LikedUsers）
-    const likedUserRef = doc(postRef, "LikedUsers", user.userUid);
+    const likedUserRef = doc(postRef, "LikedUsers", loginUserData.userUid);
 
-    const userDoc = doc(db, "users", user.userUid);
-    const userSnapshot = await getDoc(doc(db, "users", user.userUid));
+    const userDoc = doc(db, "users", loginUserData.userUid);
+    const userSnapshot = await getDoc(doc(db, "users", loginUserData.userUid));
     const { userName, userUid, userPicture } = userSnapshot.data() || {};
 
     //Usersに対して残すサブコレクション（likePosts）
@@ -237,10 +240,10 @@ export default function Comment({ params }: { params: { id: string } }) {
       });
       // await setDoc(userLikePostRef, { postId: params.id });
     }
-  }, [user.userUid, params.id, isLiked]);
+  }, [loginUserData.userUid, params.id, isLiked]);
 
   // 「いいね」機能のためのレンダリング
-  if (!user.userUid) return null;
+  if (!loginUserData.userUid) return null;
   if (isLiked === null) return null;
 
   return (

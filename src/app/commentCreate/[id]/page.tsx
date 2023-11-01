@@ -20,11 +20,14 @@ import { useState } from "react";
 import { Timestamp, doc, setDoc } from "firebase/firestore";
 import { db } from "@/lib/FirebaseConfig";
 import { v4 as uuidv4 } from "uuid";
+import { useAuth } from "@/useAuth/useAuth";
 
 export default function CommentCreate({ params }: { params: { id: string } }) {
   const router = useRouter();
   //ログインユーザーの情報
-  const user = useRecoilValue(loginUser);
+  // const user = useRecoilValue(loginUser);
+  const loginUserData = useAuth();
+  // console.log(loginUserData);
   //Comment画面遷移時のPost作成者の情報
   const commentPostUser = useRecoilValue(commentPost);
   const commentData = {
@@ -57,7 +60,7 @@ export default function CommentCreate({ params }: { params: { id: string } }) {
         commentId: uuidv4(),
         text: comment.text,
         createdAt: Timestamp.now(),
-        commentAuthorUid: user.userUid,
+        commentAuthorUid: loginUserData.userUid,
       }
     );
     //コメントの中を空にする
@@ -98,14 +101,14 @@ export default function CommentCreate({ params }: { params: { id: string } }) {
                   <Wrap>
                     <WrapItem>
                       <Avatar
-                        name={user.userName}
+                        name={loginUserData.userName}
                         size="sm"
-                        src={user.userPicture}
+                        src={loginUserData.userPicture}
                       ></Avatar>
                     </WrapItem>
                   </Wrap>
                   <Text fontSize="lg" ml="3">
-                    {user.userName}
+                    {loginUserData.userName}
                   </Text>
                 </Flex>
                 {/* アカウント */}

@@ -42,23 +42,6 @@ export default function Login() {
         return await signInWithEmailAndPassword(auth, user.email, user.password)
           .then(async (userCredential) => {
             //Login 成功！
-            // onAuthStateChanged(auth, async (user) => {
-            //   // ユーザー保存の処理を書く
-            //   console.log(user);
-            const currentUser: any = auth.currentUser;
-            // console.log(currentUser);
-            const docSnap = await getDoc(doc(db, "users", currentUser.uid));
-            const { userName, userPicture, email, userUid } =
-              docSnap.data() || {};
-            setLoginUserData({
-              userName,
-              userPicture,
-              email,
-              userUid,
-            });
-            // console.log("login", user);
-            // });
-
             //Top画面へ遷移
             router.push("/top");
           })

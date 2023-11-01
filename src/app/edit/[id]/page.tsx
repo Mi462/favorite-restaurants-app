@@ -32,6 +32,7 @@ import { db } from "@/lib/FirebaseConfig";
 import { format } from "date-fns";
 import { useRecoilValue } from "recoil";
 import { loginUser } from "@/states/states";
+import { useAuth } from "@/useAuth/useAuth";
 
 export default function Edit({ params }: { params: { id: string } }) {
   //画面遷移用
@@ -49,7 +50,9 @@ export default function Edit({ params }: { params: { id: string } }) {
     userPicture: "",
   });
   //ログインユーザー
-  const user = useRecoilValue(loginUser);
+  const loginUserData = useAuth();
+  console.log(loginUserData);
+  // const user = useRecoilValue(loginUser);
   // console.log("edit", user);
   // console.log(params.id);
   //Postしたユーザーの情報
@@ -82,7 +85,7 @@ export default function Edit({ params }: { params: { id: string } }) {
   const postDataFromFirebase = async () => {
     //渡ってきたidを元にデータベースからデータを取り出してきた
     const docSnap = await getDoc(
-      doc(db, "users", user.userUid, "posts", params.id)
+      doc(db, "users", loginUserData.userUid, "posts", params.id)
     );
     const { text, category, createdAt, updatedAt, picture, authorUid } =
       docSnap.data() || {};
@@ -116,7 +119,7 @@ export default function Edit({ params }: { params: { id: string } }) {
       return;
     }
     //Firebaseでデータを更新する
-    await updateDoc(doc(db, "users", user.userUid, "posts", id), {
+    await updateDoc(doc(db, "users", loginUserData.userUid, "posts", id), {
       text: editPost.text,
       category: editPost.category,
       updatedAt: Timestamp.now(),

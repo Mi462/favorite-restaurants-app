@@ -1,5 +1,6 @@
 "use client";
 
+import { useAuth } from "@/useAuth/useAuth";
 import { loginUser } from "@/states/states";
 import {
   Avatar,
@@ -24,7 +25,9 @@ import { useRecoilValue } from "recoil";
 export default function Sidebar() {
   const router = useRouter();
   //ログインユーザー
-  const loginUserData = useRecoilValue(loginUser);
+  // const loginUserData = useRecoilValue(loginUser);
+  const loginUserData = useAuth();
+  // console.log(loginUserData);
   // console.log("sidebar", loginUserData);
 
   const linkToUser = () => {

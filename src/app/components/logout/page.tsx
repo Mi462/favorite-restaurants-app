@@ -1,5 +1,6 @@
 "use client";
 
+import { useAuth } from "@/useAuth/useAuth";
 import { auth } from "@/lib/FirebaseConfig";
 import { loginUser } from "@/states/states";
 import { Button } from "@chakra-ui/react";
@@ -9,15 +10,16 @@ import { useRecoilValue } from "recoil";
 
 export default function Logout() {
   //ログインユーザーの情報
-  const user = useRecoilValue(loginUser);
-
+  // const user = useRecoilValue(loginUser);
+  const loginUserData = useAuth();
+  // console.log(loginUserData);
   const router = useRouter();
 
   const logOut = async () => {
     await signOut(auth)
       .then(() => {
         console.log("ログアウト成功");
-        console.log(user);
+        console.log(loginUserData);
         router.push("/");
       })
       .catch((e) => {

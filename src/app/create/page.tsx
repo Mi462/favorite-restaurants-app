@@ -29,6 +29,7 @@ import { db } from "@/lib/FirebaseConfig";
 import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
 import { useRecoilValue } from "recoil";
 import { loginUser } from "@/states/states";
+import { useAuth } from "@/useAuth/useAuth";
 
 export default function Create() {
   //画面遷移用
@@ -40,7 +41,9 @@ export default function Create() {
   //categoryの状態
   const [selectCategory, setSelectCategory] = useState("日本料理");
   //ログインユーザー
-  const user = useRecoilValue(loginUser);
+  // const user = useRecoilValue(loginUser);
+  const loginUserData = useAuth();
+  // console.log(loginUserData);
 
   const postData = {
     id: uuidv4(),
@@ -69,14 +72,14 @@ export default function Create() {
       return;
     }
     //Firebaseにデータを登録する
-    await setDoc(doc(db, "users", user.userUid, "posts", post.id), {
+    await setDoc(doc(db, "users", loginUserData.userUid, "posts", post.id), {
       id: post.id,
       text: post.text,
       category: selectCategory,
       createdAt: Timestamp.now(),
       updatedAt: Timestamp.now(),
       picture: createObjectURL,
-      authorUid: user.userUid,
+      authorUid: loginUserData.userUid,
     });
     //textの中身を空にする
     setPost(postData);
@@ -197,14 +200,14 @@ export default function Create() {
                     <Wrap>
                       <WrapItem>
                         <Avatar
-                          name={user.userName}
+                          name={loginUserData.userName}
                           size="sm"
-                          src={user.userPicture}
+                          src={loginUserData.userPicture}
                         ></Avatar>
                       </WrapItem>
                     </Wrap>
                     <Text fontSize="lg" ml="3">
-                      {user.userName}
+                      {loginUserData.userName}
                     </Text>
                   </Flex>
                   {/* アカウント */}

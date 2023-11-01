@@ -37,8 +37,9 @@ import { db } from "@/lib/FirebaseConfig";
 import { format } from "date-fns";
 import { useRecoilValue } from "recoil";
 import { loginUser } from "@/states/states";
+import { useAuth } from "@/useAuth/useAuth";
 
-export default function myPosts() {
+export default function myPage() {
   //画面遷移
   const router = useRouter();
   //状態
@@ -46,7 +47,7 @@ export default function myPosts() {
   //上のプルダウンの状態
   const [selectCategory, setSelectCategory] = useState("全て");
   //ログインユーザーの情報
-  const user = useRecoilValue(loginUser);
+  const loginUserData = useAuth();
   //Postしたユーザーの情報
   const [postUsers, setPostUsers] = useState<any>([]);
   //ローディング
@@ -76,7 +77,7 @@ export default function myPosts() {
 
   //Postの内容を取得する関数
   const postsDataFromFirebase = async () => {
-    const postsData = collection(db, "users", user.userUid, "posts");
+    const postsData = collection(db, "users", loginUserData.userUid, "posts");
     //Updateを基準に降順で取得
     const q = query(postsData, orderBy("updatedAt", "desc"));
     await getDocs(q).then((snapShot) => {
@@ -101,9 +102,9 @@ export default function myPosts() {
     });
     setLoading(false);
   };
-  console.log("ラスト2", posts);
-  console.log("ラスト2 length", posts.length);
-  console.log(loading);
+  // console.log("ラスト2", posts);
+  // console.log("ラスト2 length", posts.length);
+  // console.log(loading);
 
   const linkToEdit = (id: string) => {
     router.push(`/edit/${id}`);
@@ -125,7 +126,7 @@ export default function myPosts() {
       const likedUsersRef = collection(
         db,
         "users",
-        user.userUid,
+        loginUserData.userUid,
         "posts",
         id,
         "LikedUsers"
@@ -138,7 +139,7 @@ export default function myPosts() {
       const commentsRef = collection(
         db,
         "users",
-        user.userUid,
+        loginUserData.userUid,
         "posts",
         id,
         "comments"
@@ -148,7 +149,7 @@ export default function myPosts() {
         deleteDoc(doc.ref);
       });
       //Postの削除
-      await deleteDoc(doc(db, "users", user.userUid, "posts", id));
+      await deleteDoc(doc(db, "users", loginUserData.userUid, "posts", id));
       //表示するための処理（フロント側）
       const deletePost = posts.filter((post: any) => post.id !== id);
       setPosts(deletePost);

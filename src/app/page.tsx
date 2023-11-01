@@ -13,7 +13,6 @@ import {
 } from "@chakra-ui/react";
 import {
   browserSessionPersistence,
-  onAuthStateChanged,
   setPersistence,
   signInWithEmailAndPassword,
 } from "firebase/auth";
@@ -24,11 +23,14 @@ import { useSetRecoilState } from "recoil";
 
 export default function Login() {
   const router = useRouter();
+  //ローディング
+  const [loading, setLoading] = useState<boolean>(true);
   //ログイン時の情報
   const [user, setUser] = useState({
     email: "",
     password: "",
   });
+
   //ログイン成功時のログイン情報
   const setLoginUserData = useSetRecoilState(loginUser);
 

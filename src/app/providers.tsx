@@ -5,7 +5,7 @@ import { ChakraProvider } from "@chakra-ui/react";
 import { RecoilRoot } from "recoil";
 // import { AuthProvider } from "@/context/AuthContext";
 // import Header from "./components/header/header";
-// import type { AppProps } from "next/app";
+import type { AppProps } from "next/app";
 
 // export function Providers({ Component, pageProps }: AppProps) {
 export function Providers({ children }: { children: React.ReactNode }) {

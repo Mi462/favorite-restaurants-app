@@ -49,10 +49,9 @@ export default function myPosts() {
   const user = useRecoilValue(loginUser);
   //Postしたユーザーの情報
   const [postUsers, setPostUsers] = useState<any>([]);
-  //Postの存在確認
-  // const [postsExist, setPostsExist] = useState<boolean>(false);
+  //ローディング
   const [loading, setLoading] = useState<boolean>(true);
-  // const postsExist = useRef<boolean>(false);
+
   useEffect(() => {
     postUsersDataFromFirebase();
   }, []);
@@ -60,11 +59,6 @@ export default function myPosts() {
   useEffect(() => {
     postsDataFromFirebase();
   }, [postUsers]);
-  // checkPostsExist();
-
-  // useEffect(() => {
-  //   checkPostsExist();
-  // }, [postUsers, posts]);
 
   //1, ユーザーの情報が入った配列とPostの情報が入った配列を用意
   //ユーザーの情報が入った配列の取得
@@ -109,10 +103,6 @@ export default function myPosts() {
   };
   console.log("ラスト2", posts);
   console.log("ラスト2 length", posts.length);
-
-  // const checkPostsExist = () => {
-  //   posts.length === 0 ? setPostsExist(true) : setPostsExist(false);
-  // };
   console.log(loading);
 
   const linkToEdit = (id: string) => {

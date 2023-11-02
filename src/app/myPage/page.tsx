@@ -59,7 +59,7 @@ export default function myPage() {
 
   useEffect(() => {
     postsDataFromFirebase();
-  }, [postUsers]);
+  }, [postUsers, loginUserData]);
 
   //1, ユーザーの情報が入った配列とPostの情報が入った配列を用意
   //ユーザーの情報が入った配列の取得

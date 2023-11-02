@@ -76,19 +76,21 @@ export const useAuth = () => {
   const resetStatus = useResetRecoilState(loginUser);
 
   useEffect(() => {
-    const unSub = auth.onAuthStateChanged((authUser) => {
-      if (authUser) {
-        setLoginUserData({
-          userName: authUser.displayName,
-          userPicture: authUser.photoURL,
-          email: authUser.email,
-          userUid: authUser.uid,
-        });
-      } else {
-        resetStatus();
-      }
-    });
-    return () => unSub();
+    (async () => {
+      const unSub = auth.onAuthStateChanged((authUser) => {
+        if (authUser) {
+          setLoginUserData({
+            userName: authUser.displayName,
+            userPicture: authUser.photoURL,
+            email: authUser.email,
+            userUid: authUser.uid,
+          });
+        } else {
+          resetStatus();
+        }
+      });
+      return () => unSub();
+    })();
   }, [setLoginUserData, resetStatus]);
 
   return loginUserData;

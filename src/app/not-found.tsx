@@ -3,12 +3,8 @@
 import { Box, Button, Flex, Heading, Text } from "@chakra-ui/react";
 import { useRouter } from "next/navigation";
 
-export default function Error404() {
+export default function NotFound() {
   const router = useRouter();
-
-  const linkToTop = () => {
-    router.push("/top");
-  };
 
   return (
     <div>
@@ -33,8 +29,8 @@ export default function Error404() {
         </Flex>
       </Flex>
       <Flex justifyContent="center">
-        <Button colorScheme="orange" onClick={linkToTop}>
-          Home
+        <Button colorScheme="orange" onClick={() => router.back()}>
+          Back
         </Button>
       </Flex>
     </div>

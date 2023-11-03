@@ -73,6 +73,12 @@ export default function Top() {
   };
 
   const postsDataFromFirebase = async () => {
+    if (!loginUserData.userUid) {
+      alert(
+        "ユーザーのデータがありません。ログインページから入りなおしてください。"
+      );
+      return;
+    }
     //Postの情報が入った配列の取得
     const queryPosts = query(
       collectionGroup(db, "posts"),

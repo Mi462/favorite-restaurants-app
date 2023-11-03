@@ -60,6 +60,12 @@ export default function Create() {
   //投稿ボタン押下時にFirebaseにデータが登録され、Top画面に遷移する関数
   const createPost = async (e: any) => {
     e.preventDefault();
+    if (!loginUserData.userUid) {
+      alert(
+        "ユーザーのデータがありません。ログインページから入りなおしてください。"
+      );
+      return;
+    }
     //textに何も記入されていない場合は反映されない
     if (post.text === "") {
       alert("テキストが入力されていません。");

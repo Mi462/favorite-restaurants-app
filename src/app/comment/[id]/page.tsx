@@ -67,13 +67,7 @@ export default function Comment({ params }: { params: { id: string } }) {
   //ローディング
   const [loading, setLoading] = useState<boolean>(true);
 
-  const linkToMap = () => {
-    router.push("/map");
-  };
-
-  const linkToCommentCreate = (id: string) => {
-    router.push(`/commentCreate/${id}`);
-  };
+  console.log(commentPostUser.authorUid);
 
   //Postの取得用useEffect
   useEffect(() => {
@@ -176,7 +170,7 @@ export default function Comment({ params }: { params: { id: string } }) {
   //いいね機能
   useEffect(() => {
     // if (!loginUserData.userUid) return;
-    if (loginUserData.userUid && commentPostUser.authorUid) {
+    if (commentPostUser.authorUid) {
       const postRef = doc(
         db,
         "users",
@@ -253,6 +247,14 @@ export default function Comment({ params }: { params: { id: string } }) {
   // 「いいね」機能のためのレンダリング
   if (!loginUserData.userUid) return null;
   if (isLiked === null) return null;
+
+  const linkToMap = () => {
+    router.push("/map");
+  };
+
+  const linkToCommentCreate = (id: string) => {
+    router.push(`/commentCreate/${id}`);
+  };
 
   return (
     <div>

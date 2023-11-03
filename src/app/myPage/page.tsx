@@ -35,7 +35,7 @@ import {
 } from "firebase/firestore";
 import { db } from "@/lib/FirebaseConfig";
 import { format } from "date-fns";
-import { useRecoilValue } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import { loginUser } from "@/states/states";
 import { useAuth } from "@/useAuth/useAuth";
 
@@ -48,6 +48,8 @@ export default function myPage() {
   const [selectCategory, setSelectCategory] = useState("全て");
   //ログインユーザーの情報
   const loginUserData = useAuth();
+  // const [loginUserData, setLoginUserData] = useRecoilState(loginUser);
+  // console.log(loginUserData.userUid);
   //Postしたユーザーの情報
   const [postUsers, setPostUsers] = useState<any>([]);
   //ローディング
@@ -59,7 +61,7 @@ export default function myPage() {
 
   useEffect(() => {
     postsDataFromFirebase();
-  }, [postUsers, loginUserData]);
+  }, [postUsers]);
 
   //1, ユーザーの情報が入った配列とPostの情報が入った配列を用意
   //ユーザーの情報が入った配列の取得
@@ -77,30 +79,39 @@ export default function myPage() {
 
   //Postの内容を取得する関数
   const postsDataFromFirebase = async () => {
-    const postsData = collection(db, "users", loginUserData.userUid, "posts");
-    //Updateを基準に降順で取得
-    const q = query(postsData, orderBy("updatedAt", "desc"));
-    await getDocs(q).then((snapShot) => {
-      const getPostsData: any = snapShot.docs.map((doc) => {
-        const { id, text, category, createdAt, updatedAt, picture, authorUid } =
-          doc.data();
-        const postUser = postUsers.find((p: any) => p.userUid === authorUid);
-        const { userName, userPicture } = postUser || {};
-        return {
-          id,
-          text,
-          category,
-          createdAt: format(createdAt.toDate(), "yyyy/MM/dd HH:mm"),
-          updatedAt: format(updatedAt.toDate(), "yyyy/MM/dd HH:mm"),
-          picture,
-          authorUid,
-          userName,
-          userPicture,
-        };
+    if (loginUserData.userUid) {
+      const postsData = collection(db, "users", loginUserData.userUid, "posts");
+      //Updateを基準に降順で取得
+      const q = query(postsData, orderBy("updatedAt", "desc"));
+      await getDocs(q).then((snapShot) => {
+        const getPostsData: any = snapShot.docs.map((doc) => {
+          const {
+            id,
+            text,
+            category,
+            createdAt,
+            updatedAt,
+            picture,
+            authorUid,
+          } = doc.data();
+          const postUser = postUsers.find((p: any) => p.userUid === authorUid);
+          const { userName, userPicture } = postUser || {};
+          return {
+            id,
+            text,
+            category,
+            createdAt: format(createdAt.toDate(), "yyyy/MM/dd HH:mm"),
+            updatedAt: format(updatedAt.toDate(), "yyyy/MM/dd HH:mm"),
+            picture,
+            authorUid,
+            userName,
+            userPicture,
+          };
+        });
+        setPosts(getPostsData);
       });
-      setPosts(getPostsData);
-    });
-    setLoading(false);
+      setLoading(false);
+    }
   };
   // console.log("ラスト2", posts);
   // console.log("ラスト2 length", posts.length);

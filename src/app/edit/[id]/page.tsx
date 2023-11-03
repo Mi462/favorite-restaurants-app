@@ -51,12 +51,13 @@ export default function Edit({ params }: { params: { id: string } }) {
   });
   //ログインユーザー
   const loginUserData = useAuth();
-  console.log(loginUserData);
+  // console.log(loginUserData);
   // const user = useRecoilValue(loginUser);
   // console.log("edit", user);
   // console.log(params.id);
   //Postしたユーザーの情報
   const [postUsers, setPostUsers] = useState<any>([]);
+
   //ローディング
   const [loading, setLoading] = useState<boolean>(true);
 
@@ -66,6 +67,10 @@ export default function Edit({ params }: { params: { id: string } }) {
 
   useEffect(() => {
     postDataFromFirebase();
+  }, [postUsers]);
+
+  useEffect(() => {
+    console.log(postUsers);
   }, [postUsers]);
 
   //1, ユーザーの情報が入った配列とPostの情報が入った配列を用意
@@ -83,27 +88,29 @@ export default function Edit({ params }: { params: { id: string } }) {
   // console.log("外3", postUsers);
 
   const postDataFromFirebase = async () => {
-    //渡ってきたidを元にデータベースからデータを取り出してきた
-    const docSnap = await getDoc(
-      doc(db, "users", loginUserData.userUid, "posts", params.id)
-    );
-    const { text, category, createdAt, updatedAt, picture, authorUid } =
-      docSnap.data() || {};
-    const postUser = postUsers.find((p: any) => p.userUid === authorUid);
-    const { userName, userPicture } = postUser || {};
-    //取り出したデータをsetEditTodoに設定する
-    setEditPost({
-      id: params.id,
-      text,
-      category,
-      createdAt: format(createdAt.toDate(), "yyyy/MM/dd HH:mm"),
-      updatedAt: format(updatedAt.toDate(), "yyyy/MM/dd HH:mm"),
-      picture,
-      authorUid,
-      userName,
-      userPicture,
-    });
-    setLoading(false);
+    if (loginUserData.userUid) {
+      //渡ってきたidを元にデータベースからデータを取り出してきた
+      const docSnap = await getDoc(
+        doc(db, "users", loginUserData.userUid, "posts", params.id)
+      );
+      const { text, category, createdAt, updatedAt, picture, authorUid } =
+        docSnap.data() || {};
+      const postUser = postUsers.find((p: any) => p.userUid === authorUid);
+      const { userName, userPicture } = postUser || {};
+      //取り出したデータをsetEditTodoに設定する
+      setEditPost({
+        id: params.id,
+        text,
+        category,
+        createdAt: format(createdAt.toDate(), "yyyy/MM/dd HH:mm"),
+        updatedAt: format(updatedAt.toDate(), "yyyy/MM/dd HH:mm"),
+        picture,
+        authorUid,
+        userName,
+        userPicture,
+      });
+      setLoading(false);
+    }
   };
   // console.log("ラスト3", editPost);
 

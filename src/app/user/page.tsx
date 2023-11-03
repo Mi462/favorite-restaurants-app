@@ -14,8 +14,6 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faRotateRight } from "@fortawesome/free-solid-svg-icons";
 import { useRouter } from "next/navigation";
 import Sidebar from "../components/sidebar/sidebar";
-import { useRecoilState } from "recoil";
-import { loginUser } from "@/states/states";
 import { useEffect, useState } from "react";
 import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
 import { auth, db } from "@/lib/FirebaseConfig";
@@ -27,40 +25,40 @@ export default function Top() {
   const router = useRouter();
   const [userImage, setUserImage] = useState();
   const [editUserPictureURL, setEditUserPictureURL] = useState<string>();
+  //ローディング
+  const [loading, setLoading] = useState<boolean>(true);
   //ログインユーザーの情報
-  // const [loginUserData, setLoginUserData] = useRecoilState(loginUser);
-  // const [loginUserData, setLoginUserData] = useState(useAuth());
   const loginUserData = useAuth();
   // console.log(loginUserData);
   //編集後のログインユーザーの情報
-  // const [editUser, setEditUser] = useState({
-  //   userName: "",
-  //   userPicture: "",
-  //   email: "",
-  //   userUid: "",
-  // });
-  const [editUser, setEditUser] = useState(useAuth());
+  const [editUser, setEditUser] = useState({
+    userName: "",
+    userPicture: "",
+    email: "",
+    userUid: "",
+  });
 
   useEffect(() => {
     loginUserDataFromFirebase();
-  }, []);
+  }, [loginUserData]);
 
   //ログインユーザーの情報を取得
   const loginUserDataFromFirebase = async () => {
-    const currentUser: any = auth.currentUser;
-    // console.log(currentUser);
-    const docSnap = await getDoc(doc(db, "users", currentUser.uid));
-    const { userName, userPicture, email, password, userUid } =
-      docSnap.data() || {};
-    setEditUser({
-      userName,
-      userPicture,
-      email,
-      userUid,
-    });
+    if (loginUserData.userUid) {
+      const docSnap = await getDoc(doc(db, "users", loginUserData.userUid));
+      const { userName, userPicture, email, userUid } = docSnap.data() || {};
+      setEditUser({
+        userName,
+        userPicture,
+        email,
+        userUid,
+      });
+      setLoading(false);
+    }
   };
+  console.log(loading);
 
-  //ログインユーザーの編集
+  //「更新」ボタン押下時に動く関数
   const editLoginUser = async (e: React.MouseEvent<HTMLElement>) => {
     e.preventDefault();
     //名前に何も記入されていない場合は反映されない
@@ -83,13 +81,10 @@ export default function Top() {
         })
           .then(() => {
             // Profile updated!
-            console.log("Profile updated! (user Page)");
-            // ...
+            console.log("Profile updated!1 (user Page)");
           })
           .catch((error) => {
-            // An error occurred
             console.log(error);
-            // ...
           });
       } else {
         console.log("error 1");
@@ -100,11 +95,6 @@ export default function Top() {
         userName: editUser.userName,
         updatedAt: Timestamp.now(),
       });
-      //Recoilで設定したログインユーザーも更新させる
-      // setLoginUserData({
-      //   ...loginUserData,
-      //   userName: editUser.userName,
-      // });
     } else {
       //画像が新たに登録された場合
       //AuthenticationとDatabaseでデータを更新する
@@ -116,13 +106,10 @@ export default function Top() {
         })
           .then(() => {
             // Profile updated!
-            console.log("Profile updated! (user Page)");
-            // ...
+            console.log("Profile updated!2 (user Page)");
           })
           .catch((error) => {
-            // An error occurred
             console.log(error);
-            // ...
           });
       } else {
         console.log("error 2");
@@ -133,12 +120,6 @@ export default function Top() {
         userPicture: editUserPictureURL,
         updatedAt: Timestamp.now(),
       });
-      //Recoilで設定したログインユーザーも更新させる
-      // setLoginUserData({
-      //   ...loginUserData,
-      //   userName: editUser.userName,
-      //   userPicture: editUserPictureURL,
-      // });
     }
     //Top画面に遷移する
     router.push("/top");
@@ -178,99 +159,110 @@ export default function Top() {
         {/* Sidebar */}
 
         <Box width="60%" height="100%" mb="5">
-          {/* 囲いの中 */}
-          <Box
-            height="190"
-            borderRadius="20"
-            border="2px"
-            borderColor="orange.500"
-            mt="5"
-          >
-            <Flex>
-              {/* アカウント画像の編集 */}
-              <Box width="25%" height="180">
-                <Wrap display="flex" justifyContent="center">
-                  <WrapItem>
-                    {userImage === undefined ? (
-                      <label htmlFor="form-image" style={{ cursor: "pointer" }}>
+          {loading ? (
+            <Flex justifyContent="center" mt="100">
+              <Flex direction="column" textAlign="center">
+                <Text fontSize="3xl">読み込み中…</Text>
+              </Flex>
+            </Flex>
+          ) : (
+            <Box
+              height="190"
+              borderRadius="20"
+              border="2px"
+              borderColor="orange.500"
+              mt="5"
+            >
+              <Flex>
+                {/* アカウント画像の編集 */}
+                <Box width="25%" height="180">
+                  <Wrap display="flex" justifyContent="center">
+                    <WrapItem>
+                      {userImage === undefined ? (
+                        <label
+                          htmlFor="form-image"
+                          style={{ cursor: "pointer" }}
+                        >
+                          <Avatar
+                            name="t"
+                            size="2xl"
+                            m="3"
+                            src={editUser.userPicture}
+                          ></Avatar>
+                        </label>
+                      ) : (
                         <Avatar
-                          name="t"
+                          name="s"
                           size="2xl"
                           m="3"
-                          src={editUser.userPicture}
+                          src={editUserPictureURL}
                         ></Avatar>
-                      </label>
-                    ) : (
-                      <Avatar
-                        name="s"
-                        size="2xl"
-                        m="3"
-                        src={editUserPictureURL}
-                      ></Avatar>
-                    )}
-                  </WrapItem>
-                </Wrap>
-                <Text
-                  display="flex"
-                  justifyContent="center"
-                  fontSize="md"
-                  mb="3"
-                >
-                  画像の選択
-                </Text>
-                <Input
-                  display="none"
-                  multiple
-                  name="userImageURL"
-                  type="file"
-                  id="form-image"
-                  accept=".png, .jpeg, .jpg"
-                  onChange={userPictureUploadToFirebase}
-                />
-              </Box>
-              {/* アカウント画像の編集 */}
+                      )}
+                    </WrapItem>
+                  </Wrap>
+                  <Text
+                    display="flex"
+                    justifyContent="center"
+                    fontSize="md"
+                    mb="3"
+                  >
+                    画像の選択
+                  </Text>
+                  <Input
+                    display="none"
+                    multiple
+                    name="userImageURL"
+                    type="file"
+                    id="form-image"
+                    accept=".png, .jpeg, .jpg"
+                    onChange={userPictureUploadToFirebase}
+                  />
+                </Box>
+                {/* アカウント画像の編集 */}
 
-              {/* アカウント画像の右横 */}
-              <Box mr="3" width="85%" height="180">
-                {/* ユーザー名編集 */}
-                <Text mt="5">ユーザー名</Text>
-                <Input
-                  value={editUser.userName}
-                  background="white"
-                  mb="3"
-                  type="userName"
-                  onChange={(e) =>
-                    setEditUser({
-                      ...editUser,
-                      userName: e.target.value,
-                    })
-                  }
-                />
-                {/* ユーザー名編集 */}
+                {/* アカウント画像の右横 */}
+                <Box mr="3" width="85%" height="180">
+                  {/* ユーザー名編集 */}
+                  <Text mt="5">ユーザー名</Text>
+                  <Input
+                    value={editUser.userName}
+                    background="white"
+                    mb="3"
+                    type="userName"
+                    onChange={(e) =>
+                      setEditUser({
+                        ...editUser,
+                        userName: e.target.value,
+                      })
+                    }
+                  />
+                  {/* ユーザー名編集 */}
 
-                {/* ユーザーのメール */}
-                <Text>メール</Text>
-                <Text>{loginUserData.email}</Text>
-                {/* ユーザーのメール */}
+                  {/* ユーザーのメール */}
+                  <Text>メール</Text>
+                  {/* <Text>{loginUserData.email}</Text> */}
+                  <Text>{editUser.email}</Text>
+                  {/* ユーザーのメール */}
 
-                {/* 更新ボタン */}
-                <Flex justifyContent="end">
-                  <button onClick={editLoginUser}>
-                    <Box height="6" display="flex" ml="1" mr="1" mt="1">
-                      <FontAwesomeIcon
-                        icon={faRotateRight}
-                        size="lg"
-                        color="#fe9611"
-                      />
-                      <Text ml="1">更新</Text>
-                    </Box>
-                  </button>
-                </Flex>
-                {/* 更新ボタン */}
-              </Box>
-              {/* アカウント画像の右横 */}
-            </Flex>
-          </Box>
+                  {/* 更新ボタン */}
+                  <Flex justifyContent="end">
+                    <button onClick={editLoginUser}>
+                      <Box height="6" display="flex" ml="1" mr="1" mt="1">
+                        <FontAwesomeIcon
+                          icon={faRotateRight}
+                          size="lg"
+                          color="#fe9611"
+                        />
+                        <Text ml="1">更新</Text>
+                      </Box>
+                    </button>
+                  </Flex>
+                  {/* 更新ボタン */}
+                </Box>
+                {/* アカウント画像の右横 */}
+              </Flex>
+            </Box>
+          )}
           {/* 囲いの中 */}
         </Box>
       </Flex>

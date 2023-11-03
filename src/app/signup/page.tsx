@@ -89,7 +89,7 @@ export default function Login() {
         const currentUser: any = auth.currentUser;
         await setDoc(doc(db, "users", currentUser.uid), {
           userName: user.userName,
-          password: user.password,
+          // password: user.password,
           email: user.email,
           userPicture: createUserPictureURL,
           userUid: currentUser.uid,

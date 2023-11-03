@@ -19,20 +19,21 @@ import {
 import { doc, getDoc } from "firebase/firestore";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { useSetRecoilState } from "recoil";
+import { useRecoilState, useResetRecoilState, useSetRecoilState } from "recoil";
 
 export default function Login() {
   const router = useRouter();
   //ローディング
   const [loading, setLoading] = useState<boolean>(true);
-  //ログイン時の情報
+  //ログイン時に入力したときの情報
   const [user, setUser] = useState({
     email: "",
     password: "",
   });
-
   //ログイン成功時のログイン情報
-  const setLoginUserData = useSetRecoilState(loginUser);
+  const [loginUserData, setLoginUserData] = useRecoilState(loginUser);
+  const resetStatus = useResetRecoilState(loginUser);
+  // const setLoginUserData = useSetRecoilState(loginUser);
 
   const handleSubmit = async () => {
     setPersistence(auth, browserSessionPersistence)
@@ -42,6 +43,16 @@ export default function Login() {
         return await signInWithEmailAndPassword(auth, user.email, user.password)
           .then(async (userCredential) => {
             //Login 成功！
+            await auth.onAuthStateChanged((authUser) => {
+              if (authUser) {
+                setLoginUserData({
+                  userName: authUser.displayName,
+                  userPicture: authUser.photoURL,
+                  email: authUser.email,
+                  userUid: authUser.uid,
+                });
+              }
+            });
             //Top画面へ遷移
             router.push("/top");
           })

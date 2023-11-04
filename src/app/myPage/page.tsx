@@ -31,6 +31,7 @@ import {
   getDocs,
   orderBy,
   query,
+  runTransaction,
   where,
 } from "firebase/firestore";
 import { db } from "@/lib/FirebaseConfig";
@@ -133,37 +134,43 @@ export default function myPage() {
   const clickDelete = async (id: string) => {
     //firebaseの中のデータを削除する（バック側）
     if (confirm("Postを削除します。よろしいですか？")) {
-      //いいねが押されている場合、LikedUsersを削除する
-      const likedUsersRef = collection(
-        db,
-        "users",
-        loginUserData.userUid,
-        "posts",
-        id,
-        "LikedUsers"
-      );
-      const likedUsersQuerySnapshot = await getDocs(likedUsersRef);
-      likedUsersQuerySnapshot.forEach((doc) => {
-        deleteDoc(doc.ref);
+      await runTransaction(db, async (transaction) => {
+        //いいねが押されている場合、LikedUsersを削除する
+        const likedUsersRef = collection(
+          db,
+          "users",
+          loginUserData.userUid,
+          "posts",
+          id,
+          "LikedUsers"
+        );
+        const likedUsersQuerySnapshot = await getDocs(likedUsersRef);
+        // const likedUsersQuerySnapshot = await transaction.get(likedUsersRef);
+        likedUsersQuerySnapshot.forEach((doc) => {
+          deleteDoc(doc.ref);
+        });
+        //Commentがある場合、Commentを削除する
+        const commentsRef = collection(
+          db,
+          "users",
+          loginUserData.userUid,
+          "posts",
+          id,
+          "comments"
+        );
+        const commentsQuerySnapshot = await getDocs(commentsRef);
+        commentsQuerySnapshot.forEach((doc) => {
+          deleteDoc(doc.ref);
+        });
+        //Postの削除
+        // await deleteDoc(doc(db, "users", loginUserData.userUid, "posts", id));
+        await transaction.delete(
+          doc(db, "users", loginUserData.userUid, "posts", id)
+        );
+        //表示するための処理（フロント側）
+        const deletePost = posts.filter((post: any) => post.id !== id);
+        setPosts(deletePost);
       });
-      //Commentがある場合、Commentを削除する
-      const commentsRef = collection(
-        db,
-        "users",
-        loginUserData.userUid,
-        "posts",
-        id,
-        "comments"
-      );
-      const commentsQuerySnapshot = await getDocs(commentsRef);
-      commentsQuerySnapshot.forEach((doc) => {
-        deleteDoc(doc.ref);
-      });
-      //Postの削除
-      await deleteDoc(doc(db, "users", loginUserData.userUid, "posts", id));
-      //表示するための処理（フロント側）
-      const deletePost = posts.filter((post: any) => post.id !== id);
-      setPosts(deletePost);
     }
   };
 

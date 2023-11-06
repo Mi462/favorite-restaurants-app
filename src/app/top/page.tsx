@@ -115,12 +115,25 @@ export default function Top() {
     userPicture: string,
     authorUid: string
   ) => {
-    router.push(`/comment/${id}`);
-    setCommentPostUser({
+    // router.push(`/comment/${id}`);
+    // setCommentPostUser({
+    //   userName: userName,
+    //   userPicture: userPicture,
+    //   authorUid: authorUid,
+    // });
+    const data: any = {
+      id: id,
       userName: userName,
       userPicture: userPicture,
       authorUid: authorUid,
-    });
+    };
+    router.push(
+      {
+        pathname: "comment",
+        data: data,
+      },
+      "comment"
+    );
   };
   // console.log(commentPostUser);
 

@@ -170,7 +170,7 @@ export default function Comment({ params }: { params: { id: string } }) {
   //いいね機能
   useEffect(() => {
     // if (!loginUserData.userUid) return;
-    if (commentPostUser.authorUid) {
+    if (commentPostUser.authorUid && loginUserData.userUid) {
       const postRef = doc(
         db,
         "users",

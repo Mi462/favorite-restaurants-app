@@ -126,6 +126,10 @@ export default function myPage() {
     router.push("/create");
   };
 
+  const linkToLogin = () => {
+    router.push("/");
+  };
+
   //上のcategoryの内容を変更できる
   const onChangePostCategory = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectCategory(e.target.value);
@@ -163,10 +167,10 @@ export default function myPage() {
           deleteDoc(doc.ref);
         });
         //Postの削除
-        // await deleteDoc(doc(db, "users", loginUserData.userUid, "posts", id));
-        await transaction.delete(
-          doc(db, "users", loginUserData.userUid, "posts", id)
-        );
+        await deleteDoc(doc(db, "users", loginUserData.userUid, "posts", id));
+        // await transaction.delete(
+        //   doc(db, "users", loginUserData.userUid, "posts", id)
+        // );
         //表示するための処理（フロント側）
         const deletePost = posts.filter((post: any) => post.id !== id);
         setPosts(deletePost);
@@ -218,116 +222,117 @@ export default function myPage() {
                 {/* 投稿ボタン */}
               </Box>
             </Flex>
-            {loading ? (
-              <Flex justifyContent="center" mt="100">
-                <Flex direction="column" textAlign="center">
-                  <Text fontSize="3xl">読み込み中…</Text>
+            {loginUserData.userUid ? (
+              loading ? (
+                <Flex justifyContent="center" mt="100">
+                  <Flex direction="column" textAlign="center">
+                    <Text fontSize="3xl">読み込み中…</Text>
+                  </Flex>
                 </Flex>
-              </Flex>
-            ) : posts.length > 0 ? (
-              posts.map((post: any) => {
-                if (
-                  selectCategory === "日本料理" &&
-                  post.category !== "日本料理"
-                )
-                  return;
-                if (
-                  selectCategory === "中国料理" &&
-                  post.category !== "中国料理"
-                )
-                  return;
-                if (
-                  selectCategory === "フランス料理" &&
-                  post.category !== "フランス料理"
-                )
-                  return;
-                if (
-                  selectCategory === "イタリア料理" &&
-                  post.category !== "イタリア料理"
-                )
-                  return;
-                if (
-                  selectCategory === "フランス料理" &&
-                  post.category !== "フランス料理"
-                )
-                  return;
-                if (
-                  selectCategory === "エスニック料理" &&
-                  post.category !== "エスニック料理"
-                )
-                  return;
-                return (
-                  <Box
-                    height="300"
-                    borderRadius="20"
-                    border="2px"
-                    borderColor="orange.500"
-                    mt="5"
-                    key={post.id}
-                  >
-                    <Flex>
-                      {/* 写真 */}
-                      <Image
-                        src={post.picture}
-                        alt="imageDataPost"
-                        width="50%"
-                        height="250"
-                        ml="5"
-                        mr="5"
-                        mt="5"
-                      />
-                      {/* 写真 */}
+              ) : posts.length > 0 ? (
+                posts.map((post: any) => {
+                  if (
+                    selectCategory === "日本料理" &&
+                    post.category !== "日本料理"
+                  )
+                    return;
+                  if (
+                    selectCategory === "中国料理" &&
+                    post.category !== "中国料理"
+                  )
+                    return;
+                  if (
+                    selectCategory === "フランス料理" &&
+                    post.category !== "フランス料理"
+                  )
+                    return;
+                  if (
+                    selectCategory === "イタリア料理" &&
+                    post.category !== "イタリア料理"
+                  )
+                    return;
+                  if (
+                    selectCategory === "フランス料理" &&
+                    post.category !== "フランス料理"
+                  )
+                    return;
+                  if (
+                    selectCategory === "エスニック料理" &&
+                    post.category !== "エスニック料理"
+                  )
+                    return;
+                  return (
+                    <Box
+                      height="300"
+                      borderRadius="20"
+                      border="2px"
+                      borderColor="orange.500"
+                      mt="5"
+                      key={post.id}
+                    >
+                      <Flex>
+                        {/* 写真 */}
+                        <Image
+                          src={post.picture}
+                          alt="imageDataPost"
+                          width="50%"
+                          height="250"
+                          ml="5"
+                          mr="5"
+                          mt="5"
+                        />
+                        {/* 写真 */}
 
-                      {/* 写真横のアカウント・コメント・ボタンなど */}
-                      <Box width="50%" height="250" mr="5" mt="5">
-                        <Flex direction="column">
-                          {/* 写真横のアカウント・コメント */}
-                          <Box height="220">
-                            {/* アカウント */}
-                            <Flex
-                              alignItems="center"
-                              m="3"
-                              justifyContent="space-between"
-                            >
-                              <Flex alignItems="center">
-                                <Wrap>
-                                  <WrapItem>
-                                    <Avatar
-                                      name={post.userName}
-                                      size="md"
-                                      src={post.userPicture}
-                                    ></Avatar>
-                                  </WrapItem>
-                                </Wrap>
-                                <Text fontSize="lg" ml="3">
-                                  {post.userName}
-                                </Text>
+                        {/* 写真横のアカウント・コメント・ボタンなど */}
+                        <Box width="50%" height="250" mr="5" mt="5">
+                          <Flex direction="column">
+                            {/* 写真横のアカウント・コメント */}
+                            <Box height="220">
+                              {/* アカウント */}
+                              <Flex
+                                alignItems="center"
+                                m="3"
+                                justifyContent="space-between"
+                              >
+                                <Flex alignItems="center">
+                                  <Wrap>
+                                    <WrapItem>
+                                      <Avatar
+                                        name={post.userName}
+                                        size="md"
+                                        src={post.userPicture}
+                                      ></Avatar>
+                                    </WrapItem>
+                                  </Wrap>
+                                  <Text fontSize="lg" ml="3">
+                                    {post.userName}
+                                  </Text>
+                                </Flex>
+                                <Text>{post.updatedAt}</Text>
                               </Flex>
-                              <Text>{post.updatedAt}</Text>
-                            </Flex>
-                            {/* アカウント */}
+                              {/* アカウント */}
 
-                            {/* コメント */}
-                            <Text mb="3">カテゴリ：{post.category}</Text>
-                            {/* <Box width="100%" height="55%" overflowY="scroll"> */}
-                            <Text>{post.text}</Text>
-                            {/* </Box> */}
-                            {/* コメント */}
-                          </Box>
-                          {/* 写真横のアカウント・コメント */}
+                              {/* コメント */}
+                              <Text mb="3">カテゴリ：{post.category}</Text>
+                              {/* <Box width="100%" height="55%" overflowY="scroll"> */}
+                              <Text>{post.text}</Text>
+                              {/* </Box> */}
+                              {/* コメント */}
+                            </Box>
+                            {/* 写真横のアカウント・コメント */}
 
-                          {/* ボタン */}
-                          <Box
-                            height="6"
-                            display="flex"
-                            alignItems="center"
-                            justifyContent="space-between"
-                            ml="1"
-                            mr="1"
-                            mt="1"
-                          >
-                            {/* コメントボタン */}
-                            {/* <FontAwesomeIcon
+                            {/* ボタン */}
+                            <Box
+                              height="6"
+                              display="flex"
+                              alignItems="center"
+                              justifyContent="space-between"
+                              ml="1"
+                              mr="1"
+                              mt="1"
+                            >
+                              {/* コメントボタン */}
+                              {/* <FontAwesomeIcon
                               icon={faComment}
                               size="lg"
                               color="#4299E1"
@@ -336,63 +341,79 @@ export default function myPage() {
                               }}
                               cursor="pointer"
                             /> */}
-                            {/* コメントボタン */}
+                              {/* コメントボタン */}
 
-                            {/* いいねボタン */}
-                            {/* <FontAwesomeIcon
+                              {/* いいねボタン */}
+                              {/* <FontAwesomeIcon
                               icon={faHeart}
                               size="lg"
                               color="#D53F8C"
                             /> */}
-                            {/* いいねボタン */}
+                              {/* いいねボタン */}
 
-                            {/* マップボタン */}
-                            {/* <FontAwesomeIcon
+                              {/* マップボタン */}
+                              {/* <FontAwesomeIcon
                               icon={faLocationDot}
                               size="lg"
                               color="#4299E1"
                               onClick={linkToMap}
                             /> */}
-                            {/* マップボタン */}
+                              {/* マップボタン */}
 
-                            {/* Editボタン */}
-                            <FontAwesomeIcon
-                              icon={faPenToSquare}
-                              size="lg"
-                              color="#4299E1"
-                              onClick={() => {
-                                linkToEdit(post.id);
-                              }}
-                              cursor="pointer"
-                            />
-                            {/* Editボタン */}
+                              {/* Editボタン */}
+                              <FontAwesomeIcon
+                                icon={faPenToSquare}
+                                size="lg"
+                                color="#4299E1"
+                                onClick={() => {
+                                  linkToEdit(post.id);
+                                }}
+                                cursor="pointer"
+                              />
+                              {/* Editボタン */}
 
-                            {/* 削除ボタン */}
-                            <FontAwesomeIcon
-                              icon={faTrashCan}
-                              size="lg"
-                              color="#4299E1"
-                              onClick={() => {
-                                clickDelete(post.id);
-                              }}
-                              cursor="pointer"
-                            />
-                            {/* 削除ボタン */}
-                          </Box>
-                          {/* ボタン */}
-                        </Flex>
-                      </Box>
-                      {/* 写真横のアカウント・コメント・ボタンなど */}
-                    </Flex>
-                  </Box>
-                );
-              })
-            ) : (
-              <Flex justifyContent="center" mt="100">
-                <Flex direction="column" textAlign="center">
-                  <Text fontSize="3xl">投稿は0件です</Text>
+                              {/* 削除ボタン */}
+                              <FontAwesomeIcon
+                                icon={faTrashCan}
+                                size="lg"
+                                color="#4299E1"
+                                onClick={() => {
+                                  clickDelete(post.id);
+                                }}
+                                cursor="pointer"
+                              />
+                              {/* 削除ボタン */}
+                            </Box>
+                            {/* ボタン */}
+                          </Flex>
+                        </Box>
+                        {/* 写真横のアカウント・コメント・ボタンなど */}
+                      </Flex>
+                    </Box>
+                  );
+                })
+              ) : (
+                <Flex justifyContent="center" mt="100">
+                  <Flex direction="column" textAlign="center">
+                    <Text fontSize="3xl">投稿は0件です</Text>
+                  </Flex>
                 </Flex>
-              </Flex>
+              )
+            ) : (
+              <div>
+                <Flex justifyContent="center" mt="100">
+                  <Flex direction="column" textAlign="center">
+                    <Text fontSize="3xl">ユーザーの情報がありません</Text>
+                    <Text fontSize="3xl">ログインしなおしてください</Text>
+                    <br />
+                  </Flex>
+                </Flex>
+                <Flex justifyContent="center">
+                  <Button width="30" colorScheme="orange" onClick={linkToLogin}>
+                    login
+                  </Button>
+                </Flex>
+              </div>
             )}
           </Flex>
         </Box>

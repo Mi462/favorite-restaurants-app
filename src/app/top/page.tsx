@@ -73,39 +73,42 @@ export default function Top() {
   };
 
   const postsDataFromFirebase = async () => {
-    if (!loginUserData.userUid) {
-      alert(
-        "ユーザーのデータがありません。ログインページから入りなおしてください。"
+    if (loginUserData.userUid) {
+      //Postの情報が入った配列の取得
+      const queryPosts = query(
+        collectionGroup(db, "posts"),
+        //updatedAtを基準に降順で取得
+        orderBy("updatedAt", "desc")
       );
-      return;
-    }
-    //Postの情報が入った配列の取得
-    const queryPosts = query(
-      collectionGroup(db, "posts"),
-      //updatedAtを基準に降順で取得
-      orderBy("updatedAt", "desc")
-    );
-    await getDocs(queryPosts).then((snapShot) => {
-      const getPostsData: any = snapShot.docs.map((doc) => {
-        const { id, text, category, createdAt, updatedAt, picture, authorUid } =
-          doc.data() || {};
-        const postUser = postUsers.find((p: any) => p.userUid === authorUid);
-        const { userName, userPicture } = postUser || {};
-        return {
-          id,
-          text,
-          category,
-          createdAt: format(createdAt.toDate(), "yyyy/MM/dd HH:mm"),
-          updatedAt: format(updatedAt.toDate(), "yyyy/MM/dd HH:mm"),
-          picture,
-          authorUid,
-          userName,
-          userPicture,
-        };
+      await getDocs(queryPosts).then((snapShot) => {
+        const getPostsData: any = snapShot.docs.map((doc) => {
+          const {
+            id,
+            text,
+            category,
+            createdAt,
+            updatedAt,
+            picture,
+            authorUid,
+          } = doc.data() || {};
+          const postUser = postUsers.find((p: any) => p.userUid === authorUid);
+          const { userName, userPicture } = postUser || {};
+          return {
+            id,
+            text,
+            category,
+            createdAt: format(createdAt.toDate(), "yyyy/MM/dd HH:mm"),
+            updatedAt: format(updatedAt.toDate(), "yyyy/MM/dd HH:mm"),
+            picture,
+            authorUid,
+            userName,
+            userPicture,
+          };
+        });
+        setPosts(getPostsData);
       });
-      setPosts(getPostsData);
-    });
-    setLoading(false);
+      setLoading(false);
+    }
   };
   // console.log(posts);
 
@@ -126,6 +129,10 @@ export default function Top() {
 
   const linkToCreate = () => {
     router.push("/create");
+  };
+
+  const linkToLogin = () => {
+    router.push("/");
   };
 
   //上のcategoryの内容を変更できる
@@ -176,7 +183,6 @@ export default function Top() {
                 {/* 投稿ボタン */}
               </Box>
             </Flex>
-
             {loading ? (
               <Flex justifyContent="center" mt="100">
                 <Flex direction="column" textAlign="center">

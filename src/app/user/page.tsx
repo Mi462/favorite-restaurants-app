@@ -3,6 +3,7 @@
 import {
   Avatar,
   Box,
+  Button,
   Flex,
   Input,
   Text,
@@ -146,6 +147,10 @@ export default function Top() {
       });
   };
 
+  const linkToLogin = () => {
+    router.push("/");
+  };
+
   return (
     <div>
       <Header />
@@ -159,109 +164,126 @@ export default function Top() {
         {/* Sidebar */}
 
         <Box width="60%" height="100%" mb="5">
-          {loading ? (
-            <Flex justifyContent="center" mt="100">
-              <Flex direction="column" textAlign="center">
-                <Text fontSize="3xl">読み込み中…</Text>
+          {loginUserData.userUid ? (
+            loading ? (
+              <Flex justifyContent="center" mt="100">
+                <Flex direction="column" textAlign="center">
+                  <Text fontSize="3xl">読み込み中…</Text>
+                </Flex>
               </Flex>
-            </Flex>
-          ) : (
-            <Box
-              height="190"
-              borderRadius="20"
-              border="2px"
-              borderColor="orange.500"
-              mt="5"
-            >
-              <Flex>
-                {/* アカウント画像の編集 */}
-                <Box width="25%" height="180">
-                  <Wrap display="flex" justifyContent="center">
-                    <WrapItem>
-                      {userImage === undefined ? (
-                        <label
-                          htmlFor="form-image"
-                          style={{ cursor: "pointer" }}
-                        >
+            ) : (
+              <Box
+                height="190"
+                borderRadius="20"
+                border="2px"
+                borderColor="orange.500"
+                mt="5"
+              >
+                <Flex>
+                  {/* アカウント画像の編集 */}
+                  <Box width="25%" height="180">
+                    <Wrap display="flex" justifyContent="center">
+                      <WrapItem>
+                        {userImage === undefined ? (
+                          <label
+                            htmlFor="form-image"
+                            style={{ cursor: "pointer" }}
+                          >
+                            <Avatar
+                              name="t"
+                              size="2xl"
+                              m="3"
+                              src={editUser.userPicture}
+                            ></Avatar>
+                          </label>
+                        ) : (
                           <Avatar
-                            name="t"
+                            name="s"
                             size="2xl"
                             m="3"
-                            src={editUser.userPicture}
+                            src={editUserPictureURL}
                           ></Avatar>
-                        </label>
-                      ) : (
-                        <Avatar
-                          name="s"
-                          size="2xl"
-                          m="3"
-                          src={editUserPictureURL}
-                        ></Avatar>
-                      )}
-                    </WrapItem>
-                  </Wrap>
-                  <Text
-                    display="flex"
-                    justifyContent="center"
-                    fontSize="md"
-                    mb="3"
-                  >
-                    画像の選択
-                  </Text>
-                  <Input
-                    display="none"
-                    multiple
-                    name="userImageURL"
-                    type="file"
-                    id="form-image"
-                    accept=".png, .jpeg, .jpg"
-                    onChange={userPictureUploadToFirebase}
-                  />
-                </Box>
-                {/* アカウント画像の編集 */}
+                        )}
+                      </WrapItem>
+                    </Wrap>
+                    <Text
+                      display="flex"
+                      justifyContent="center"
+                      fontSize="md"
+                      mb="3"
+                    >
+                      画像の選択
+                    </Text>
+                    <Input
+                      display="none"
+                      multiple
+                      name="userImageURL"
+                      type="file"
+                      id="form-image"
+                      accept=".png, .jpeg, .jpg"
+                      onChange={userPictureUploadToFirebase}
+                    />
+                  </Box>
+                  {/* アカウント画像の編集 */}
 
-                {/* アカウント画像の右横 */}
-                <Box mr="3" width="85%" height="180">
-                  {/* ユーザー名編集 */}
-                  <Text mt="5">ユーザー名</Text>
-                  <Input
-                    value={editUser.userName}
-                    background="white"
-                    mb="3"
-                    type="userName"
-                    onChange={(e) =>
-                      setEditUser({
-                        ...editUser,
-                        userName: e.target.value,
-                      })
-                    }
-                  />
-                  {/* ユーザー名編集 */}
+                  {/* アカウント画像の右横 */}
+                  <Box mr="3" width="85%" height="180">
+                    {/* ユーザー名編集 */}
+                    <Text mt="5">ユーザー名</Text>
+                    <Input
+                      value={editUser.userName}
+                      background="white"
+                      mb="3"
+                      type="userName"
+                      onChange={(e) =>
+                        setEditUser({
+                          ...editUser,
+                          userName: e.target.value,
+                        })
+                      }
+                    />
+                    {/* ユーザー名編集 */}
 
-                  {/* ユーザーのメール */}
-                  <Text>メール</Text>
-                  {/* <Text>{loginUserData.email}</Text> */}
-                  <Text>{editUser.email}</Text>
-                  {/* ユーザーのメール */}
+                    {/* ユーザーのメール */}
+                    <Text>メール</Text>
+                    {/* <Text>{loginUserData.email}</Text> */}
+                    <Text>{editUser.email}</Text>
+                    {/* ユーザーのメール */}
 
-                  {/* 更新ボタン */}
-                  <Flex justifyContent="end">
-                    <button onClick={editLoginUser}>
-                      <Box height="6" display="flex" ml="1" mr="1" mt="1">
-                        <FontAwesomeIcon
-                          icon={faRotateRight}
-                          size="lg"
-                          color="#fe9611"
-                        />
-                        <Text ml="1">更新</Text>
-                      </Box>
-                    </button>
-                  </Flex>
-                  {/* 更新ボタン */}
-                </Box>
-                {/* アカウント画像の右横 */}
+                    {/* 更新ボタン */}
+                    <Flex justifyContent="end">
+                      <button onClick={editLoginUser}>
+                        <Box height="6" display="flex" ml="1" mr="1" mt="1">
+                          <FontAwesomeIcon
+                            icon={faRotateRight}
+                            size="lg"
+                            color="#fe9611"
+                          />
+                          <Text ml="1">更新</Text>
+                        </Box>
+                      </button>
+                    </Flex>
+                    {/* 更新ボタン */}
+                  </Box>
+                  {/* アカウント画像の右横 */}
+                </Flex>
+              </Box>
+            )
+          ) : (
+            <div>
+              <Flex justifyContent="center" mt="100">
+                <Flex direction="column" textAlign="center">
+                  <Text fontSize="3xl">ユーザーの情報がありません</Text>
+                  <Text fontSize="3xl">ログインしなおしてください</Text>
+                  <br />
+                </Flex>
               </Flex>
-            </Box>
+              <Flex justifyContent="center">
+                <Button width="30" colorScheme="orange" onClick={linkToLogin}>
+                  login
+                </Button>
+              </Flex>
+            </div>
           )}
           {/* 囲いの中 */}
         </Box>

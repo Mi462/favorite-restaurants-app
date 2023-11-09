@@ -30,6 +30,7 @@ import { format } from "date-fns";
 import { useSetRecoilState } from "recoil";
 import { commentPost } from "@/states/states";
 import { useAuth } from "@/useAuth/useAuth";
+import classes from "./page.module.css";
 
 export default function Top() {
   //画面遷移
@@ -154,18 +155,22 @@ export default function Top() {
       <Header />
       {/* SidebarとPosts */}
       <Container maxW="1000" bg="pink">
-        <Flex>
-          {/* Sidebar */}
-          <Box width="25%" height="100%" mt="5">
-            <Sidebar />
-          </Box>
-          {/* Sidebar */}
+        <div className={classes.container}>
+          <Flex>
+            {/* Sidebar */}
+            <div className={classes.sidebar}>
+              {/* <Box width="25%" height="100%" mt="5"> */}
+              <Sidebar />
+              {/* </Box> */}
+            </div>
+            {/* Sidebar */}
 
-          {/* Posts */}
-          <Box width="75%" height="100%" mb="16">
+            {/* プルダウンリストと投稿ボタンとPosts */}
+            {/* <Box width="75%" height="100%" mb="16"> */}
             <Flex direction="column">
               <Flex justifyContent="space-between">
-                <Box mt="3" width="30%" display="flex">
+                <div className={classes.bar}>
+                  {/* <Box mt="3" width="30%" display="flex"> */}
                   {/* 上のプルダウンリスト */}
                   <Select
                     name="status"
@@ -181,8 +186,8 @@ export default function Top() {
                     <option value="エスニック料理">エスニック料理</option>
                   </Select>
                   {/* 上のプルダウンリスト */}
-                </Box>
-                <Box mt="3" width="20%" display="flex">
+                  {/* </Box> */}
+                  {/* <Box mt="3" width="20%" display="flex"> */}
                   {/* 投稿ボタン */}
                   <Button onClick={linkToCreate} borderRadius="50" width="100%">
                     <Flex>
@@ -195,14 +200,19 @@ export default function Top() {
                     </Flex>
                   </Button>
                   {/* 投稿ボタン */}
-                </Box>
+                  {/* </Box> */}
+                </div>
               </Flex>
+
+              {/* Postsが出るところ */}
               {loading ? (
-                <Flex justifyContent="center" mt="100">
-                  <Flex direction="column" textAlign="center">
-                    <Text fontSize="3xl">読み込み中…</Text>
+                <div className={classes.loading}>
+                  <Flex justifyContent="center" mt="100">
+                    <Flex direction="column" textAlign="center">
+                      <Text fontSize="3xl">読み込み中…</Text>
+                    </Flex>
                   </Flex>
-                </Flex>
+                </div>
               ) : posts.length > 0 ? (
                 posts.map((post: any) => {
                   if (
@@ -236,100 +246,106 @@ export default function Top() {
                   )
                     return;
                   return (
-                    <Box
-                      // sx={{
-                      //   position: "fixed",
+                    <div className={classes.posts}>
+                      <Box
+                        // sx={{
+                        //   position: "fixed",
 
-                      //   "@media (min-width: 768px)": {},
-                      // }}
-                      height="300"
-                      borderRadius="20"
-                      background="orange.100"
-                      border="2px"
-                      borderColor="orange.500"
-                      mt="5"
-                      cursor="pointer"
-                      key={post.id}
-                      onClick={() => {
-                        linkToComment(
-                          post.id,
-                          post.userName,
-                          post.userPicture,
-                          post.authorUid
-                        );
-                      }}
-                    >
-                      <Flex>
-                        {/* 写真 */}
-                        <Image
-                          src={post.picture}
-                          alt="imageDataPost"
-                          width="50%"
-                          height="250"
-                          ml="5"
-                          mr="5"
-                          mt="5"
-                        />
-                        {/* 写真 */}
+                        //   "@media (min-width: 768px)": {},
+                        // }}
+                        height="300"
+                        borderRadius="20"
+                        background="orange.100"
+                        border="2px"
+                        borderColor="orange.500"
+                        mt="5"
+                        cursor="pointer"
+                        key={post.id}
+                        onClick={() => {
+                          linkToComment(
+                            post.id,
+                            post.userName,
+                            post.userPicture,
+                            post.authorUid
+                          );
+                        }}
+                      >
+                        <Flex>
+                          {/* 写真 */}
+                          <Image
+                            src={post.picture}
+                            alt="imageDataPost"
+                            width="50%"
+                            height="250"
+                            ml="5"
+                            mr="5"
+                            mt="5"
+                          />
+                          {/* 写真 */}
 
-                        {/* 写真横のアカウント・コメント・ボタンなど */}
-                        <Box width="50%" height="250" mr="5" mt="5">
-                          <Flex direction="column">
-                            {/* 写真横のアカウント・コメント */}
-                            <Box height="220">
-                              {/* アカウント */}
-                              <Flex
-                                alignItems="center"
-                                m="3"
-                                justifyContent="space-between"
-                              >
-                                <Flex alignItems="center">
-                                  <Wrap>
-                                    <WrapItem>
-                                      <Avatar
-                                        name={post.userName}
-                                        size="md"
-                                        src={post.userPicture}
-                                      ></Avatar>
-                                    </WrapItem>
-                                  </Wrap>
-                                  <Text fontSize="lg" ml="3">
-                                    {post.userName}
-                                  </Text>
+                          {/* 写真横のアカウント・コメント・ボタンなど */}
+                          <Box width="50%" height="250" mr="5" mt="5">
+                            <Flex direction="column">
+                              {/* 写真横のアカウント・コメント */}
+                              <Box height="220">
+                                {/* アカウント */}
+                                <Flex
+                                  alignItems="center"
+                                  m="3"
+                                  justifyContent="space-between"
+                                >
+                                  <Flex alignItems="center">
+                                    <Wrap>
+                                      <WrapItem>
+                                        <Avatar
+                                          name={post.userName}
+                                          size="md"
+                                          src={post.userPicture}
+                                        ></Avatar>
+                                      </WrapItem>
+                                    </Wrap>
+                                    <Text fontSize="lg" ml="3">
+                                      {post.userName}
+                                    </Text>
+                                  </Flex>
+                                  <Text>{post.updatedAt}</Text>
                                 </Flex>
-                                <Text>{post.updatedAt}</Text>
-                              </Flex>
-                              {/* アカウント */}
+                                {/* アカウント */}
 
-                              {/* コメント */}
-                              <Box height="155">
-                                <Text mb="3">カテゴリ：{post.category}</Text>
-                                {/* <Box width="100%" height="55%" overflowY="scroll"> */}
-                                <Text>{post.text}</Text>
+                                {/* コメント */}
+                                <Box height="155">
+                                  <Text mb="3">カテゴリ：{post.category}</Text>
+                                  {/* <Box width="100%" height="55%" overflowY="scroll"> */}
+                                  <Text>{post.text}</Text>
+                                </Box>
+                                {/* </Box> */}
+                                {/* コメント */}
                               </Box>
-                              {/* </Box> */}
-                              {/* コメント */}
-                            </Box>
-                            {/* 写真横のアカウント・コメント */}
-                          </Flex>
-                        </Box>
-                        {/* 写真横のアカウント・コメント・ボタンなど */}
-                      </Flex>
-                    </Box>
+                              {/* 写真横のアカウント・コメント */}
+                            </Flex>
+                          </Box>
+                          {/* 写真横のアカウント・コメント・ボタンなど */}
+                        </Flex>
+                      </Box>
+                    </div>
                   );
                 })
               ) : (
-                <Flex justifyContent="center" mt="100">
-                  <Flex direction="column" textAlign="center">
-                    <Text fontSize="3xl">投稿は0件です</Text>
+                <div className={classes.notPostExisits}>
+                  <Flex justifyContent="center" mt="100">
+                    <Flex direction="column" textAlign="center">
+                      <Text fontSize="3xl">投稿は0件です</Text>
+                    </Flex>
                   </Flex>
-                </Flex>
+                </div>
               )}
+              {/* Postsが出るところ */}
             </Flex>
-          </Box>
-          {/* Posts */}
-        </Flex>
-        {/* SidebarとPosts */}
+            {/* </Box> */}
+            {/* プルダウンリストと投稿ボタンとPosts */}
+          </Flex>
+          {/* SidebarとPosts */}
+        </div>
       </Container>
     </div>
   );

@@ -16,7 +16,6 @@ import Header from "../components/header/header";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { useRouter } from "next/navigation";
-import Sidebar from "../components/sidebar/sidebar";
 import { useEffect, useState } from "react";
 import {
   collection,
@@ -167,7 +166,16 @@ export default function Top() {
                   ></Avatar>
                 </WrapItem>
               </Wrap>
-              <Text fontSize="2xl" ml="3" mr="3">
+              <Text
+                // fontSize="2xl"
+                ml="3"
+                mr="3"
+                fontSize={{
+                  base: "md",
+                  md: "2xl",
+                }}
+                bg={{ base: "red.200", md: "green.200" }}
+              >
                 {loginUserData.userName}
               </Text>
             </Box>
@@ -196,8 +204,9 @@ export default function Top() {
                 <Button
                   onClick={linkToCreate}
                   borderRadius="50"
-                  pl="10"
-                  pr="10"
+                  // pl="10"
+                  pl={{ base: "3", md: "10" }}
+                  pr={{ base: "3", md: "10" }}
                 >
                   <Flex alignItems="center">
                     <FontAwesomeIcon icon={faPlus} size="lg" color="#fe9611" />
@@ -289,7 +298,8 @@ export default function Top() {
                           {/* アカウント */}
                           <Flex
                             alignItems="center"
-                            m="3"
+                            // m="3"
+                            m={{ base: "1", md: "3" }}
                             justifyContent="space-between"
                           >
                             <Flex alignItems="center">
@@ -302,7 +312,11 @@ export default function Top() {
                                   ></Avatar>
                                 </WrapItem>
                               </Wrap>
-                              <Text fontSize="lg" ml="3">
+                              <Text
+                                fontSize="lg"
+                                ml={{ base: "1", md: "3" }}
+                                // ml="3"
+                              >
                                 {post.userName}
                               </Text>
                             </Flex>
@@ -336,10 +350,6 @@ export default function Top() {
           )}
           {/* Postsが出るところ */}
         </Flex>
-        {/* </Box> */}
-        {/* プルダウンリストと投稿ボタンとPosts */}
-        {/* </Flex> */}
-        {/* SidebarとPosts */}
       </Container>
     </div>
   );

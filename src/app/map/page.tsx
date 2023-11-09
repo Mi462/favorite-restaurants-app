@@ -25,7 +25,6 @@ import {
   faTrashCan,
 } from "@fortawesome/free-solid-svg-icons";
 import { useRouter } from "next/navigation";
-import Sidebar from "../components/sidebar/sidebar";
 import { useAuth } from "@/useAuth/useAuth";
 
 export default function Top() {

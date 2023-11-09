@@ -20,7 +20,6 @@ import {
   faTrashCan,
 } from "@fortawesome/free-solid-svg-icons";
 import { useRouter } from "next/navigation";
-import Sidebar from "../components/sidebar/sidebar";
 import { useEffect, useRef, useState } from "react";
 import {
   Query,

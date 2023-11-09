@@ -8,6 +8,7 @@ import {
   Wrap,
   WrapItem,
   Image,
+  Container,
 } from "@chakra-ui/react";
 import Header from "../../components/header/header";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -18,7 +19,6 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
-import Sidebar from "../../components/sidebar/sidebar";
 import {
   collection,
   deleteDoc,
@@ -258,158 +258,100 @@ export default function Comment({ params }: { params: { id: string } }) {
   return (
     <div>
       <Header />
-
-      <Flex>
-        {/* Sidebar */}
-        <Box width="20%" height="100%" ml="10%" mt="5">
-          <Sidebar />
-        </Box>
-        {/* Sidebar */}
-
-        {/* Posts */}
-        <Box width="60%" height="100%" mb="16">
-          <Flex direction="column">
-            {loading ? (
-              <Flex justifyContent="center" mt="100">
-                <Flex direction="column" textAlign="center">
-                  <Text fontSize="3xl">読み込み中…</Text>
-                </Flex>
-              </Flex>
-            ) : (
-              <Box
-                height="300"
-                borderRadius="20"
-                background="orange.200"
-                border="2px"
-                borderColor="orange.500"
-                mt="5"
-              >
-                <Flex>
-                  {/* 写真 */}
-                  <Image
-                    src={subPost.picture}
-                    alt="imageDataPost"
-                    width="50%"
-                    height="250"
-                    ml="5"
-                    mr="5"
-                    mt="5"
-                  />
-                  {/* 写真 */}
-
-                  {/* 写真横のアカウント・コメント・ボタンなど */}
-                  <Box width="50%" height="250" mr="5" mt="5">
-                    <Flex direction="column">
-                      {/* 写真横のアカウント・コメント */}
-                      <Box height="220">
-                        {/* アカウント */}
-                        <Flex
-                          alignItems="center"
-                          m="3"
-                          justifyContent="space-between"
-                        >
-                          <Flex alignItems="center">
-                            <Wrap>
-                              <WrapItem>
-                                <Avatar
-                                  name={subPost.userName}
-                                  size="md"
-                                  src={subPost.userPicture}
-                                ></Avatar>
-                              </WrapItem>
-                            </Wrap>
-                            <Text fontSize="lg" ml="3">
-                              {subPost.userName}
-                            </Text>
-                          </Flex>
-                          <Text>{subPost.updatedAt}</Text>
-                        </Flex>
-                        {/* アカウント */}
-
-                        {/* コメント */}
-                        <Text mb="3">ジャンル： {subPost.category}</Text>
-                        <Text>{subPost.text}</Text>
-                        {/* コメント */}
-                      </Box>
-                      {/* 写真横のアカウント・コメント */}
-
-                      {/* ボタン */}
-                      <Box
-                        height="6"
-                        display="flex"
-                        alignItems="center"
-                        justifyContent="space-between"
-                        ml="1"
-                        mr="1"
-                        mt="1"
-                      >
-                        {/* 返信ボタン */}
-                        <FontAwesomeIcon
-                          icon={faComment}
-                          size="lg"
-                          color="#4299E1"
-                          onClick={() => {
-                            linkToCommentCreate(params.id);
-                          }}
-                          cursor="pointer"
-                        />
-                        {/* 返信ボタン */}
-
-                        {/* いいねボタン */}
-                        {/* <button onClick={handleClick}> */}
-                        <Flex alignItems="center">
-                          <FontAwesomeIcon
-                            icon={faHeart}
-                            color={isLiked ? "red" : "#4299E1"}
-                            size="lg"
-                            onClick={handleClick}
-                            cursor="pointer"
-                          />
-                          <Text ml="1">{likeCount}</Text>
-                        </Flex>
-                        {/* </button> */}
-                        {/* いいねボタン */}
-
-                        {/* マップボタン */}
-                        <FontAwesomeIcon
-                          icon={faLocationDot}
-                          size="lg"
-                          color="#4299E1"
-                          onClick={linkToMap}
-                          cursor="pointer"
-                        />
-                        {/* マップボタン */}
-                      </Box>
-                      {/* ボタン */}
-                    </Flex>
-                  </Box>
-
-                  {/* 写真横のアカウント・コメント・ボタンなど */}
-                </Flex>
+      <Container maxW="1000">
+        {/* ユーザー情報とプルダウンリストと投稿ボタン */}
+        <Flex direction="column">
+          <Flex alignItems="center" justifyContent="space-between">
+            {/* ユーザー情報 */}
+            <Box display="flex" alignItems="center" p="3">
+              <Wrap>
+                <WrapItem>
+                  <Avatar
+                    name={loginUserData.userName}
+                    size="md"
+                    src={loginUserData.userPicture}
+                  ></Avatar>
+                </WrapItem>
+              </Wrap>
+              <Text fontSize="2xl" ml="3" mr="3">
+                {loginUserData.userName}
+              </Text>
+            </Box>
+            {/* ユーザー情報 */}
+            {/* プルダウンリストと投稿ボタン */}
+            <Box display="flex" alignItems="center" p="3">
+              {/* 上のプルダウンリスト */}
+              <Box mt="3" width="50%" display="flex" mr="3">
+                {/* <Select
+                  name="status"
+                  borderColor="orange.500"
+                  value={selectCategory}
+                  onChange={(e) => onChangePostCategory(e)}
+                >
+                  <option value="全て">全て</option>
+                  <option value="日本料理">日本料理</option>
+                  <option value="中国料理">中国料理</option>
+                  <option value="フランス料理">フランス料理</option>
+                  <option value="イタリア料理">イタリア料理</option>
+                  <option value="エスニック料理">エスニック料理</option>
+                </Select> */}
               </Box>
-            )}
-            {/* Posts */}
-
-            {/* Comments */}
-            {comments.map((comment: any) => {
-              return (
+              {/* 上のプルダウンリスト */}
+              {/* 投稿ボタン */}
+              <Box mt="3" width="20%">
+                {/* <Button
+                  // onClick={linkToCreate}
+                  borderRadius="50"
+                  pl="10"
+                  pr="10"
+                >
+                  <Flex alignItems="center">
+                    <FontAwesomeIcon icon={faPlus} size="lg" color="#fe9611" />
+                    <Text ml="5">投稿</Text>
+                  </Flex>
+                </Button> */}
+              </Box>
+              {/* 投稿ボタン */}
+            </Box>
+            {/* プルダウンリストと投稿ボタン */}
+          </Flex>
+          {/* ユーザー情報とプルダウンリストと投稿ボタン */}
+          {/* Posts */}
+          <Box width="100%" height="100%" mb="16">
+            <Flex direction="column">
+              {loading ? (
+                <Flex justifyContent="center" mt="100">
+                  <Flex direction="column" textAlign="center">
+                    <Text fontSize="3xl">読み込み中…</Text>
+                  </Flex>
+                </Flex>
+              ) : (
                 <Box
-                  width="95%"
-                  height="200"
+                  height="300"
                   borderRadius="20"
-                  background="orange.100"
+                  background="orange.200"
                   border="2px"
                   borderColor="orange.500"
                   mt="5"
-                  ml="5"
-                  key={comment.commentId}
                 >
                   <Flex>
+                    {/* 写真 */}
+                    <Image
+                      src={subPost.picture}
+                      alt="imageDataPost"
+                      width="50%"
+                      height="250"
+                      ml="5"
+                      mr="5"
+                      mt="5"
+                    />
+                    {/* 写真 */}
+
                     {/* 写真横のアカウント・コメント・ボタンなど */}
-                    <Box width="100%" height="190" mr="5" ml="5">
+                    <Box width="50%" height="250" mr="5" mt="5">
                       <Flex direction="column">
                         {/* 写真横のアカウント・コメント */}
-                        <Box height="160">
+                        <Box height="220">
                           {/* アカウント */}
                           <Flex
                             alignItems="center"
@@ -420,37 +362,146 @@ export default function Comment({ params }: { params: { id: string } }) {
                               <Wrap>
                                 <WrapItem>
                                   <Avatar
-                                    name={comment.userName}
+                                    name={subPost.userName}
                                     size="md"
-                                    src={comment.userPicture}
+                                    src={subPost.userPicture}
                                   ></Avatar>
                                 </WrapItem>
                               </Wrap>
                               <Text fontSize="lg" ml="3">
-                                {comment.userName}
+                                {subPost.userName}
                               </Text>
                             </Flex>
-                            <Text>{comment.createdAt}</Text>
+                            <Text>{subPost.updatedAt}</Text>
                           </Flex>
                           {/* アカウント */}
 
                           {/* コメント */}
-                          <Text>{comment.text}</Text>
+                          <Text mb="3">ジャンル： {subPost.category}</Text>
+                          <Text>{subPost.text}</Text>
                           {/* コメント */}
                         </Box>
                         {/* 写真横のアカウント・コメント */}
+
+                        {/* ボタン */}
+                        <Box
+                          height="6"
+                          display="flex"
+                          alignItems="center"
+                          justifyContent="space-between"
+                          ml="1"
+                          mr="1"
+                          mt="1"
+                        >
+                          {/* 返信ボタン */}
+                          <FontAwesomeIcon
+                            icon={faComment}
+                            size="lg"
+                            color="#4299E1"
+                            onClick={() => {
+                              linkToCommentCreate(params.id);
+                            }}
+                            cursor="pointer"
+                          />
+                          {/* 返信ボタン */}
+
+                          {/* いいねボタン */}
+                          {/* <button onClick={handleClick}> */}
+                          <Flex alignItems="center">
+                            <FontAwesomeIcon
+                              icon={faHeart}
+                              color={isLiked ? "red" : "#4299E1"}
+                              size="lg"
+                              onClick={handleClick}
+                              cursor="pointer"
+                            />
+                            <Text ml="1">{likeCount}</Text>
+                          </Flex>
+                          {/* </button> */}
+                          {/* いいねボタン */}
+
+                          {/* マップボタン */}
+                          <FontAwesomeIcon
+                            icon={faLocationDot}
+                            size="lg"
+                            color="#4299E1"
+                            onClick={linkToMap}
+                            cursor="pointer"
+                          />
+                          {/* マップボタン */}
+                        </Box>
+                        {/* ボタン */}
                       </Flex>
                     </Box>
+
                     {/* 写真横のアカウント・コメント・ボタンなど */}
                   </Flex>
                 </Box>
-              );
-            })}
+              )}
+              {/* Posts */}
 
-            {/* Comments */}
-          </Flex>
-        </Box>
-      </Flex>
+              {/* Comments */}
+              {comments.map((comment: any) => {
+                return (
+                  <Box
+                    width="95%"
+                    height="200"
+                    borderRadius="20"
+                    background="orange.100"
+                    border="2px"
+                    borderColor="orange.500"
+                    mt="5"
+                    ml="5"
+                    key={comment.commentId}
+                  >
+                    <Flex>
+                      {/* 写真横のアカウント・コメント・ボタンなど */}
+                      <Box width="100%" height="190" mr="5" ml="5">
+                        <Flex direction="column">
+                          {/* 写真横のアカウント・コメント */}
+                          <Box height="160">
+                            {/* アカウント */}
+                            <Flex
+                              alignItems="center"
+                              m="3"
+                              justifyContent="space-between"
+                            >
+                              <Flex alignItems="center">
+                                <Wrap>
+                                  <WrapItem>
+                                    <Avatar
+                                      name={comment.userName}
+                                      size="md"
+                                      src={comment.userPicture}
+                                    ></Avatar>
+                                  </WrapItem>
+                                </Wrap>
+                                <Text fontSize="lg" ml="3">
+                                  {comment.userName}
+                                </Text>
+                              </Flex>
+                              <Text>{comment.createdAt}</Text>
+                            </Flex>
+                            {/* アカウント */}
+
+                            {/* コメント */}
+                            <Text>{comment.text}</Text>
+                            {/* コメント */}
+                          </Box>
+                          {/* 写真横のアカウント・コメント */}
+                        </Flex>
+                      </Box>
+                      {/* 写真横のアカウント・コメント・ボタンなど */}
+                    </Flex>
+                  </Box>
+                );
+              })}
+
+              {/* Comments */}
+            </Flex>
+          </Box>
+        </Flex>
+      </Container>
     </div>
   );
 }

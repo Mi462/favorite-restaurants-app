@@ -22,7 +22,6 @@ import {
   faLocationDot,
 } from "@fortawesome/free-solid-svg-icons";
 import { useRouter } from "next/navigation";
-import Sidebar from "../components/sidebar/sidebar";
 import { useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import { Timestamp, doc, setDoc } from "firebase/firestore";

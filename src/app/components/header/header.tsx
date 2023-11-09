@@ -43,7 +43,9 @@ export default function Header() {
       >
         {/* アプリのタイトル欄 */}
         <Link href="/top">
-          <Heading textColor="white">Favorite Restaurants App</Heading>
+          <Heading textColor="white" size={{ lg: "lg" }}>
+            Favorite Restaurants App
+          </Heading>
         </Link>
         {/* アプリのタイトル欄 */}
 

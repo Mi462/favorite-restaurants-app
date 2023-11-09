@@ -15,7 +15,6 @@ import Header from "../components/header/header";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faRotateRight } from "@fortawesome/free-solid-svg-icons";
 import { useRouter } from "next/navigation";
-import Sidebar from "../components/sidebar/sidebar";
 import { useEffect, useState } from "react";
 import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
 import { auth, db } from "@/lib/FirebaseConfig";

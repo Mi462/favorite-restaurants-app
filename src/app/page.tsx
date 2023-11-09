@@ -31,8 +31,6 @@ export default function Login() {
     password: "",
   });
   //ログイン成功時のログイン情報
-  const [loginUserData, setLoginUserData] = useRecoilState(loginUser);
-  const resetStatus = useResetRecoilState(loginUser);
   // const setLoginUserData = useSetRecoilState(loginUser);
 
   const handleSubmit = async () => {
@@ -43,16 +41,16 @@ export default function Login() {
         return await signInWithEmailAndPassword(auth, user.email, user.password)
           .then(async (userCredential) => {
             //Login 成功！
-            await auth.onAuthStateChanged((authUser) => {
-              if (authUser) {
-                setLoginUserData({
-                  userName: authUser.displayName,
-                  userPicture: authUser.photoURL,
-                  email: authUser.email,
-                  userUid: authUser.uid,
-                });
-              }
-            });
+            // await auth.onAuthStateChanged((authUser) => {
+            //   if (authUser) {
+            //     setLoginUserData({
+            //       userName: authUser.displayName,
+            //       userPicture: authUser.photoURL,
+            //       email: authUser.email,
+            //       userUid: authUser.uid,
+            //     });
+            //   }
+            // });
             //Top画面へ遷移
             router.push("/top");
           })

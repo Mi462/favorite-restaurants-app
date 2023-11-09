@@ -39,7 +39,6 @@ import { useAuth } from "@/useAuth/useAuth";
 export default function Comment({ params }: { params: { id: string } }) {
   const router = useRouter();
   //ログインユーザー
-  // const user = useRecoilValue(loginUser);
   const loginUserData = useAuth();
   // console.log(loginUserData);
   // 「いいね」の状態管理
@@ -67,7 +66,7 @@ export default function Comment({ params }: { params: { id: string } }) {
   //ローディング
   const [loading, setLoading] = useState<boolean>(true);
 
-  console.log(commentPostUser.authorUid);
+  // console.log(commentPostUser.authorUid);
 
   //Postの取得用useEffect
   useEffect(() => {
@@ -204,7 +203,7 @@ export default function Comment({ params }: { params: { id: string } }) {
     }
   }, [loginUserData.userUid, params.id]);
 
-  console.log(isLiked);
+  // console.log(isLiked);
 
   // 「いいね」ボタンのクリックイベント
   const handleClick = useCallback(async () => {

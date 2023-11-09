@@ -6,6 +6,7 @@ import {
   Avatar,
   Box,
   Button,
+  Container,
   Flex,
   Text,
   Wrap,
@@ -50,19 +51,21 @@ export default function Sidebar() {
     router.push("/map");
   };
 
+  const breakpoints = {
+    sm: "30em", // 480px以上
+    md: "48em", // 768px以上
+    lg: "62em", // 992px以上
+    xl: "80em", // 1280px以上
+    "2xl": "96em", // 1536px以上
+  };
+
   return (
     <div>
       <Flex>
         {/* Sidebar */}
-
         <Flex direction="column" width="full">
           {/* アカウント表示 */}
-          <Box
-            display="flex"
-            alignItems="center"
-            m="3"
-            // w={["150px", "300px", "500px", "700px", "1000px"]}
-          >
+          <Box display="flex" alignItems="center" m="3">
             <Wrap>
               <WrapItem>
                 <Avatar
@@ -79,35 +82,35 @@ export default function Sidebar() {
           {/* アカウント表示 */}
 
           {/* ユーザーボタン */}
-          <Button ml="1" mr="3" mb="1" onClick={linkToUser}>
+          <Button mr="3" mb="1" onClick={linkToUser}>
             <FontAwesomeIcon icon={faUser} size="lg" color="#fe9611" />
             <Text ml="5">ユーザー</Text>
           </Button>
           {/* ユーザーボタン */}
 
           {/* My Pageボタン */}
-          <Button ml="1" mr="3" mb="1" onClick={linkToMyPage}>
+          <Button mr="3" mb="1" onClick={linkToMyPage}>
             <FontAwesomeIcon icon={faFolder} size="lg" color="#fe9611" />
             <Text ml="5">マイページ</Text>
           </Button>
           {/* My Pageボタン */}
 
           {/* ホームボタン */}
-          <Button ml="1" mr="3" mb="1" onClick={linkToTop}>
+          <Button mr="3" mb="1" onClick={linkToTop}>
             <FontAwesomeIcon icon={faHouse} size="lg" color="#fe9611" />
             <Text ml="5">ホーム</Text>
           </Button>
           {/* ホームボタン */}
 
           {/* マップボタン */}
-          <Button ml="1" mr="3" mb="3" onClick={linkToMap}>
+          <Button mr="3" mb="3" onClick={linkToMap}>
             <FontAwesomeIcon icon={faLocationDot} size="lg" color="#fe9611" />
             <Text ml="5">マップ</Text>
           </Button>
           {/* マップボタン */}
 
           {/* 投稿ボタン */}
-          <Button ml="1" mr="3" mb="1" borderRadius="50" onClick={linkToCreate}>
+          <Button mr="3" mb="1" borderRadius="50" onClick={linkToCreate}>
             <Flex justify="start">
               <FontAwesomeIcon icon={faPlus} size="lg" color="#fe9611" />
               <Text ml="5">投稿</Text>

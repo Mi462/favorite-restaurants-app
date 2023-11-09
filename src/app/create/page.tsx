@@ -4,6 +4,7 @@ import {
   Avatar,
   Box,
   Button,
+  Container,
   Flex,
   Image,
   Input,
@@ -133,140 +134,177 @@ export default function Create() {
   return (
     <div>
       <Header />
-
-      <Flex>
-        {/* Sidebar */}
-        <Box width="20%" height="100%" ml="10%" mt="5">
-          <Sidebar />
-        </Box>
-        {/* Sidebar */}
-
-        {/* Create */}
-        <Box
-          width="60%"
-          height="300"
-          borderRadius="20"
-          border="2px"
-          borderColor="orange.500"
-          mr="10%"
-          mt="5"
-        >
-          <Flex>
-            {/* 写真 */}
-            <Box width="50%" height="250" mr="10">
-              {createObjectURL === undefined ? (
-                <label htmlFor="form-image" style={{ cursor: "pointer" }}>
-                  <Box
+      <Container maxW="1000">
+        {/* ユーザー情報とプルダウンリストと投稿ボタン */}
+        <Flex direction="column">
+          <Flex alignItems="center" justifyContent="space-between">
+            {/* ユーザー情報 */}
+            <Box display="flex" alignItems="center" p="3">
+              <Wrap>
+                <WrapItem>
+                  <Avatar
+                    name={loginUserData.userName}
+                    size="md"
+                    src={loginUserData.userPicture}
+                  ></Avatar>
+                </WrapItem>
+              </Wrap>
+              <Text fontSize="2xl" ml="3" mr="3">
+                {loginUserData.userName}
+              </Text>
+            </Box>
+            {/* ユーザー情報 */}
+            {/* プルダウンリストと投稿ボタン */}
+            <Box display="flex" alignItems="center" p="3">
+              {/* 上のプルダウンリスト */}
+              <Box mt="3" width="50%" display="flex" mr="3">
+                {/* <Select
+                  name="status"
+                  borderColor="orange.500"
+                  value={selectCategory}
+                  onChange={(e) => onChangePostCategory(e)}
+                >
+                  <option value="全て">全て</option>
+                  <option value="日本料理">日本料理</option>
+                  <option value="中国料理">中国料理</option>
+                  <option value="フランス料理">フランス料理</option>
+                  <option value="イタリア料理">イタリア料理</option>
+                  <option value="エスニック料理">エスニック料理</option>
+                </Select> */}
+              </Box>
+              {/* 上のプルダウンリスト */}
+              {/* 投稿ボタン */}
+              <Box mt="3" width="20%">
+                {/* <Button
+                  // onClick={linkToCreate}
+                  borderRadius="50"
+                  pl="10"
+                  pr="10"
+                >
+                  <Flex alignItems="center">
+                    <FontAwesomeIcon icon={faPlus} size="lg" color="#fe9611" />
+                    <Text ml="5">投稿</Text>
+                  </Flex>
+                </Button> */}
+              </Box>
+              {/* 投稿ボタン */}
+            </Box>
+            {/* プルダウンリストと投稿ボタン */}
+          </Flex>
+          {/* ユーザー情報とプルダウンリストと投稿ボタン */}
+          {/* Create */}
+          <Box
+            width="100%"
+            height="300"
+            borderRadius="20"
+            border="2px"
+            borderColor="orange.500"
+            mr="10%"
+            mt="5"
+          >
+            <Flex>
+              {/* 写真 */}
+              <Box width="50%" height="250" mr="10">
+                {createObjectURL === undefined ? (
+                  <label htmlFor="form-image" style={{ cursor: "pointer" }}>
+                    <Box
+                      width="100%"
+                      height="250"
+                      background="#FEFCBF"
+                      ml="5"
+                      mr="5"
+                      mt="5"
+                      display="flex"
+                      justifyContent="center"
+                      alignItems="center"
+                    >
+                      <FontAwesomeIcon
+                        icon={faImage}
+                        size="lg"
+                        color="#4299E1"
+                      />
+                      画像を選択
+                    </Box>
+                    <Input
+                      display="none"
+                      multiple
+                      name="imageURL"
+                      type="file"
+                      id="form-image"
+                      accept=".png, .jpeg, .jpg"
+                      onChange={onFileUploadToFirebase}
+                    />
+                  </label>
+                ) : (
+                  // </Box>
+                  <Image
+                    src={createObjectURL}
+                    alt="imageDataPost"
                     width="100%"
                     height="250"
-                    background="#FEFCBF"
                     ml="5"
                     mr="5"
                     mt="5"
-                    display="flex"
-                    justifyContent="center"
-                    alignItems="center"
-                  >
-                    <FontAwesomeIcon icon={faImage} size="lg" color="#4299E1" />
-                    画像を選択
-                  </Box>
-                  <Input
-                    display="none"
-                    multiple
-                    name="imageURL"
-                    type="file"
-                    id="form-image"
-                    accept=".png, .jpeg, .jpg"
-                    onChange={onFileUploadToFirebase}
                   />
-                </label>
-              ) : (
-                // </Box>
-                <Image
-                  src={createObjectURL}
-                  alt="imageDataPost"
-                  width="100%"
-                  height="250"
-                  ml="5"
-                  mr="5"
-                  mt="5"
-                />
-              )}
-            </Box>
+                )}
+              </Box>
 
-            {/* 写真 */}
+              {/* 写真 */}
 
-            {/* 写真横のアカウント・コメント・ボタンなど */}
-            <Box width="50%" height="250" mr="5" mt="5">
-              <Flex direction="column">
-                {/* 写真横のアカウント・コメント */}
-                <Box height="210">
-                  {/* アカウント */}
-                  <Flex alignItems="center" m="1">
-                    <Wrap>
-                      <WrapItem>
-                        <Avatar
-                          name={loginUserData.userName}
-                          size="sm"
-                          src={loginUserData.userPicture}
-                        ></Avatar>
-                      </WrapItem>
-                    </Wrap>
-                    <Text fontSize="lg" ml="3">
-                      {loginUserData.userName}
-                    </Text>
-                  </Flex>
-                  {/* アカウント */}
+              {/* 写真横のアカウント・コメント・ボタンなど */}
+              <Box width="50%" height="250" mr="5" mt="5">
+                <Flex direction="column">
+                  {/* 写真横のアカウント・コメント */}
+                  <Box height="210">
+                    {/* アカウント */}
+                    <Flex alignItems="center" m="1">
+                      <Wrap>
+                        <WrapItem>
+                          <Avatar
+                            name={loginUserData.userName}
+                            size="sm"
+                            src={loginUserData.userPicture}
+                          ></Avatar>
+                        </WrapItem>
+                      </Wrap>
+                      <Text fontSize="lg" ml="3">
+                        {loginUserData.userName}
+                      </Text>
+                    </Flex>
+                    {/* アカウント */}
 
-                  {/* コメント */}
-                  <Select
-                    size="sm"
-                    borderRadius="5"
-                    onChange={(e) => {
-                      onChangePostCategory(e);
-                    }}
-                  >
-                    <option value="日本料理">日本料理</option>
-                    <option value="中国料理">中国料理</option>
-                    <option value="フランス料理">フランス料理</option>
-                    <option value="イタリア料理">イタリア料理</option>
-                    <option value="エスニック料理">エスニック料理</option>
-                  </Select>
-                  <Textarea
-                    placeholder="おすすめのお店・料理は？"
-                    value={post.text}
-                    resize="none"
-                    borderRadius={5}
-                    size="md"
-                    rows={5}
-                    mt={1}
-                    onChange={(e) => setPost({ ...post, text: e.target.value })}
-                  />
-                  {/* コメント */}
-                </Box>
-                {/* 写真横のアカウント・コメント */}
-
-                <Flex alignItems="center" justifyContent="space-between">
-                  {/* マップボタン */}
-                  <Box
-                    height="6"
-                    display="flex"
-                    alignItems="center"
-                    ml="1"
-                    mr="1"
-                    mt="1"
-                  >
-                    <FontAwesomeIcon
-                      icon={faLocationDot}
-                      size="lg"
-                      color="#4299E1"
+                    {/* コメント */}
+                    <Select
+                      size="sm"
+                      borderRadius="5"
+                      onChange={(e) => {
+                        onChangePostCategory(e);
+                      }}
+                    >
+                      <option value="日本料理">日本料理</option>
+                      <option value="中国料理">中国料理</option>
+                      <option value="フランス料理">フランス料理</option>
+                      <option value="イタリア料理">イタリア料理</option>
+                      <option value="エスニック料理">エスニック料理</option>
+                    </Select>
+                    <Textarea
+                      placeholder="おすすめのお店・料理は？"
+                      value={post.text}
+                      resize="none"
+                      borderRadius={5}
+                      size="md"
+                      rows={5}
+                      mt={1}
+                      onChange={(e) =>
+                        setPost({ ...post, text: e.target.value })
+                      }
                     />
-                    <Text ml="1">場所を挿入</Text>
+                    {/* コメント */}
                   </Box>
-                  {/* マップボタン */}
+                  {/* 写真横のアカウント・コメント */}
 
-                  {/* 投稿ボタン */}
-                  <button onClick={createPost}>
+                  <Flex alignItems="center" justifyContent="space-between">
+                    {/* マップボタン */}
                     <Box
                       height="6"
                       display="flex"
@@ -276,22 +314,42 @@ export default function Create() {
                       mt="1"
                     >
                       <FontAwesomeIcon
-                        icon={faCirclePlus}
+                        icon={faLocationDot}
                         size="lg"
-                        color="#fe9611"
+                        color="#4299E1"
                       />
-                      <Text ml="1">投稿</Text>
+                      <Text ml="1">場所を挿入</Text>
                     </Box>
-                  </button>
-                  {/* 投稿ボタン */}
+                    {/* マップボタン */}
+
+                    {/* 投稿ボタン */}
+                    <button onClick={createPost}>
+                      <Box
+                        height="6"
+                        display="flex"
+                        alignItems="center"
+                        ml="1"
+                        mr="1"
+                        mt="1"
+                      >
+                        <FontAwesomeIcon
+                          icon={faCirclePlus}
+                          size="lg"
+                          color="#fe9611"
+                        />
+                        <Text ml="1">投稿</Text>
+                      </Box>
+                    </button>
+                    {/* 投稿ボタン */}
+                  </Flex>
                 </Flex>
-              </Flex>
-            </Box>
-            {/* 写真横のアカウント・コメント・ボタンなど */}
-          </Flex>
-        </Box>
-        {/* Create */}
-      </Flex>
+              </Box>
+              {/* 写真横のアカウント・コメント・ボタンなど */}
+            </Flex>
+          </Box>
+          {/* Create */}
+        </Flex>
+      </Container>
     </div>
   );
 }

@@ -3,7 +3,6 @@
 import {
   Avatar,
   Box,
-  Button,
   Container,
   Flex,
   Text,
@@ -11,42 +10,11 @@ import {
   WrapItem,
 } from "@chakra-ui/react";
 import Header from "../components/header/header";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faComment,
-  faEnvelope,
-  faHeart,
-  faHouse,
-  faLocationDot,
-  faPenToSquare,
-  faPlus,
-  faReply,
-  faRetweet,
-  faTrashCan,
-} from "@fortawesome/free-solid-svg-icons";
-import { useRouter } from "next/navigation";
 import { useAuth } from "@/useAuth/useAuth";
 
 export default function Top() {
-  const router = useRouter();
   //ログインユーザー
   const loginUserData = useAuth();
-
-  const linkToTop = () => {
-    router.push("/top");
-  };
-
-  const linkToComment = () => {
-    router.push("/comment");
-  };
-
-  const linkToCreate = () => {
-    router.push("/create");
-  };
-
-  const linkToEdit = () => {
-    router.push("/edit");
-  };
 
   return (
     <div>
@@ -67,12 +35,11 @@ export default function Top() {
                 </WrapItem>
               </Wrap>
               <Text
-                // fontSize="2xl"
                 fontSize={{
                   base: "md",
                   md: "2xl",
                 }}
-                bg={{ base: "red.200", md: "green.200" }}
+                // bg={{ base: "red.200", md: "green.200" }}
                 ml="3"
                 mr="3"
               >
@@ -129,7 +96,6 @@ export default function Top() {
             >
               <Flex direction="column">
                 <Text
-                  // fontSize="2xl"
                   fontSize={{
                     base: "md",
                     md: "2xl",
@@ -149,7 +115,6 @@ export default function Top() {
             {/* 囲いの中 */}
           </Box>
         </Flex>
-        {/* SidebarとPosts */}
       </Container>
     </div>
   );

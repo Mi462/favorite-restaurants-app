@@ -20,24 +20,18 @@ import {
   faTrashCan,
 } from "@fortawesome/free-solid-svg-icons";
 import { useRouter } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import {
-  Query,
   collection,
-  collectionGroup,
   deleteDoc,
   doc,
-  getDoc,
   getDocs,
   orderBy,
   query,
   runTransaction,
-  where,
 } from "firebase/firestore";
 import { db } from "@/lib/FirebaseConfig";
 import { format } from "date-fns";
-import { useRecoilState, useRecoilValue } from "recoil";
-import { loginUser } from "@/states/states";
 import { useAuth } from "@/useAuth/useAuth";
 
 export default function myPage() {
@@ -126,10 +120,6 @@ export default function myPage() {
     router.push("/create");
   };
 
-  const linkToLogin = () => {
-    router.push("/");
-  };
-
   //上のcategoryの内容を変更できる
   const onChangePostCategory = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectCategory(e.target.value);
@@ -197,12 +187,11 @@ export default function myPage() {
                 </WrapItem>
               </Wrap>
               <Text
-                // fontSize="2xl"
                 fontSize={{
                   base: "md",
                   md: "2xl",
                 }}
-                bg={{ base: "red.200", md: "green.200" }}
+                // bg={{ base: "sred.200", md: "green.200" }}
                 ml="3"
                 mr="3"
               >
@@ -216,6 +205,7 @@ export default function myPage() {
               <Box mt="3" width="50%" display="flex" mr="3">
                 <Select
                   name="status"
+                  fontSize={{ base: "12", md: "md" }}
                   borderColor="orange.500"
                   value={selectCategory}
                   onChange={(e) => onChangePostCategory(e)}
@@ -234,14 +224,14 @@ export default function myPage() {
                 <Button
                   onClick={linkToCreate}
                   borderRadius="50"
-                  // pl="10"
-                  // pr="10"
                   pl={{ base: "3", md: "10" }}
                   pr={{ base: "3", md: "10" }}
                 >
                   <Flex alignItems="center">
                     <FontAwesomeIcon icon={faPlus} size="lg" color="#fe9611" />
-                    <Text ml="5">投稿</Text>
+                    <Text ml="5" fontSize={{ base: "15", md: "md" }}>
+                      投稿
+                    </Text>
                   </Flex>
                 </Button>
               </Box>
@@ -294,7 +284,6 @@ export default function myPage() {
                   return;
                 return (
                   <Box
-                    // height="300"
                     height={{ base: "200", md: "300" }}
                     borderRadius="20"
                     border="2px"
@@ -308,13 +297,9 @@ export default function myPage() {
                         src={post.picture}
                         alt="imageDataPost"
                         width="50%"
-                        // height="250"
                         height={{ base: "170", md: "250" }}
-                        // ml="5"
                         ml={{ base: "3", md: "5" }}
-                        // mr="5"
                         mr={{ base: "3", md: "5" }}
-                        // mt="5"
                         mt={{ base: "3", md: "5" }}
                       />
                       {/* 写真 */}
@@ -323,21 +308,15 @@ export default function myPage() {
                       <Box
                         width="50%"
                         height="250"
-                        // mr="5"
                         mr={{ base: "3", md: "5" }}
-                        // mt="5"
                         mt={{ base: "3", md: "5" }}
                       >
                         <Flex direction="column">
                           {/* 写真横のアカウント・コメント */}
-                          <Box
-                            // height="220"
-                            height={{ base: "150", md: "220" }}
-                          >
+                          <Box height={{ base: "150", md: "220" }}>
                             {/* アカウント */}
                             <Flex
                               alignItems="center"
-                              // m="3"
                               m={{ base: "1", md: "3" }}
                               justifyContent="space-between"
                             >
@@ -346,15 +325,12 @@ export default function myPage() {
                                   <WrapItem>
                                     <Avatar
                                       name={post.userName}
-                                      // size="md"
                                       size={{ base: "sm", md: "md" }}
                                       src={post.userPicture}
                                     ></Avatar>
                                   </WrapItem>
                                 </Wrap>
                                 <Text
-                                  // fontSize="lg"
-                                  // ml="3"
                                   fontSize={{ base: "10", md: "lg" }}
                                   ml={{ base: "1", md: "3" }}
                                   mr={{ base: "1", md: "3" }}
@@ -370,7 +346,6 @@ export default function myPage() {
 
                             {/* コメント */}
                             <Text
-                              // mb="3"
                               mb={{ base: "1", md: "3" }}
                               fontSize={{ base: "10", md: "md" }}
                             >
@@ -395,35 +370,6 @@ export default function myPage() {
                             mr="1"
                             mt="1"
                           >
-                            {/* コメントボタン */}
-                            {/* <FontAwesomeIcon
-                              icon={faComment}
-                              size="lg"
-                              color="#4299E1"
-                              onClick={() => {
-                                linkToComment(post.id);
-                              }}
-                              cursor="pointer"
-                            /> */}
-                            {/* コメントボタン */}
-
-                            {/* いいねボタン */}
-                            {/* <FontAwesomeIcon
-                              icon={faHeart}
-                              size="lg"
-                              color="#D53F8C"
-                            /> */}
-                            {/* いいねボタン */}
-
-                            {/* マップボタン */}
-                            {/* <FontAwesomeIcon
-                              icon={faLocationDot}
-                              size="lg"
-                              color="#4299E1"
-                              onClick={linkToMap}
-                            /> */}
-                            {/* マップボタン */}
-
                             {/* Editボタン */}
                             <FontAwesomeIcon
                               icon={faPenToSquare}

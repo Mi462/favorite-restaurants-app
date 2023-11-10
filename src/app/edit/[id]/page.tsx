@@ -3,7 +3,6 @@
 import {
   Avatar,
   Box,
-  Button,
   Container,
   Flex,
   Image,
@@ -31,8 +30,6 @@ import {
 } from "firebase/firestore";
 import { db } from "@/lib/FirebaseConfig";
 import { format } from "date-fns";
-import { useRecoilValue } from "recoil";
-import { loginUser } from "@/states/states";
 import { useAuth } from "@/useAuth/useAuth";
 
 export default function Edit({ params }: { params: { id: string } }) {
@@ -159,7 +156,7 @@ export default function Edit({ params }: { params: { id: string } }) {
                   base: "md",
                   md: "2xl",
                 }}
-                bg={{ base: "red.200", md: "green.200" }}
+                // bg={{ base: "red.200", md: "green.200" }}
                 ml="3"
                 mr="3"
               >
@@ -215,12 +212,10 @@ export default function Edit({ params }: { params: { id: string } }) {
           ) : (
             <Box
               width="100%"
-              // height="300"
               height={{ base: "200", md: "300" }}
               borderRadius="20"
               border="2px"
               borderColor="orange.500"
-              // mr="10%"
               mt="5"
             >
               <Flex>
@@ -229,13 +224,9 @@ export default function Edit({ params }: { params: { id: string } }) {
                   src={editPost.picture}
                   alt="imageDataPost"
                   width="50%"
-                  // height="250"
                   height={{ base: "170", md: "250" }}
-                  // ml="5"
                   ml={{ base: "3", md: "5" }}
-                  // mr="5"
                   mr={{ base: "3", md: "5" }}
-                  // mt="5"
                   mt={{ base: "3", md: "5" }}
                 />
                 {/* 写真 */}
@@ -244,36 +235,24 @@ export default function Edit({ params }: { params: { id: string } }) {
                 <Box
                   width="50%"
                   height="250"
-                  // mr="5"
                   mr={{ base: "3", md: "5" }}
-                  // mt="5"
                   mt={{ base: "3", md: "5" }}
                 >
                   <Flex direction="column">
                     {/* 写真横のアカウント・コメント */}
-                    <Box
-                      // height="210"
-                      height={{ base: "150", md: "210" }}
-                    >
+                    <Box height={{ base: "150", md: "210" }}>
                       {/* アカウント */}
-                      <Flex
-                        alignItems="center"
-                        // m="1"
-                        m={{ base: "1", md: "3" }}
-                      >
+                      <Flex alignItems="center" m={{ base: "1", md: "3" }}>
                         <Wrap>
                           <WrapItem>
                             <Avatar
                               name={editPost.userName}
-                              // size="sm"
                               size={{ base: "sm", md: "md" }}
                               src={editPost.userPicture}
                             ></Avatar>
                           </WrapItem>
                         </Wrap>
                         <Text
-                          // fontSize="lg"
-                          // ml="3"
                           fontSize={{ base: "10", md: "lg" }}
                           ml={{ base: "1", md: "3" }}
                         >
@@ -325,7 +304,6 @@ export default function Edit({ params }: { params: { id: string } }) {
                         alignItems="center"
                         ml="1"
                         mr="1"
-                        // mt="1"
                       >
                         <FontAwesomeIcon
                           icon={faLocationDot}
@@ -346,7 +324,6 @@ export default function Edit({ params }: { params: { id: string } }) {
                           alignItems="center"
                           ml="1"
                           mr="1"
-                          // mt="1"
                           mt={{ base: "1", md: "3" }}
                         >
                           <FontAwesomeIcon

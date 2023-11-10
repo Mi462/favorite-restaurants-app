@@ -3,7 +3,6 @@
 import {
   Avatar,
   Box,
-  Button,
   Container,
   Flex,
   Input,
@@ -147,10 +146,6 @@ export default function Top() {
       });
   };
 
-  const linkToLogin = () => {
-    router.push("/");
-  };
-
   return (
     <div>
       <Header />
@@ -170,14 +165,13 @@ export default function Top() {
                 </WrapItem>
               </Wrap>
               <Text
-                // fontSize="2xl"
                 ml="3"
                 mr="3"
                 fontSize={{
                   base: "md",
                   md: "2xl",
                 }}
-                bg={{ base: "red.200", md: "green.200" }}
+                // bg={{ base: "red.200", md: "green.200" }}
               >
                 {loginUserData.userName}
               </Text>
@@ -374,7 +368,6 @@ export default function Top() {
             {/* 囲いの中 */}
           </Box>
         </Flex>
-        {/* SidebarとPosts */}
       </Container>
     </div>
   );

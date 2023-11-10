@@ -3,7 +3,6 @@
 import {
   Avatar,
   Box,
-  Button,
   Container,
   Flex,
   Image,
@@ -27,8 +26,6 @@ import { v4 as uuidv4 } from "uuid";
 import { Timestamp, doc, setDoc } from "firebase/firestore";
 import { db } from "@/lib/FirebaseConfig";
 import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
-import { useRecoilValue } from "recoil";
-import { loginUser } from "@/states/states";
 import { useAuth } from "@/useAuth/useAuth";
 
 export default function Create() {
@@ -154,14 +151,13 @@ export default function Create() {
                 </WrapItem>
               </Wrap>
               <Text
-                // fontSize="2xl"
                 ml="3"
                 mr="3"
                 fontSize={{
                   base: "md",
                   md: "2xl",
                 }}
-                bg={{ base: "red.200", md: "green.200" }}
+                // bg={{ base: "red.200", md: "green.200" }}
               >
                 {loginUserData.userName}
               </Text>
@@ -208,34 +204,23 @@ export default function Create() {
           {/* Create */}
           <Box
             width="100%"
-            // height="300"
             height={{ base: "200", md: "300" }}
             borderRadius="20"
             border="2px"
             borderColor="orange.500"
-            // mr="10%"
             mt="5"
           >
             <Flex>
               {/* 写真 */}
-              <Box
-                width="50%"
-                height="250"
-                // mr="10"
-                mr={{ base: "5", md: "10" }}
-              >
+              <Box width="50%" height="250" mr={{ base: "5", md: "10" }}>
                 {createObjectURL === undefined ? (
                   <label htmlFor="form-image" style={{ cursor: "pointer" }}>
                     <Box
                       width="100%"
-                      // height="250"
                       height={{ base: "170", md: "250" }}
                       background="#FEFCBF"
-                      // ml="5"
                       ml={{ base: "3", md: "5" }}
-                      // mr="5"
                       mr={{ base: "3", md: "5" }}
-                      // mt="5"
                       mt={{ base: "3", md: "5" }}
                       display="flex"
                       justifyContent="center"
@@ -261,18 +246,13 @@ export default function Create() {
                     />
                   </label>
                 ) : (
-                  // </Box>
                   <Image
                     src={createObjectURL}
                     alt="imageDataPost"
                     width="100%"
-                    // height="250"
                     height={{ base: "170", md: "250" }}
-                    // ml="5"
                     ml={{ base: "3", md: "5" }}
-                    // mr="5"
                     mr={{ base: "3", md: "5" }}
-                    // mt="5"
                     mt={{ base: "3", md: "5" }}
                   />
                 )}
@@ -284,17 +264,12 @@ export default function Create() {
               <Box
                 width="50%"
                 height="250"
-                // mr="5"
                 mr={{ base: "3", md: "5" }}
-                // mt="5"
                 mt={{ base: "3", md: "5" }}
               >
                 <Flex direction="column">
                   {/* 写真横のアカウント・コメント */}
-                  <Box
-                    // height="210"
-                    height={{ base: "150", md: "210" }}
-                  >
+                  <Box height={{ base: "150", md: "210" }}>
                     {/* アカウント */}
                     <Flex alignItems="center" m={{ base: "1", md: "3" }}>
                       <Wrap>
@@ -356,7 +331,6 @@ export default function Create() {
                       alignItems="center"
                       ml="1"
                       mr="1"
-                      // mt="1"
                       mt={{ base: "1", md: "3" }}
                     >
                       <FontAwesomeIcon
@@ -378,7 +352,6 @@ export default function Create() {
                         alignItems="center"
                         ml="1"
                         mr="1"
-                        // mt="1"
                         mt={{ base: "1", md: "3" }}
                       >
                         <FontAwesomeIcon

@@ -140,14 +140,6 @@ export default function Top() {
     setSelectCategory(e.target.value);
   };
 
-  const breakpoints = {
-    sm: "30em", // 480px以上
-    md: "48em", // 768px以上
-    lg: "62em", // 992px以上
-    xl: "80em", // 1280px以上
-    "2xl": "96em", // 1536px以上
-  };
-
   return (
     <div>
       <Header />
@@ -167,14 +159,13 @@ export default function Top() {
                 </WrapItem>
               </Wrap>
               <Text
-                // fontSize="2xl"
                 ml="3"
                 mr="3"
                 fontSize={{
                   base: "md",
                   md: "2xl",
                 }}
-                bg={{ base: "red.200", md: "green.200" }}
+                // bg={{ base: "red.200", md: "green.200" }}
               >
                 {loginUserData.userName}
               </Text>
@@ -186,6 +177,7 @@ export default function Top() {
               <Box mt="3" width="50%" display="flex" mr="3">
                 <Select
                   name="status"
+                  fontSize={{ base: "12", md: "md" }}
                   borderColor="orange.500"
                   value={selectCategory}
                   onChange={(e) => onChangePostCategory(e)}
@@ -204,13 +196,14 @@ export default function Top() {
                 <Button
                   onClick={linkToCreate}
                   borderRadius="50"
-                  // pl="10"
                   pl={{ base: "3", md: "10" }}
                   pr={{ base: "3", md: "10" }}
                 >
                   <Flex alignItems="center">
                     <FontAwesomeIcon icon={faPlus} size="lg" color="#fe9611" />
-                    <Text ml="5">投稿</Text>
+                    <Text ml="5" fontSize={{ base: "15", md: "md" }}>
+                      投稿
+                    </Text>
                   </Flex>
                 </Button>
               </Box>
@@ -255,7 +248,6 @@ export default function Top() {
                 return;
               return (
                 <Box
-                  // height="300"
                   height={{ base: "200", md: "300" }}
                   borderRadius="20"
                   background="orange.100"
@@ -279,14 +271,9 @@ export default function Top() {
                       src={post.picture}
                       alt="imageDataPost"
                       width="50%"
-                      // width={{ base: "40%", md: "50%" }}
-                      // height="250"
                       height={{ base: "170", md: "250" }}
-                      // ml="5"
                       ml={{ base: "3", md: "5" }}
-                      // mr="5"
                       mr={{ base: "3", md: "5" }}
-                      // mt="5"
                       mt={{ base: "3", md: "5" }}
                     />
                     {/* 写真 */}
@@ -297,9 +284,7 @@ export default function Top() {
                       // width={{ base: "60%", md: "50%" }}
                       height="250"
                       mr={{ base: "3", md: "5" }}
-                      // mr="5"
                       mt={{ base: "3", md: "5" }}
-                      // mt="5"
                     >
                       <Flex direction="column">
                         {/* 写真横のアカウント・コメント */}
@@ -316,18 +301,15 @@ export default function Top() {
                                 <WrapItem>
                                   <Avatar
                                     name={post.userName}
-                                    // size="md"
                                     size={{ base: "sm", md: "md" }}
                                     src={post.userPicture}
                                   ></Avatar>
                                 </WrapItem>
                               </Wrap>
                               <Text
-                                // fontSize="lg"
                                 fontSize={{ base: "10", md: "lg" }}
                                 ml={{ base: "1", md: "3" }}
                                 mr={{ base: "1", md: "3" }}
-                                // ml="3"
                               >
                                 {post.userName}
                               </Text>
@@ -341,7 +323,6 @@ export default function Top() {
                           {/* コメント */}
                           <Box height="155">
                             <Text
-                              // mb="3"
                               mb={{ base: "1", md: "3" }}
                               fontSize={{ base: "10", md: "md" }}
                             >

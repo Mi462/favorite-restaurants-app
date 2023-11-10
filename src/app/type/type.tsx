@@ -7,6 +7,9 @@ export type PostType = {
   createdAt: Timestamp;
   updatedAt: Timestamp;
   picture: string;
+  authorUid: string;
+  userName: string;
+  userPicture: string;
 };
 
 export type loginUserType = {

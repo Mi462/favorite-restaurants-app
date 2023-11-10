@@ -131,10 +131,6 @@ export default function Top() {
     router.push("/create");
   };
 
-  const linkToLogin = () => {
-    router.push("/");
-  };
-
   //上のcategoryの内容を変更できる
   const onChangePostCategory = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectCategory(e.target.value);

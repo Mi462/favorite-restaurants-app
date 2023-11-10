@@ -154,7 +154,15 @@ export default function Edit({ params }: { params: { id: string } }) {
                   ></Avatar>
                 </WrapItem>
               </Wrap>
-              <Text fontSize="2xl" ml="3" mr="3">
+              <Text
+                fontSize={{
+                  base: "md",
+                  md: "2xl",
+                }}
+                bg={{ base: "red.200", md: "green.200" }}
+                ml="3"
+                mr="3"
+              >
                 {loginUserData.userName}
               </Text>
             </Box>
@@ -207,11 +215,12 @@ export default function Edit({ params }: { params: { id: string } }) {
           ) : (
             <Box
               width="100%"
-              height="300"
+              // height="300"
+              height={{ base: "200", md: "300" }}
               borderRadius="20"
               border="2px"
               borderColor="orange.500"
-              mr="10%"
+              // mr="10%"
               mt="5"
             >
               <Flex>
@@ -220,30 +229,54 @@ export default function Edit({ params }: { params: { id: string } }) {
                   src={editPost.picture}
                   alt="imageDataPost"
                   width="50%"
-                  height="250"
-                  ml="5"
-                  mr="5"
-                  mt="5"
+                  // height="250"
+                  height={{ base: "170", md: "250" }}
+                  // ml="5"
+                  ml={{ base: "3", md: "5" }}
+                  // mr="5"
+                  mr={{ base: "3", md: "5" }}
+                  // mt="5"
+                  mt={{ base: "3", md: "5" }}
                 />
                 {/* 写真 */}
 
                 {/* 写真横のアカウント・コメント・ボタンなど */}
-                <Box width="50%" height="250" mr="5" mt="5">
+                <Box
+                  width="50%"
+                  height="250"
+                  // mr="5"
+                  mr={{ base: "3", md: "5" }}
+                  // mt="5"
+                  mt={{ base: "3", md: "5" }}
+                >
                   <Flex direction="column">
                     {/* 写真横のアカウント・コメント */}
-                    <Box height="210">
+                    <Box
+                      // height="210"
+                      height={{ base: "150", md: "210" }}
+                    >
                       {/* アカウント */}
-                      <Flex alignItems="center" m="1">
+                      <Flex
+                        alignItems="center"
+                        // m="1"
+                        m={{ base: "1", md: "3" }}
+                      >
                         <Wrap>
                           <WrapItem>
                             <Avatar
                               name={editPost.userName}
-                              size="sm"
+                              // size="sm"
+                              size={{ base: "sm", md: "md" }}
                               src={editPost.userPicture}
                             ></Avatar>
                           </WrapItem>
                         </Wrap>
-                        <Text fontSize="lg" ml="3">
+                        <Text
+                          // fontSize="lg"
+                          // ml="3"
+                          fontSize={{ base: "10", md: "lg" }}
+                          ml={{ base: "1", md: "3" }}
+                        >
                           {editPost.userName}
                         </Text>
                       </Flex>
@@ -253,6 +286,7 @@ export default function Edit({ params }: { params: { id: string } }) {
                       <Select
                         size="sm"
                         borderRadius="5"
+                        fontSize={{ base: "10", md: "md" }}
                         value={editPost.category}
                         onChange={(e) => {
                           setEditPost({
@@ -271,7 +305,8 @@ export default function Edit({ params }: { params: { id: string } }) {
                         resize="none"
                         borderRadius={5}
                         size="md"
-                        rows={5}
+                        fontSize={{ base: "10", md: "md" }}
+                        rows={4}
                         mt={1}
                         value={editPost.text}
                         onChange={(e) => {
@@ -290,14 +325,16 @@ export default function Edit({ params }: { params: { id: string } }) {
                         alignItems="center"
                         ml="1"
                         mr="1"
-                        mt="1"
+                        // mt="1"
                       >
                         <FontAwesomeIcon
                           icon={faLocationDot}
                           size="lg"
                           color="#4299E1"
                         />
-                        <Text ml="1">ミスタードーナツ</Text>
+                        <Text ml="1" fontSize={{ base: "10", md: "lg" }}>
+                          ミスド
+                        </Text>
                       </Box>
                       {/* マップボタン */}
 
@@ -309,14 +346,17 @@ export default function Edit({ params }: { params: { id: string } }) {
                           alignItems="center"
                           ml="1"
                           mr="1"
-                          mt="1"
+                          // mt="1"
+                          mt={{ base: "1", md: "3" }}
                         >
                           <FontAwesomeIcon
                             icon={faRotateRight}
                             size="lg"
                             color="#fe9611"
                           />
-                          <Text ml="1">再投稿</Text>
+                          <Text ml="1" fontSize={{ base: "10", md: "lg" }}>
+                            再投稿
+                          </Text>
                         </Box>
                       </button>
                       {/* 投稿ボタン */}

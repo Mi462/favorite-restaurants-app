@@ -66,7 +66,16 @@ export default function Top() {
                   ></Avatar>
                 </WrapItem>
               </Wrap>
-              <Text fontSize="2xl" ml="3" mr="3">
+              <Text
+                // fontSize="2xl"
+                fontSize={{
+                  base: "md",
+                  md: "2xl",
+                }}
+                bg={{ base: "red.200", md: "green.200" }}
+                ml="3"
+                mr="3"
+              >
                 {loginUserData.userName}
               </Text>
             </Box>
@@ -119,7 +128,15 @@ export default function Top() {
               mt="5"
             >
               <Flex direction="column">
-                <Text fontSize="2xl" mt="5" ml="5">
+                <Text
+                  // fontSize="2xl"
+                  fontSize={{
+                    base: "md",
+                    md: "2xl",
+                  }}
+                  mt="5"
+                  ml="5"
+                >
                   マップ
                 </Text>
                 {/* 写真 */}

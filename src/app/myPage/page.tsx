@@ -252,7 +252,8 @@ export default function myPage() {
           {/* ユーザー情報とプルダウンリストと投稿ボタン */}
 
           {/* Postsが出るところ */}
-          {loginUserData.userUid ? (
+          {
+            // loginUserData.userUid ? (
             loading ? (
               <Flex justifyContent="center" mt="100">
                 <Flex direction="column" textAlign="center">
@@ -462,22 +463,23 @@ export default function myPage() {
                 </Flex>
               </Flex>
             )
-          ) : (
-            <div>
-              <Flex justifyContent="center" mt="100">
-                <Flex direction="column" textAlign="center">
-                  <Text fontSize="3xl">ユーザーの情報がありません</Text>
-                  <Text fontSize="3xl">ログインしなおしてください</Text>
-                  <br />
-                </Flex>
-              </Flex>
-              <Flex justifyContent="center">
-                <Button width="30" colorScheme="orange" onClick={linkToLogin}>
-                  login
-                </Button>
-              </Flex>
-            </div>
-          )}
+            // ) : (
+            //   <div>
+            //     <Flex justifyContent="center" mt="100">
+            //       <Flex direction="column" textAlign="center">
+            //         <Text fontSize="3xl">ユーザーの情報がありません</Text>
+            //         <Text fontSize="3xl">ログインしなおしてください</Text>
+            //         <br />
+            //       </Flex>
+            //     </Flex>
+            //     <Flex justifyContent="center">
+            //       <Button width="30" colorScheme="orange" onClick={linkToLogin}>
+            //         login
+            //       </Button>
+            //     </Flex>
+            //   </div>
+            // )
+          }
           {/* Postsが出るところ */}
         </Flex>
       </Container>

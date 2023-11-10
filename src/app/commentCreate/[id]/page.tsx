@@ -222,14 +222,14 @@ export default function CommentCreate({ params }: { params: { id: string } }) {
                     mr="1"
                     mt="1"
                   >
-                    <FontAwesomeIcon
+                    {/* <FontAwesomeIcon
                       icon={faLocationDot}
                       size="lg"
                       color="#4299E1"
                     />
                     <Text ml="1" fontSize={{ base: "10", md: "lg" }}>
                       場所を挿入
-                    </Text>
+                    </Text> */}
                   </Box>
                   {/* マップボタン */}
 

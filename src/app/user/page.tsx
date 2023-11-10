@@ -169,7 +169,16 @@ export default function Top() {
                   ></Avatar>
                 </WrapItem>
               </Wrap>
-              <Text fontSize="2xl" ml="3" mr="3">
+              <Text
+                // fontSize="2xl"
+                ml="3"
+                mr="3"
+                fontSize={{
+                  base: "md",
+                  md: "2xl",
+                }}
+                bg={{ base: "red.200", md: "green.200" }}
+              >
                 {loginUserData.userName}
               </Text>
             </Box>
@@ -213,7 +222,8 @@ export default function Top() {
           </Flex>
           {/* ユーザー情報とプルダウンリストと投稿ボタン */}
           <Box width="100%" height="100%" mb="5">
-            {loginUserData.userUid ? (
+            {
+              // loginUserData.userUid ? (
               loading ? (
                 <Flex justifyContent="center" mt="100">
                   <Flex direction="column" textAlign="center">
@@ -222,7 +232,8 @@ export default function Top() {
                 </Flex>
               ) : (
                 <Box
-                  height="190"
+                  // height="190"
+                  height={{ base: "140", md: "190" }}
                   borderRadius="20"
                   border="2px"
                   borderColor="orange.500"
@@ -230,7 +241,12 @@ export default function Top() {
                 >
                   <Flex>
                     {/* アカウント画像の編集 */}
-                    <Box width="25%" height="180">
+                    <Box
+                      width="25%"
+                      // height="180"
+                      height={{ base: "130", md: "180" }}
+                      m="1"
+                    >
                       <Wrap display="flex" justifyContent="center">
                         <WrapItem>
                           {userImage === undefined ? (
@@ -240,7 +256,8 @@ export default function Top() {
                             >
                               <Avatar
                                 name="t"
-                                size="2xl"
+                                // size="2xl"
+                                size={{ base: "lg", md: "2xl" }}
                                 m="3"
                                 src={editUser.userPicture}
                               ></Avatar>
@@ -248,7 +265,8 @@ export default function Top() {
                           ) : (
                             <Avatar
                               name="s"
-                              size="2xl"
+                              // size="2xl"
+                              size={{ base: "lg", md: "2xl" }}
                               m="3"
                               src={editUserPictureURL}
                             ></Avatar>
@@ -258,7 +276,8 @@ export default function Top() {
                       <Text
                         display="flex"
                         justifyContent="center"
-                        fontSize="md"
+                        // fontSize="md"
+                        fontSize={{ base: "10", md: "md" }}
                         mb="3"
                       >
                         画像の選択
@@ -276,11 +295,24 @@ export default function Top() {
                     {/* アカウント画像の編集 */}
 
                     {/* アカウント画像の右横 */}
-                    <Box mr="3" width="85%" height="180">
+                    <Box
+                      mt="1"
+                      mr="3"
+                      width="85%"
+                      // height="180"
+                      height={{ base: "130", md: "180" }}
+                    >
                       {/* ユーザー名編集 */}
-                      <Text mt="5">ユーザー名</Text>
+                      <Text
+                        // mt="3"
+                        mt={{ base: "1", md: "3" }}
+                        fontSize={{ base: "10", md: "md" }}
+                      >
+                        ユーザー名
+                      </Text>
                       <Input
                         value={editUser.userName}
+                        fontSize={{ base: "10", md: "md" }}
                         background="white"
                         mb="3"
                         type="userName"
@@ -294,9 +326,11 @@ export default function Top() {
                       {/* ユーザー名編集 */}
 
                       {/* ユーザーのメール */}
-                      <Text>メール</Text>
+                      <Text fontSize={{ base: "10", md: "md" }}>メール</Text>
                       {/* <Text>{loginUserData.email}</Text> */}
-                      <Text>{editUser.email}</Text>
+                      <Text fontSize={{ base: "10", md: "md" }}>
+                        {editUser.email}
+                      </Text>
                       {/* ユーザーのメール */}
 
                       {/* 更新ボタン */}
@@ -308,7 +342,9 @@ export default function Top() {
                               size="lg"
                               color="#fe9611"
                             />
-                            <Text ml="1">更新</Text>
+                            <Text ml="1" fontSize={{ base: "10", md: "md" }}>
+                              更新
+                            </Text>
                           </Box>
                         </button>
                       </Flex>
@@ -318,22 +354,23 @@ export default function Top() {
                   </Flex>
                 </Box>
               )
-            ) : (
-              <div>
-                <Flex justifyContent="center" mt="100">
-                  <Flex direction="column" textAlign="center">
-                    <Text fontSize="3xl">ユーザーの情報がありません</Text>
-                    <Text fontSize="3xl">ログインしなおしてください</Text>
-                    <br />
-                  </Flex>
-                </Flex>
-                <Flex justifyContent="center">
-                  <Button width="30" colorScheme="orange" onClick={linkToLogin}>
-                    login
-                  </Button>
-                </Flex>
-              </div>
-            )}
+              // ) : (
+              //   <div>
+              //     <Flex justifyContent="center" mt="100">
+              //       <Flex direction="column" textAlign="center">
+              //         <Text fontSize="3xl">ユーザーの情報がありません</Text>
+              //         <Text fontSize="3xl">ログインしなおしてください</Text>
+              //         <br />
+              //       </Flex>
+              //     </Flex>
+              //     <Flex justifyContent="center">
+              //       <Button width="30" colorScheme="orange" onClick={linkToLogin}>
+              //         login
+              //       </Button>
+              //     </Flex>
+              //   </div>
+              // )
+            }
             {/* 囲いの中 */}
           </Box>
         </Flex>

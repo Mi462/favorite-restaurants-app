@@ -20,6 +20,7 @@ import {
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import {
+  Timestamp,
   collection,
   deleteDoc,
   doc,
@@ -35,6 +36,12 @@ import { format } from "date-fns";
 import { useRecoilValue } from "recoil";
 import { commentPost, loginUser } from "@/states/states";
 import { useAuth } from "@/useAuth/useAuth";
+import {
+  CommentPostType,
+  CommentPostUserType,
+  PostType,
+  loginUserType,
+} from "@/app/type/type";
 
 export default function Comment({ params }: { params: { id: string } }) {
   const router = useRouter();
@@ -46,11 +53,11 @@ export default function Comment({ params }: { params: { id: string } }) {
   // 「いいね」数の状態管理
   const [likeCount, setLikeCount] = useState<number>(0);
   //Comment画面遷移時のPost作成者の情報
-  const commentPostUser = useRecoilValue(commentPost);
+  const commentPostUser = useRecoilValue<CommentPostUserType>(commentPost);
   //コメントしたユーザーの情報
-  const [commentUsers, setCommentUsers] = useState<any>([]);
+  const [commentUsers, setCommentUsers] = useState<loginUserType[]>([]);
   //Postの状態
-  const [subPost, setSubPost] = useState<any>({
+  const [subPost, setSubPost] = useState<PostType>({
     id: params.id,
     text: "",
     category: "日本料理",
@@ -62,7 +69,7 @@ export default function Comment({ params }: { params: { id: string } }) {
     userPicture: "",
   });
   //コメントの状態
-  const [comments, setComments] = useState<any>([]);
+  const [comments, setComments] = useState<CommentPostType[]>([]);
   //ローディング
   const [loading, setLoading] = useState<boolean>(true);
 
@@ -119,9 +126,9 @@ export default function Comment({ params }: { params: { id: string } }) {
   const commentUsersDataFromFirebase = async () => {
     const q = collection(db, "users");
     await getDocs(q).then((snapShot) => {
-      const getCommentUsersData: any = snapShot.docs.map((doc) => {
-        const { userPicture, userName, userUid } = doc.data();
-        return { userPicture, userName, userUid };
+      const getCommentUsersData: loginUserType[] = snapShot.docs.map((doc) => {
+        const { userPicture, userName, userUid, email } = doc.data();
+        return { userPicture, userName, userUid, email };
       });
       setCommentUsers(getCommentUsersData);
     });
@@ -143,11 +150,11 @@ export default function Comment({ params }: { params: { id: string } }) {
         orderBy("createdAt")
       );
       await getDocs(queryComments).then((snapShot) => {
-        const getCommentsData: any = snapShot.docs.map((doc) => {
+        const getCommentsData: CommentPostType[] = snapShot.docs.map((doc) => {
           const { commentId, text, createdAt, commentAuthorUid } =
             doc.data() || {};
           const commentUser = commentUsers.find(
-            (p: any) => p.userUid === commentAuthorUid
+            (p: loginUserType) => p.userUid === commentAuthorUid
           );
           const { userName, userPicture } = commentUser || {};
           return {
@@ -274,14 +281,13 @@ export default function Comment({ params }: { params: { id: string } }) {
                 </WrapItem>
               </Wrap>
               <Text
-                // fontSize="2xl"
                 ml="3"
                 mr="3"
                 fontSize={{
                   base: "md",
                   md: "2xl",
                 }}
-                bg={{ base: "red.200", md: "green.200" }}
+                // bg={{ base: "red.200", md: "green.200" }}
               >
                 {loginUserData.userName}
               </Text>
@@ -486,7 +492,7 @@ export default function Comment({ params }: { params: { id: string } }) {
               {/* Posts */}
 
               {/* Comments */}
-              {comments.map((comment: any) => {
+              {comments.map((comment: CommentPostType) => {
                 return (
                   <Box
                     width="95%"

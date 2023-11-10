@@ -1,35 +1,25 @@
 "use client";
 
 import {
-  Avatar,
   Box,
   Heading,
   Menu,
   MenuButton,
   MenuItem,
   MenuList,
-  Text,
-  Wrap,
-  WrapItem,
 } from "@chakra-ui/react";
 import Link from "next/link";
 import Logout from "../logout/page";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-  faDoorOpen,
   faFolder,
   faHouse,
   faLocationDot,
   faPlus,
   faUser,
 } from "@fortawesome/free-solid-svg-icons";
-import { signOut } from "firebase/auth";
-import { auth } from "@/lib/FirebaseConfig";
-import { useAuth } from "@/useAuth/useAuth";
-import { useRouter } from "next/navigation";
 
 export default function Header() {
-  const loginUserData = useAuth();
   return (
     <div>
       {/* header */}

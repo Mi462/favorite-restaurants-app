@@ -20,10 +20,11 @@ import { auth, db } from "@/lib/FirebaseConfig";
 import { Timestamp, doc, getDoc, updateDoc } from "firebase/firestore";
 import { useAuth } from "@/useAuth/useAuth";
 import { updateProfile } from "firebase/auth";
+import { loginUserType } from "../type/type";
 
 export default function Top() {
   const router = useRouter();
-  const [userImage, setUserImage] = useState();
+  const [userImage, setUserImage] = useState<Blob | MediaSource | string>();
   const [editUserPictureURL, setEditUserPictureURL] = useState<string>();
   //ローディング
   const [loading, setLoading] = useState<boolean>(true);
@@ -31,7 +32,7 @@ export default function Top() {
   const loginUserData = useAuth();
   // console.log(loginUserData);
   //編集後のログインユーザーの情報
-  const [editUser, setEditUser] = useState({
+  const [editUser, setEditUser] = useState<loginUserType>({
     userName: "",
     userPicture: "",
     email: "",
@@ -56,7 +57,7 @@ export default function Top() {
       setLoading(false);
     }
   };
-  console.log(loading);
+  // console.log(loading);
 
   //「更新」ボタン押下時に動く関数
   const editLoginUser = async (e: React.MouseEvent<HTMLElement>) => {
@@ -126,24 +127,28 @@ export default function Top() {
   };
 
   //アカウント画像登録
-  const userPictureUploadToFirebase = async (e: any) => {
-    const file = e.target.files[0];
-    setUserImage(file);
+  const userPictureUploadToFirebase = async (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    if (e.target.files) {
+      const file = e.target.files[0];
+      setUserImage(file);
 
-    //Storageにユーザー画像をアップロードする
-    const storage = getStorage();
-    const storageRef = ref(storage, "/image" + file.name);
-    await uploadBytes(storageRef, file);
+      //Storageにユーザー画像をアップロードする
+      const storage = getStorage();
+      const storageRef = ref(storage, "/image" + file.name);
+      await uploadBytes(storageRef, file);
 
-    //Storageからユーザー画像をダウンロードする
-    await getDownloadURL(ref(storage, "/image" + file.name))
-      .then((url) => {
-        // console.log(url);
-        setEditUserPictureURL(url);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+      //Storageからユーザー画像をダウンロードする
+      await getDownloadURL(ref(storage, "/image" + file.name))
+        .then((url) => {
+          // console.log(url);
+          setEditUserPictureURL(url);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    }
   };
 
   return (
@@ -270,7 +275,6 @@ export default function Top() {
                       <Text
                         display="flex"
                         justifyContent="center"
-                        // fontSize="md"
                         fontSize={{ base: "10", md: "md" }}
                         mb="3"
                       >

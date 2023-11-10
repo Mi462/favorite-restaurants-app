@@ -1,4 +1,3 @@
-import { loginUserType } from "@/app/type/type";
 import { atom } from "recoil";
 import { recoilPersist } from "recoil-persist";
 

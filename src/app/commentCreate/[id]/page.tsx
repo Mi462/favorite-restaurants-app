@@ -22,6 +22,7 @@ import { Timestamp, doc, setDoc } from "firebase/firestore";
 import { db } from "@/lib/FirebaseConfig";
 import { v4 as uuidv4 } from "uuid";
 import { useAuth } from "@/useAuth/useAuth";
+import { CommentPostType, CommentPostUserType } from "@/app/type/type";
 
 export default function CommentCreate({ params }: { params: { id: string } }) {
   const router = useRouter();
@@ -30,17 +31,22 @@ export default function CommentCreate({ params }: { params: { id: string } }) {
   const loginUserData = useAuth();
   // console.log(loginUserData);
   //Comment画面遷移時のPost作成者の情報
-  const commentPostUser = useRecoilValue(commentPost);
+  const commentPostUser = useRecoilValue<CommentPostUserType>(commentPost);
   const commentData = {
     commentId: uuidv4(),
     text: "",
     createdAt: "",
     commentAuthorUid: "",
+    userName: "",
+    userPicture: "",
   };
   //コメントの内容
-  const [comment, setCommentData] = useState(commentData);
+  const [comment, setCommentData] = useState<CommentPostType>(commentData);
 
-  const createComment = async (id: string, e: any) => {
+  const createComment = async (
+    id: string,
+    e: React.MouseEvent<HTMLElement, MouseEvent>
+  ) => {
     e.preventDefault();
     if (comment.text === "") {
       alert(" コメントが入力されていません。");

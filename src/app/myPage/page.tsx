@@ -33,20 +33,21 @@ import {
 import { db } from "@/lib/FirebaseConfig";
 import { format } from "date-fns";
 import { useAuth } from "@/useAuth/useAuth";
+import { PostType, loginUserType } from "../type/type";
 
 export default function myPage() {
   //画面遷移
   const router = useRouter();
   //状態
-  const [posts, setPosts] = useState([]);
+  const [posts, setPosts] = useState<PostType[]>([]);
   //上のプルダウンの状態
-  const [selectCategory, setSelectCategory] = useState("全て");
+  const [selectCategory, setSelectCategory] = useState<string>("全て");
   //ログインユーザーの情報
   const loginUserData = useAuth();
   // const [loginUserData, setLoginUserData] = useRecoilState(loginUser);
   // console.log(loginUserData.userUid);
   //Postしたユーザーの情報
-  const [postUsers, setPostUsers] = useState<any>([]);
+  const [postUsers, setPostUsers] = useState<loginUserType[]>([]);
   //ローディング
   const [loading, setLoading] = useState<boolean>(true);
 
@@ -63,9 +64,9 @@ export default function myPage() {
   const postUsersDataFromFirebase = async () => {
     const q = collection(db, "users");
     await getDocs(q).then((snapShot) => {
-      const getUsersData: any = snapShot.docs.map((doc) => {
-        const { userPicture, userName, userUid } = doc.data();
-        return { userPicture, userName, userUid };
+      const getUsersData: loginUserType[] = snapShot.docs.map((doc) => {
+        const { userPicture, userName, userUid, email } = doc.data();
+        return { userPicture, userName, userUid, email };
       });
       setPostUsers(getUsersData);
     });
@@ -79,7 +80,7 @@ export default function myPage() {
       //Updateを基準に降順で取得
       const q = query(postsData, orderBy("updatedAt", "desc"));
       await getDocs(q).then((snapShot) => {
-        const getPostsData: any = snapShot.docs.map((doc) => {
+        const getPostsData: PostType[] = snapShot.docs.map((doc) => {
           const {
             id,
             text,
@@ -89,7 +90,9 @@ export default function myPage() {
             picture,
             authorUid,
           } = doc.data();
-          const postUser = postUsers.find((p: any) => p.userUid === authorUid);
+          const postUser = postUsers.find(
+            (p: loginUserType) => p.userUid === authorUid
+          );
           const { userName, userPicture } = postUser || {};
           return {
             id,
@@ -162,7 +165,7 @@ export default function myPage() {
         //   doc(db, "users", loginUserData.userUid, "posts", id)
         // );
         //表示するための処理（フロント側）
-        const deletePost = posts.filter((post: any) => post.id !== id);
+        const deletePost = posts.filter((post: PostType) => post.id !== id);
         setPosts(deletePost);
       });
     }
@@ -251,7 +254,7 @@ export default function myPage() {
                 </Flex>
               </Flex>
             ) : posts.length > 0 ? (
-              posts.map((post: any) => {
+              posts.map((post: PostType) => {
                 if (
                   selectCategory === "日本料理" &&
                   post.category !== "日本料理"

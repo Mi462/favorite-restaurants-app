@@ -27,6 +27,7 @@ import { Timestamp, doc, setDoc } from "firebase/firestore";
 import { db } from "@/lib/FirebaseConfig";
 import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
 import { useAuth } from "@/useAuth/useAuth";
+import { CreatePostType } from "../type/type";
 
 export default function Create() {
   //画面遷移用
@@ -34,11 +35,10 @@ export default function Create() {
   //画像のURL管理
   const [createObjectURL, setCreateObjectURL] = useState<string>();
   //fileのオブジェクト管理
-  const [image, setImage] = useState<any>();
+  const [image, setImage] = useState<Blob | MediaSource | string>();
   //categoryの状態
-  const [selectCategory, setSelectCategory] = useState("日本料理");
+  const [selectCategory, setSelectCategory] = useState<string>("日本料理");
   //ログインユーザー
-  // const user = useRecoilValue(loginUser);
   const loginUserData = useAuth();
   // console.log(loginUserData);
 
@@ -46,16 +46,19 @@ export default function Create() {
     id: uuidv4(),
     text: "",
     category: "日本料理",
-    createdAt: "",
-    updatedAt: "",
+    createdAt: Timestamp.now(),
+    updatedAt: Timestamp.now(),
     picture: "",
+    authorUid: "",
+    userName: "",
+    userPicture: "",
   };
 
   //投稿内容
-  const [post, setPost] = useState(postData);
+  const [post, setPost] = useState<CreatePostType>(postData);
 
   //投稿ボタン押下時にFirebaseにデータが登録され、Top画面に遷移する関数
-  const createPost = async (e: any) => {
+  const createPost = async (e: React.MouseEvent<HTMLElement, MouseEvent>) => {
     e.preventDefault();
     if (!loginUserData.userUid) {
       alert(
@@ -96,38 +99,42 @@ export default function Create() {
     //Top画面に遷移する
     router.push("/top");
   };
-
+  // console.log(post);
   //categoryの内容を変更できる関数
   const onChangePostCategory = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectCategory(e.target.value);
   };
 
   //画像を選択してFirebaseにアップロードとダウンロード、さらに表示する関数
-  const onFileUploadToFirebase = async (e: any) => {
-    const file = e.target.files[0];
-    // console.log(file);
-    setImage(file);
+  const onFileUploadToFirebase = async (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    if (e.target.files) {
+      const file = e.target.files[0];
+      // console.log(file);
+      setImage(file);
 
-    //Storageに画像をアップロードする
-    const storage = getStorage();
-    const storageRef = ref(storage, "/image" + file.name);
-    await uploadBytes(storageRef, file)
-      .then((snapshot) => {
-        // console.log("Uploaded a blob or file!");
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+      //Storageに画像をアップロードする
+      const storage = getStorage();
+      const storageRef = ref(storage, "/image" + file.name);
+      await uploadBytes(storageRef, file)
+        .then((snapshot) => {
+          // console.log("Uploaded a blob or file!");
+        })
+        .catch((error) => {
+          console.log(error);
+        });
 
-    //Storageから画像をダウンロードする
-    await getDownloadURL(ref(storage, "/image" + file.name))
-      .then((url) => {
-        // console.log(url);
-        setCreateObjectURL(url);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+      //Storageから画像をダウンロードする
+      await getDownloadURL(ref(storage, "/image" + file.name))
+        .then((url) => {
+          // console.log(url);
+          setCreateObjectURL(url);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    }
   };
 
   // console.log(image);

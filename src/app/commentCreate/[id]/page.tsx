@@ -46,6 +46,11 @@ export default function CommentCreate({ params }: { params: { id: string } }) {
       alert(" コメントが入力されていません。");
       return;
     }
+    //textに100文字以上入力されていないかチェック
+    if (comment.text.replace(/\n/g, "").length > 100) {
+      alert("入力できる文字数は100までです。");
+      return;
+    }
     //Firebaseにデータを登録する
     await setDoc(
       doc(
@@ -146,18 +151,28 @@ export default function CommentCreate({ params }: { params: { id: string } }) {
           {/* CommentEdit */}
           <Box
             width="100%"
-            height="255"
+            // height="255"
+            height={{ base: "230", md: "255" }}
             borderRadius="20"
             border="2px"
             borderColor="orange.500"
-            mr="10%"
-            mt="5"
+            // mr="10%"
+            // mt="5"
+            mt={{ base: "3", md: "5" }}
           >
             <Flex direction="column">
               {/* アカウント・Edit・ボタンなど */}
-              <Box height="250" m="5">
+              <Box
+                // height="250"
+                height={{ base: "10", md: "210" }}
+                // m="5"
+                m={{ base: "3", md: "5" }}
+              >
                 {/* アカウント・Edit */}
-                <Box height="180">
+                <Box
+                  // height="180"
+                  height={{ base: "170", md: "180" }}
+                >
                   {/* アカウント */}
                   <Flex alignItems="center" m="1">
                     <Wrap>
@@ -169,7 +184,12 @@ export default function CommentCreate({ params }: { params: { id: string } }) {
                         ></Avatar>
                       </WrapItem>
                     </Wrap>
-                    <Text fontSize="lg" ml="3">
+                    <Text
+                      // fontSize="lg"
+                      fontSize={{ base: "10", md: "lg" }}
+                      // ml="3"
+                      ml={{ base: "1", md: "3" }}
+                    >
                       {loginUserData.userName}
                     </Text>
                   </Flex>
@@ -195,6 +215,7 @@ export default function CommentCreate({ params }: { params: { id: string } }) {
                   {/* マップボタン */}
                   <Box
                     height="6"
+                    // height={{ base: "3", md: "6" }}
                     display="flex"
                     alignItems="center"
                     ml="1"
@@ -206,7 +227,9 @@ export default function CommentCreate({ params }: { params: { id: string } }) {
                       size="lg"
                       color="#4299E1"
                     />
-                    <Text ml="1">場所を挿入</Text>
+                    <Text ml="1" fontSize={{ base: "10", md: "lg" }}>
+                      場所を挿入
+                    </Text>
                   </Box>
                   {/* マップボタン */}
 
@@ -229,7 +252,9 @@ export default function CommentCreate({ params }: { params: { id: string } }) {
                         size="lg"
                         color="#fe9611"
                       />
-                      <Text ml="1">コメント</Text>
+                      <Text ml="1" fontSize={{ base: "10", md: "lg" }}>
+                        コメント
+                      </Text>
                     </Box>
                   </button>
                   {/* 投稿ボタン */}

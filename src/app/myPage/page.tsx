@@ -179,10 +179,8 @@ export default function myPage() {
   };
 
   return (
-    <div className="screen">
+    <div>
       <Header />
-
-      {/* SidebarとPosts */}
       <Container maxW="1000" mb="16">
         {/* ユーザー情報とプルダウンリストと投稿ボタン */}
         <Flex direction="column">
@@ -198,7 +196,16 @@ export default function myPage() {
                   ></Avatar>
                 </WrapItem>
               </Wrap>
-              <Text fontSize="2xl" ml="3" mr="3">
+              <Text
+                // fontSize="2xl"
+                fontSize={{
+                  base: "md",
+                  md: "2xl",
+                }}
+                bg={{ base: "red.200", md: "green.200" }}
+                ml="3"
+                mr="3"
+              >
                 {loginUserData.userName}
               </Text>
             </Box>
@@ -227,8 +234,10 @@ export default function myPage() {
                 <Button
                   onClick={linkToCreate}
                   borderRadius="50"
-                  pl="10"
-                  pr="10"
+                  // pl="10"
+                  // pr="10"
+                  pl={{ base: "3", md: "10" }}
+                  pr={{ base: "3", md: "10" }}
                 >
                   <Flex alignItems="center">
                     <FontAwesomeIcon icon={faPlus} size="lg" color="#fe9611" />
@@ -284,7 +293,8 @@ export default function myPage() {
                   return;
                 return (
                   <Box
-                    height="300"
+                    // height="300"
+                    height={{ base: "200", md: "300" }}
                     borderRadius="20"
                     border="2px"
                     borderColor="orange.500"
@@ -297,22 +307,37 @@ export default function myPage() {
                         src={post.picture}
                         alt="imageDataPost"
                         width="50%"
-                        height="250"
-                        ml="5"
-                        mr="5"
-                        mt="5"
+                        // height="250"
+                        height={{ base: "170", md: "250" }}
+                        // ml="5"
+                        ml={{ base: "3", md: "5" }}
+                        // mr="5"
+                        mr={{ base: "3", md: "5" }}
+                        // mt="5"
+                        mt={{ base: "3", md: "5" }}
                       />
                       {/* 写真 */}
 
                       {/* 写真横のアカウント・コメント・ボタンなど */}
-                      <Box width="50%" height="250" mr="5" mt="5">
+                      <Box
+                        width="50%"
+                        height="250"
+                        // mr="5"
+                        mr={{ base: "3", md: "5" }}
+                        // mt="5"
+                        mt={{ base: "3", md: "5" }}
+                      >
                         <Flex direction="column">
                           {/* 写真横のアカウント・コメント */}
-                          <Box height="220">
+                          <Box
+                            // height="220"
+                            height={{ base: "150", md: "220" }}
+                          >
                             {/* アカウント */}
                             <Flex
                               alignItems="center"
-                              m="3"
+                              // m="3"
+                              m={{ base: "1", md: "3" }}
                               justifyContent="space-between"
                             >
                               <Flex alignItems="center">
@@ -320,23 +345,40 @@ export default function myPage() {
                                   <WrapItem>
                                     <Avatar
                                       name={post.userName}
-                                      size="md"
+                                      // size="md"
+                                      size={{ base: "sm", md: "md" }}
                                       src={post.userPicture}
                                     ></Avatar>
                                   </WrapItem>
                                 </Wrap>
-                                <Text fontSize="lg" ml="3">
+                                <Text
+                                  // fontSize="lg"
+                                  // ml="3"
+                                  fontSize={{ base: "10", md: "lg" }}
+                                  ml={{ base: "1", md: "3" }}
+                                  mr={{ base: "1", md: "3" }}
+                                >
                                   {post.userName}
                                 </Text>
                               </Flex>
-                              <Text>{post.updatedAt}</Text>
+                              <Text fontSize={{ base: "10", md: "md" }}>
+                                {post.updatedAt}
+                              </Text>
                             </Flex>
                             {/* アカウント */}
 
                             {/* コメント */}
-                            <Text mb="3">カテゴリ：{post.category}</Text>
+                            <Text
+                              // mb="3"
+                              mb={{ base: "1", md: "3" }}
+                              fontSize={{ base: "10", md: "md" }}
+                            >
+                              カテゴリ：{post.category}
+                            </Text>
                             {/* <Box width="100%" height="55%" overflowY="scroll"> */}
-                            <Text>{post.text}</Text>
+                            <Text fontSize={{ base: "10", md: "md" }}>
+                              {post.text}
+                            </Text>
                             {/* </Box> */}
                             {/* コメント */}
                           </Box>

@@ -258,7 +258,7 @@ export default function Comment({ params }: { params: { id: string } }) {
   return (
     <div>
       <Header />
-      <Container maxW="1000">
+      <Container maxW="1000" mb="16">
         {/* ユーザー情報とプルダウンリストと投稿ボタン */}
         <Flex direction="column">
           <Flex alignItems="center" justifyContent="space-between">
@@ -273,7 +273,16 @@ export default function Comment({ params }: { params: { id: string } }) {
                   ></Avatar>
                 </WrapItem>
               </Wrap>
-              <Text fontSize="2xl" ml="3" mr="3">
+              <Text
+                // fontSize="2xl"
+                ml="3"
+                mr="3"
+                fontSize={{
+                  base: "md",
+                  md: "2xl",
+                }}
+                bg={{ base: "red.200", md: "green.200" }}
+              >
                 {loginUserData.userName}
               </Text>
             </Box>
@@ -327,7 +336,8 @@ export default function Comment({ params }: { params: { id: string } }) {
                 </Flex>
               ) : (
                 <Box
-                  height="300"
+                  // height="300"
+                  height={{ base: "200", md: "300" }}
                   borderRadius="20"
                   background="orange.200"
                   border="2px"
@@ -340,22 +350,38 @@ export default function Comment({ params }: { params: { id: string } }) {
                       src={subPost.picture}
                       alt="imageDataPost"
                       width="50%"
-                      height="250"
-                      ml="5"
-                      mr="5"
-                      mt="5"
+                      // width={{ base: "40%", md: "50%" }}
+                      // height="250"
+                      height={{ base: "170", md: "250" }}
+                      // ml="5"
+                      ml={{ base: "3", md: "5" }}
+                      // mr="5"
+                      mr={{ base: "3", md: "5" }}
+                      // mt="5"
+                      mt={{ base: "3", md: "5" }}
                     />
                     {/* 写真 */}
 
                     {/* 写真横のアカウント・コメント・ボタンなど */}
-                    <Box width="50%" height="250" mr="5" mt="5">
+                    <Box
+                      width="50%"
+                      height="250"
+                      // mr="5"
+                      mr={{ base: "3", md: "5" }}
+                      // mt="5"
+                      mt={{ base: "3", md: "5" }}
+                    >
                       <Flex direction="column">
                         {/* 写真横のアカウント・コメント */}
-                        <Box height="220">
+                        <Box
+                          // height="220"
+                          height={{ base: "150", md: "220" }}
+                        >
                           {/* アカウント */}
                           <Flex
                             alignItems="center"
-                            m="3"
+                            // m="3"
+                            m={{ base: "1", md: "3" }}
                             justifyContent="space-between"
                           >
                             <Flex alignItems="center">
@@ -363,22 +389,39 @@ export default function Comment({ params }: { params: { id: string } }) {
                                 <WrapItem>
                                   <Avatar
                                     name={subPost.userName}
-                                    size="md"
+                                    // size="md"
+                                    size={{ base: "sm", md: "md" }}
                                     src={subPost.userPicture}
                                   ></Avatar>
                                 </WrapItem>
                               </Wrap>
-                              <Text fontSize="lg" ml="3">
+                              <Text
+                                // fontSize="lg"
+                                fontSize={{ base: "10", md: "lg" }}
+                                // ml="3"
+                                ml={{ base: "1", md: "3" }}
+                                mr={{ base: "1", md: "3" }}
+                              >
                                 {subPost.userName}
                               </Text>
                             </Flex>
-                            <Text>{subPost.updatedAt}</Text>
+                            <Text fontSize={{ base: "10", md: "md" }}>
+                              {subPost.updatedAt}
+                            </Text>
                           </Flex>
                           {/* アカウント */}
 
                           {/* コメント */}
-                          <Text mb="3">ジャンル： {subPost.category}</Text>
-                          <Text>{subPost.text}</Text>
+                          <Text
+                            // mb="3"
+                            mb={{ base: "1", md: "3" }}
+                            fontSize={{ base: "10", md: "md" }}
+                          >
+                            ジャンル： {subPost.category}
+                          </Text>
+                          <Text fontSize={{ base: "10", md: "md" }}>
+                            {subPost.text}
+                          </Text>
                           {/* コメント */}
                         </Box>
                         {/* 写真横のアカウント・コメント */}
@@ -415,7 +458,9 @@ export default function Comment({ params }: { params: { id: string } }) {
                               onClick={handleClick}
                               cursor="pointer"
                             />
-                            <Text ml="1">{likeCount}</Text>
+                            <Text ml="1" fontSize={{ base: "10", md: "lg" }}>
+                              {likeCount}
+                            </Text>
                           </Flex>
                           {/* </button> */}
                           {/* いいねボタン */}
@@ -445,49 +490,71 @@ export default function Comment({ params }: { params: { id: string } }) {
                 return (
                   <Box
                     width="95%"
-                    height="200"
+                    // height="200"
+                    height={{ base: "130", md: "200" }}
                     borderRadius="20"
                     background="orange.100"
                     border="2px"
                     borderColor="orange.500"
                     mt="5"
-                    ml="5"
+                    // ml="5"
+                    ml={{ base: "3", md: "5" }}
                     key={comment.commentId}
                   >
                     <Flex>
                       {/* 写真横のアカウント・コメント・ボタンなど */}
-                      <Box width="100%" height="190" mr="5" ml="5">
+                      <Box
+                        width="100%"
+                        // height="190"
+                        height={{ base: "100", md: "160" }}
+                        // mr="5"
+                        mr={{ base: "3", md: "5" }}
+                        // ml="5"
+                        ml={{ base: "3", md: "5" }}
+                        mt={{ base: "3", md: "5" }}
+                        // bg="green"
+                      >
                         <Flex direction="column">
                           {/* 写真横のアカウント・コメント */}
-                          <Box height="160">
-                            {/* アカウント */}
-                            <Flex
-                              alignItems="center"
-                              m="3"
-                              justifyContent="space-between"
-                            >
-                              <Flex alignItems="center">
-                                <Wrap>
-                                  <WrapItem>
-                                    <Avatar
-                                      name={comment.userName}
-                                      size="md"
-                                      src={comment.userPicture}
-                                    ></Avatar>
-                                  </WrapItem>
-                                </Wrap>
-                                <Text fontSize="lg" ml="3">
-                                  {comment.userName}
-                                </Text>
-                              </Flex>
-                              <Text>{comment.createdAt}</Text>
+                          {/* <Box height="160" bg="yellow"> */}
+                          {/* アカウント */}
+                          <Flex
+                            alignItems="center"
+                            justifyContent="space-between"
+                            mb="1"
+                            // bg="pink"
+                          >
+                            <Flex alignItems="center">
+                              <Wrap>
+                                <WrapItem>
+                                  <Avatar
+                                    name={comment.userName}
+                                    // size="md"
+                                    size={{ base: "sm", md: "md" }}
+                                    src={comment.userPicture}
+                                  ></Avatar>
+                                </WrapItem>
+                              </Wrap>
+                              <Text
+                                // fontSize="lg"
+                                fontSize={{ base: "10", md: "lg" }}
+                                ml="3"
+                              >
+                                {comment.userName}
+                              </Text>
                             </Flex>
-                            {/* アカウント */}
+                            <Text fontSize={{ base: "10", md: "lg" }}>
+                              {comment.createdAt}
+                            </Text>
+                          </Flex>
+                          {/* アカウント */}
 
-                            {/* コメント */}
-                            <Text>{comment.text}</Text>
-                            {/* コメント */}
-                          </Box>
+                          {/* コメント */}
+                          <Text fontSize={{ base: "10", md: "lg" }}>
+                            {comment.text}
+                          </Text>
+                          {/* コメント */}
+                          {/* </Box> */}
                           {/* 写真横のアカウント・コメント */}
                         </Flex>
                       </Box>

@@ -255,12 +255,8 @@ export default function Top() {
                 return;
               return (
                 <Box
-                  // sx={{
-                  //   position: "fixed",
-
-                  //   "@media (min-width: 768px)": {},
-                  // }}
-                  height="300"
+                  // height="300"
+                  height={{ base: "200", md: "300" }}
                   borderRadius="20"
                   background="orange.100"
                   border="2px"
@@ -283,15 +279,28 @@ export default function Top() {
                       src={post.picture}
                       alt="imageDataPost"
                       width="50%"
-                      height="250"
-                      ml="5"
-                      mr="5"
-                      mt="5"
+                      // width={{ base: "40%", md: "50%" }}
+                      // height="250"
+                      height={{ base: "170", md: "250" }}
+                      // ml="5"
+                      ml={{ base: "3", md: "5" }}
+                      // mr="5"
+                      mr={{ base: "3", md: "5" }}
+                      // mt="5"
+                      mt={{ base: "3", md: "5" }}
                     />
                     {/* 写真 */}
 
                     {/* 写真横のアカウント・コメント・ボタンなど */}
-                    <Box width="50%" height="250" mr="5" mt="5">
+                    <Box
+                      width="50%"
+                      // width={{ base: "60%", md: "50%" }}
+                      height="250"
+                      mr={{ base: "3", md: "5" }}
+                      // mr="5"
+                      mt={{ base: "3", md: "5" }}
+                      // mt="5"
+                    >
                       <Flex direction="column">
                         {/* 写真横のアカウント・コメント */}
                         <Box height="220">
@@ -307,28 +316,41 @@ export default function Top() {
                                 <WrapItem>
                                   <Avatar
                                     name={post.userName}
-                                    size="md"
+                                    // size="md"
+                                    size={{ base: "sm", md: "md" }}
                                     src={post.userPicture}
                                   ></Avatar>
                                 </WrapItem>
                               </Wrap>
                               <Text
-                                fontSize="lg"
+                                // fontSize="lg"
+                                fontSize={{ base: "10", md: "lg" }}
                                 ml={{ base: "1", md: "3" }}
+                                mr={{ base: "1", md: "3" }}
                                 // ml="3"
                               >
                                 {post.userName}
                               </Text>
                             </Flex>
-                            <Text>{post.updatedAt}</Text>
+                            <Text fontSize={{ base: "10", md: "md" }}>
+                              {post.updatedAt}
+                            </Text>
                           </Flex>
                           {/* アカウント */}
 
                           {/* コメント */}
                           <Box height="155">
-                            <Text mb="3">カテゴリ：{post.category}</Text>
+                            <Text
+                              // mb="3"
+                              mb={{ base: "1", md: "3" }}
+                              fontSize={{ base: "10", md: "md" }}
+                            >
+                              カテゴリ：{post.category}
+                            </Text>
                             {/* <Box width="100%" height="55%" overflowY="scroll"> */}
-                            <Text>{post.text}</Text>
+                            <Text fontSize={{ base: "10", md: "md" }}>
+                              {post.text}
+                            </Text>
                           </Box>
                           {/* </Box> */}
                           {/* コメント */}

@@ -71,6 +71,11 @@ export default function Create() {
       alert("テキストが入力されていません。");
       return;
     }
+    //textに50文字以上入力されていないかチェック
+    if (post.text.replace(/\n/g, "").length > 40) {
+      alert("入力できる文字数は40までです。");
+      return;
+    }
     // console.log(post.text);
     //画像がセットされていない場合は反映されない
     if (image === undefined) {
@@ -148,7 +153,16 @@ export default function Create() {
                   ></Avatar>
                 </WrapItem>
               </Wrap>
-              <Text fontSize="2xl" ml="3" mr="3">
+              <Text
+                // fontSize="2xl"
+                ml="3"
+                mr="3"
+                fontSize={{
+                  base: "md",
+                  md: "2xl",
+                }}
+                bg={{ base: "red.200", md: "green.200" }}
+              >
                 {loginUserData.userName}
               </Text>
             </Box>
@@ -194,25 +208,35 @@ export default function Create() {
           {/* Create */}
           <Box
             width="100%"
-            height="300"
+            // height="300"
+            height={{ base: "200", md: "300" }}
             borderRadius="20"
             border="2px"
             borderColor="orange.500"
-            mr="10%"
+            // mr="10%"
             mt="5"
           >
             <Flex>
               {/* 写真 */}
-              <Box width="50%" height="250" mr="10">
+              <Box
+                width="50%"
+                height="250"
+                // mr="10"
+                mr={{ base: "5", md: "10" }}
+              >
                 {createObjectURL === undefined ? (
                   <label htmlFor="form-image" style={{ cursor: "pointer" }}>
                     <Box
                       width="100%"
-                      height="250"
+                      // height="250"
+                      height={{ base: "170", md: "250" }}
                       background="#FEFCBF"
-                      ml="5"
-                      mr="5"
-                      mt="5"
+                      // ml="5"
+                      ml={{ base: "3", md: "5" }}
+                      // mr="5"
+                      mr={{ base: "3", md: "5" }}
+                      // mt="5"
+                      mt={{ base: "3", md: "5" }}
                       display="flex"
                       justifyContent="center"
                       alignItems="center"
@@ -222,7 +246,9 @@ export default function Create() {
                         size="lg"
                         color="#4299E1"
                       />
-                      画像を選択
+                      <Text fontSize={{ base: "10", md: "lg" }}>
+                        画像を選択
+                      </Text>
                     </Box>
                     <Input
                       display="none"
@@ -240,10 +266,14 @@ export default function Create() {
                     src={createObjectURL}
                     alt="imageDataPost"
                     width="100%"
-                    height="250"
-                    ml="5"
-                    mr="5"
-                    mt="5"
+                    // height="250"
+                    height={{ base: "170", md: "250" }}
+                    // ml="5"
+                    ml={{ base: "3", md: "5" }}
+                    // mr="5"
+                    mr={{ base: "3", md: "5" }}
+                    // mt="5"
+                    mt={{ base: "3", md: "5" }}
                   />
                 )}
               </Box>
@@ -251,22 +281,36 @@ export default function Create() {
               {/* 写真 */}
 
               {/* 写真横のアカウント・コメント・ボタンなど */}
-              <Box width="50%" height="250" mr="5" mt="5">
+              <Box
+                width="50%"
+                height="250"
+                // mr="5"
+                mr={{ base: "3", md: "5" }}
+                // mt="5"
+                mt={{ base: "3", md: "5" }}
+              >
                 <Flex direction="column">
                   {/* 写真横のアカウント・コメント */}
-                  <Box height="210">
+                  <Box
+                    // height="210"
+                    height={{ base: "150", md: "210" }}
+                  >
                     {/* アカウント */}
-                    <Flex alignItems="center" m="1">
+                    <Flex alignItems="center" m={{ base: "1", md: "3" }}>
                       <Wrap>
                         <WrapItem>
                           <Avatar
                             name={loginUserData.userName}
-                            size="sm"
+                            size={{ base: "sm", md: "md" }}
                             src={loginUserData.userPicture}
                           ></Avatar>
                         </WrapItem>
                       </Wrap>
-                      <Text fontSize="lg" ml="3">
+                      <Text
+                        // fontSize="lg"
+                        fontSize={{ base: "10", md: "lg" }}
+                        ml={{ base: "1", md: "3" }}
+                      >
                         {loginUserData.userName}
                       </Text>
                     </Flex>
@@ -275,6 +319,7 @@ export default function Create() {
                     {/* コメント */}
                     <Select
                       size="sm"
+                      fontSize={{ base: "10", md: "md" }}
                       borderRadius="5"
                       onChange={(e) => {
                         onChangePostCategory(e);
@@ -292,7 +337,8 @@ export default function Create() {
                       resize="none"
                       borderRadius={5}
                       size="md"
-                      rows={5}
+                      fontSize={{ base: "10", md: "md" }}
+                      rows={4}
                       mt={1}
                       onChange={(e) =>
                         setPost({ ...post, text: e.target.value })
@@ -310,14 +356,17 @@ export default function Create() {
                       alignItems="center"
                       ml="1"
                       mr="1"
-                      mt="1"
+                      // mt="1"
+                      mt={{ base: "1", md: "3" }}
                     >
                       <FontAwesomeIcon
                         icon={faLocationDot}
                         size="lg"
                         color="#4299E1"
                       />
-                      <Text ml="1">場所を挿入</Text>
+                      <Text ml="1" fontSize={{ base: "10", md: "lg" }}>
+                        場所を挿入
+                      </Text>
                     </Box>
                     {/* マップボタン */}
 
@@ -329,14 +378,17 @@ export default function Create() {
                         alignItems="center"
                         ml="1"
                         mr="1"
-                        mt="1"
+                        // mt="1"
+                        mt={{ base: "1", md: "3" }}
                       >
                         <FontAwesomeIcon
                           icon={faCirclePlus}
                           size="lg"
                           color="#fe9611"
                         />
-                        <Text ml="1">投稿</Text>
+                        <Text ml="1" fontSize={{ base: "10", md: "lg" }}>
+                          投稿
+                        </Text>
                       </Box>
                     </button>
                     {/* 投稿ボタン */}

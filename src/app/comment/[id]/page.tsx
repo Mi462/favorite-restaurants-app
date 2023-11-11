@@ -17,7 +17,7 @@ import {
   faHeart,
   faLocationDot,
 } from "@fortawesome/free-solid-svg-icons";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import {
   Timestamp,
@@ -43,8 +43,25 @@ import {
   loginUserType,
 } from "@/app/type/type";
 
-export default function Comment({ params }: { params: { id: string } }) {
+// export default function Comment({ params }: { params: { id: string } }) {
+// export default function Comment() {
+export default function Comment({
+  params,
+}: {
+  params: {
+    id: string;
+    userName: string;
+    userPicture: string;
+    authorUid: string;
+  };
+}) {
   const router = useRouter();
+  // const searchParams = useSearchParams();
+  // const id = searchParams.get("id");
+  // const userName = searchParams.get("userName");
+  // const userPicture = searchParams.get("userPicture");
+  // const authorUid = searchParams.get("authorUid");
+
   //ログインユーザー
   const loginUserData = useAuth();
   // console.log(loginUserData);
@@ -53,20 +70,24 @@ export default function Comment({ params }: { params: { id: string } }) {
   // 「いいね」数の状態管理
   const [likeCount, setLikeCount] = useState<number>(0);
   //Comment画面遷移時のPost作成者の情報
-  const commentPostUser = useRecoilValue<CommentPostUserType>(commentPost);
+  // const commentPostUser = useRecoilValue<CommentPostUserType>(commentPost);
   //コメントしたユーザーの情報
   const [commentUsers, setCommentUsers] = useState<loginUserType[]>([]);
   //Postの状態
   const [subPost, setSubPost] = useState<PostType>({
     id: params.id,
+    // id: id,
     text: "",
     category: "日本料理",
     createdAt: "",
     updatedAt: "",
     picture: "",
-    authorUid: "",
-    userName: "",
-    userPicture: "",
+    authorUid: params.authorUid,
+    // authorUid: authorUid,
+    userName: params.userName,
+    // userName: userName,
+    userPicture: params.userPicture,
+    // userPicture: userPicture,
   });
   //コメントの状態
   const [comments, setComments] = useState<CommentPostType[]>([]);
@@ -78,7 +99,7 @@ export default function Comment({ params }: { params: { id: string } }) {
   //Postの取得用useEffect
   useEffect(() => {
     postDataFromFirebase();
-  }, [commentPostUser]);
+  }, [params.id]);
 
   //コメントしたユーザーの情報取得用useEffect
   useEffect(() => {
@@ -93,17 +114,19 @@ export default function Comment({ params }: { params: { id: string } }) {
   //Postに関して
   //1, ユーザーの情報が入ったstateとPostの情報が入ったstateを用意
   // → ユーザーの情報は commentPostUser にある
-
+  console.log(params);
   //Postの情報の取得
   const postDataFromFirebase = async () => {
-    if (commentPostUser.authorUid) {
+    // if (commentPostUser.authorUid) {
+    if (params.authorUid) {
       //渡ってきたidを元にデータベースからデータを取り出す
       const docSnap = await getDoc(
-        doc(db, "users", commentPostUser.authorUid, "posts", params.id)
+        // doc(db, "users", commentPostUser.authorUid, "posts", params.id)
+        doc(db, "users", params.authorUid, "posts", params.id)
       );
       const { text, category, createdAt, updatedAt, picture, authorUid } =
         docSnap.data() || {};
-      const { userName, userPicture } = commentPostUser;
+      // const { userName, userPicture } = commentPostUser;
       setSubPost({
         id: params.id,
         text,
@@ -112,8 +135,8 @@ export default function Comment({ params }: { params: { id: string } }) {
         updatedAt: format(updatedAt.toDate(), "yyyy/MM/dd HH:mm"),
         picture,
         authorUid,
-        userName,
-        userPicture,
+        userName: params.userName,
+        userPicture: params.userPicture,
       });
       setLoading(false);
     }
@@ -136,12 +159,14 @@ export default function Comment({ params }: { params: { id: string } }) {
 
   //コメントの取得
   const commentsDataFromFirebase = async () => {
-    if (commentPostUser.authorUid) {
+    // if (commentPostUser.authorUid) {
+    if (params.authorUid) {
       const queryComments = query(
         collection(
           db,
           "users",
-          commentPostUser.authorUid,
+          // commentPostUser.authorUid,
+          params.authorUid,
           "posts",
           params.id,
           "comments"
@@ -150,7 +175,7 @@ export default function Comment({ params }: { params: { id: string } }) {
         orderBy("createdAt")
       );
       await getDocs(queryComments).then((snapShot) => {
-        const getCommentsData: CommentPostType[] = snapShot.docs.map((doc) => {
+        const getCommentsData: any = snapShot.docs.map((doc) => {
           const { commentId, text, createdAt, commentAuthorUid } =
             doc.data() || {};
           const commentUser = commentUsers.find(
@@ -176,11 +201,13 @@ export default function Comment({ params }: { params: { id: string } }) {
   //いいね機能
   useEffect(() => {
     // if (!loginUserData.userUid) return;
-    if (commentPostUser.authorUid && loginUserData.userUid) {
+    // if (commentPostUser.authorUid && loginUserData.userUid) {
+    if (params.authorUid && loginUserData.userUid) {
       const postRef = doc(
         db,
         "users",
-        commentPostUser.authorUid,
+        // commentPostUser.authorUid,
+        params.authorUid,
         "posts",
         params.id
       );
@@ -194,7 +221,8 @@ export default function Comment({ params }: { params: { id: string } }) {
       const likedUsersRef = collection(
         db,
         "users",
-        commentPostUser.authorUid,
+        // commentPostUser.authorUid,
+        params.authorUid,
         "posts",
         params.id,
         "LikedUsers"
@@ -220,7 +248,8 @@ export default function Comment({ params }: { params: { id: string } }) {
     const postRef = doc(
       db,
       "users",
-      commentPostUser.authorUid,
+      // commentPostUser.authorUid,
+      params.authorUid,
       "posts",
       params.id
     );

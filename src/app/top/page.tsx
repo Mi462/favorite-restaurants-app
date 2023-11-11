@@ -133,8 +133,8 @@ export default function Top() {
 
   const linkToComment = (
     id: string,
-    userName: string,
-    userPicture: string,
+    // userName: string,
+    // userPicture: string,
     authorUid: string
   ) => {
     // // 受け渡すクエリパラメータ
@@ -146,7 +146,8 @@ export default function Top() {
     // };
     // router.push({ pathname: `comment/${id}`, query: example }, `comment/${id}`);
     router.push(
-      `/comment/${id}?userName=${userName}&userPicture=${userPicture}&authorUid=${authorUid}`
+      // `/comment/${id}?userName=${userName}&userPicture=${userPicture}&authorUid=${authorUid}`
+      `/comment/${id}?authorUid=${authorUid}`
     );
     // router.push(`/comment/${id}`);
     // setCommentPostUser({
@@ -286,8 +287,8 @@ export default function Top() {
                   onClick={() => {
                     linkToComment(
                       post.id,
-                      post.userName,
-                      post.userPicture,
+                      // post.userName,
+                      // post.userPicture,
                       post.authorUid
                     );
                   }}

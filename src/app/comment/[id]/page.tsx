@@ -39,28 +39,29 @@ import { useAuth } from "@/useAuth/useAuth";
 import {
   CommentPostType,
   CommentPostUserType,
+  PostSecondType,
   PostType,
   loginUserType,
 } from "@/app/type/type";
 
 // export default function Comment({ params }: { params: { id: string } }) {
-// export default function Comment() {
-export default function Comment({
-  params,
-}: {
-  params: {
-    id: string;
-    userName: string;
-    userPicture: string;
-    authorUid: string;
-  };
-}) {
+export default function Comment() {
+  // export default function Comment({
+  //   params,
+  // }: {
+  //   params: {
+  //     id: string;
+  //     userName: string;
+  //     userPicture: string;
+  //     authorUid: string;
+  //   };
+  // }) {
   const router = useRouter();
-  // const searchParams = useSearchParams();
-  // const id = searchParams.get("id");
+  const searchParams = useSearchParams();
+  const id = searchParams.get("id");
   // const userName = searchParams.get("userName");
   // const userPicture = searchParams.get("userPicture");
-  // const authorUid = searchParams.get("authorUid");
+  const PostAuthorUid = searchParams.get("authorUid");
 
   //ログインユーザー
   const loginUserData = useAuth();
@@ -74,20 +75,20 @@ export default function Comment({
   //コメントしたユーザーの情報
   const [commentUsers, setCommentUsers] = useState<loginUserType[]>([]);
   //Postの状態
-  const [subPost, setSubPost] = useState<PostType>({
-    id: params.id,
-    // id: id,
+  const [subPost, setSubPost] = useState<PostSecondType>({
+    // id: params.id,
+    id: id,
     text: "",
     category: "日本料理",
     createdAt: "",
     updatedAt: "",
     picture: "",
-    authorUid: params.authorUid,
-    // authorUid: authorUid,
-    userName: params.userName,
-    // userName: userName,
-    userPicture: params.userPicture,
-    // userPicture: userPicture,
+    // authorUid: params.authorUid,
+    authorUid: PostAuthorUid,
+    // userName: params.userName,
+    userName: "",
+    // userPicture: params.userPicture,
+    userPicture: "",
   });
   //コメントの状態
   const [comments, setComments] = useState<CommentPostType[]>([]);
@@ -99,7 +100,7 @@ export default function Comment({
   //Postの取得用useEffect
   useEffect(() => {
     postDataFromFirebase();
-  }, [params.id]);
+  }, [id]);
 
   //コメントしたユーザーの情報取得用useEffect
   useEffect(() => {
@@ -114,29 +115,36 @@ export default function Comment({
   //Postに関して
   //1, ユーザーの情報が入ったstateとPostの情報が入ったstateを用意
   // → ユーザーの情報は commentPostUser にある
-  console.log(params);
+  console.log(PostAuthorUid);
   //Postの情報の取得
   const postDataFromFirebase = async () => {
     // if (commentPostUser.authorUid) {
-    if (params.authorUid) {
+    if (PostAuthorUid) {
+      //Post作成者のデータを取得する
+      const postCreateUserData = await getDoc(doc(db, "users", PostAuthorUid));
+      const { userName, userPicture } = postCreateUserData.data() || {};
       //渡ってきたidを元にデータベースからデータを取り出す
       const docSnap = await getDoc(
         // doc(db, "users", commentPostUser.authorUid, "posts", params.id)
-        doc(db, "users", params.authorUid, "posts", params.id)
+        // doc(db, "users", authorUid, "posts", id)
+        doc(db, "users", PostAuthorUid, "posts", id)
       );
       const { text, category, createdAt, updatedAt, picture, authorUid } =
         docSnap.data() || {};
       // const { userName, userPicture } = commentPostUser;
       setSubPost({
-        id: params.id,
+        // id: params.id,
+        id: id,
         text,
         category,
         createdAt: format(createdAt.toDate(), "yyyy/MM/dd HH:mm"),
         updatedAt: format(updatedAt.toDate(), "yyyy/MM/dd HH:mm"),
         picture,
         authorUid,
-        userName: params.userName,
-        userPicture: params.userPicture,
+        // userName: params.userName,
+        userName,
+        // userPicture: params.userPicture,
+        userPicture,
       });
       setLoading(false);
     }
@@ -160,15 +168,18 @@ export default function Comment({
   //コメントの取得
   const commentsDataFromFirebase = async () => {
     // if (commentPostUser.authorUid) {
-    if (params.authorUid) {
+    // if (params.authorUid) {
+    if (PostAuthorUid) {
       const queryComments = query(
         collection(
           db,
           "users",
           // commentPostUser.authorUid,
-          params.authorUid,
+          // params.authorUid,
+          PostAuthorUid,
           "posts",
-          params.id,
+          // params.id,
+          id,
           "comments"
         ),
         //createdAtを基準に昇順で取得
@@ -202,14 +213,17 @@ export default function Comment({
   useEffect(() => {
     // if (!loginUserData.userUid) return;
     // if (commentPostUser.authorUid && loginUserData.userUid) {
-    if (params.authorUid && loginUserData.userUid) {
+    // if (params.authorUid && loginUserData.userUid) {
+    if (PostAuthorUid && loginUserData.userUid) {
       const postRef = doc(
         db,
         "users",
         // commentPostUser.authorUid,
-        params.authorUid,
+        // params.authorUid,
+        PostAuthorUid,
         "posts",
-        params.id
+        // params.id
+        id
       );
       const likedUserRef = doc(postRef, "LikedUsers", loginUserData.userUid);
 

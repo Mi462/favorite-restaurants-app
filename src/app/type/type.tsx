@@ -51,13 +51,25 @@ export type CommentPostUserType = {
 // };
 
 export type PostType = {
-  id: string;
+  id: string | null;
   text: string;
   category: string;
   createdAt: string;
   updatedAt: string;
   picture: string;
-  authorUid: string;
+  authorUid: string | null;
+  userName: string | undefined;
+  userPicture: string | undefined;
+};
+
+export type PostSecondType = {
+  id: string | null;
+  text: string;
+  category: string;
+  createdAt: string;
+  updatedAt: string;
+  picture: string;
+  authorUid: string | null;
   userName: string | undefined;
   userPicture: string | undefined;
 };

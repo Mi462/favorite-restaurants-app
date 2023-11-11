@@ -59,8 +59,8 @@ export default function Comment() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const id = searchParams.get("id");
-  // const userName = searchParams.get("userName");
-  // const userPicture = searchParams.get("userPicture");
+  const userName = searchParams.get("userName");
+  const userPicture = searchParams.get("userPicture");
   const PostAuthorUid = searchParams.get("authorUid");
 
   //ログインユーザー
@@ -85,9 +85,12 @@ export default function Comment() {
     picture: "",
     // authorUid: params.authorUid,
     authorUid: PostAuthorUid,
+    // authorUid: authorUid,
     // userName: params.userName,
+    // userName: userName,
     userName: "",
     // userPicture: params.userPicture,
+    // userPicture: userPicture,
     userPicture: "",
   });
   //コメントの状態
@@ -116,18 +119,26 @@ export default function Comment() {
   //1, ユーザーの情報が入ったstateとPostの情報が入ったstateを用意
   // → ユーザーの情報は commentPostUser にある
   console.log(PostAuthorUid);
+  // console.log(params.authorUid);
+  // console.log(authorUid);
   //Postの情報の取得
   const postDataFromFirebase = async () => {
     // if (commentPostUser.authorUid) {
     if (PostAuthorUid) {
+      // if (params.authorUid) {
+      // if (authorUid) {
       //Post作成者のデータを取得する
       const postCreateUserData = await getDoc(doc(db, "users", PostAuthorUid));
+      // const postCreateUserData = await getDoc(
+      //   doc(db, "users", params.authorUid)
+      // );
       const { userName, userPicture } = postCreateUserData.data() || {};
       //渡ってきたidを元にデータベースからデータを取り出す
       const docSnap = await getDoc(
         // doc(db, "users", commentPostUser.authorUid, "posts", params.id)
-        // doc(db, "users", authorUid, "posts", id)
-        doc(db, "users", PostAuthorUid, "posts", id)
+        // doc(db, "users", authorUid, "posts", id)x
+        doc(db, "users", PostAuthorUid!, "posts", id!)
+        // doc(db, "users", params.authorUid, "posts", params.id)
       );
       const { text, category, createdAt, updatedAt, picture, authorUid } =
         docSnap.data() || {};
@@ -176,10 +187,10 @@ export default function Comment() {
           "users",
           // commentPostUser.authorUid,
           // params.authorUid,
-          PostAuthorUid,
+          PostAuthorUid!,
           "posts",
           // params.id,
-          id,
+          id!,
           "comments"
         ),
         //createdAtを基準に昇順で取得
@@ -220,10 +231,10 @@ export default function Comment() {
         "users",
         // commentPostUser.authorUid,
         // params.authorUid,
-        PostAuthorUid,
+        PostAuthorUid!,
         "posts",
         // params.id
-        id
+        id!
       );
       const likedUserRef = doc(postRef, "LikedUsers", loginUserData.userUid);
 
@@ -236,9 +247,11 @@ export default function Comment() {
         db,
         "users",
         // commentPostUser.authorUid,
-        params.authorUid,
+        // params.authorUid,
+        PostAuthorUid!,
         "posts",
-        params.id,
+        // params.id,
+        id!,
         "LikedUsers"
       );
       const unsubscribeLikedCount = onSnapshot(likedUsersRef, (snapShot) => {
@@ -250,7 +263,8 @@ export default function Comment() {
         unsubscribeLikedCount();
       };
     }
-  }, [loginUserData.userUid, params.id]);
+    // }, [loginUserData.userUid, params.id]);
+  }, [loginUserData.userUid, id]);
 
   // console.log(isLiked);
 
@@ -263,35 +277,32 @@ export default function Comment() {
       db,
       "users",
       // commentPostUser.authorUid,
-      params.authorUid,
+      // params.authorUid,
+      PostAuthorUid!,
       "posts",
-      params.id
+      // params.id,
+      id!
     );
     //Postに対して残すサブコレクション（LikedUsers）
     const likedUserRef = doc(postRef, "LikedUsers", loginUserData.userUid);
-
-    const userDoc = doc(db, "users", loginUserData.userUid);
     const userSnapshot = await getDoc(doc(db, "users", loginUserData.userUid));
     const { userName, userUid, userPicture } = userSnapshot.data() || {};
-
-    //Usersに対して残すサブコレクション（likePosts）
-    const userLikePostRef = doc(userDoc, "likePosts", params.id);
 
     if (isLiked) {
       //isLikeを使って、既にlikeしたか確認して、もししていたら解除する
       await deleteDoc(likedUserRef);
-      // await deleteDoc(userLikePostRef);
     } else {
       //isLikeを使って、既にlikeしたか確認したあと、いいねする（重複させない）
       await setDoc(likedUserRef, {
         userUid,
         userName,
         userPicture,
-        likedPostId: params.id,
+        // likedPostId: params.id,
+        likedPostId: id,
       });
-      // await setDoc(userLikePostRef, { postId: params.id });
     }
-  }, [loginUserData.userUid, params.id, isLiked]);
+    // }, [loginUserData.userUid, params.id, isLiked]);
+  }, [loginUserData.userUid, id, isLiked]);
 
   // 「いいね」機能のためのレンダリング
   if (!loginUserData.userUid) return null;
@@ -399,14 +410,9 @@ export default function Comment() {
                       src={subPost.picture}
                       alt="imageDataPost"
                       width="50%"
-                      // width={{ base: "40%", md: "50%" }}
-                      // height="250"
                       height={{ base: "170", md: "250" }}
-                      // ml="5"
                       ml={{ base: "3", md: "5" }}
-                      // mr="5"
                       mr={{ base: "3", md: "5" }}
-                      // mt="5"
                       mt={{ base: "3", md: "5" }}
                     />
                     {/* 写真 */}
@@ -415,21 +421,15 @@ export default function Comment() {
                     <Box
                       width="50%"
                       height="250"
-                      // mr="5"
                       mr={{ base: "3", md: "5" }}
-                      // mt="5"
                       mt={{ base: "3", md: "5" }}
                     >
                       <Flex direction="column">
                         {/* 写真横のアカウント・コメント */}
-                        <Box
-                          // height="220"
-                          height={{ base: "150", md: "220" }}
-                        >
+                        <Box height={{ base: "150", md: "220" }}>
                           {/* アカウント */}
                           <Flex
                             alignItems="center"
-                            // m="3"
                             m={{ base: "1", md: "3" }}
                             justifyContent="space-between"
                           >
@@ -438,16 +438,13 @@ export default function Comment() {
                                 <WrapItem>
                                   <Avatar
                                     name={subPost.userName}
-                                    // size="md"
                                     size={{ base: "sm", md: "md" }}
                                     src={subPost.userPicture}
                                   ></Avatar>
                                 </WrapItem>
                               </Wrap>
                               <Text
-                                // fontSize="lg"
                                 fontSize={{ base: "10", md: "lg" }}
-                                // ml="3"
                                 ml={{ base: "1", md: "3" }}
                                 mr={{ base: "1", md: "3" }}
                               >
@@ -491,7 +488,8 @@ export default function Comment() {
                             size="lg"
                             color="#4299E1"
                             onClick={() => {
-                              linkToCommentCreate(params.id);
+                              // linkToCommentCreate(params.id);
+                              linkToCommentCreate(id!);
                             }}
                             cursor="pointer"
                           />

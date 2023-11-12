@@ -20,7 +20,6 @@ import {
 import { useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import {
-  Timestamp,
   collection,
   deleteDoc,
   doc,
@@ -33,35 +32,18 @@ import {
 } from "firebase/firestore";
 import { db } from "@/lib/FirebaseConfig";
 import { format } from "date-fns";
-import { useRecoilValue } from "recoil";
-import { commentPost, loginUser } from "@/states/states";
 import { useAuth } from "@/useAuth/useAuth";
 import {
   CommentPostType,
-  CommentPostUserType,
   PostSecondType,
-  PostType,
   loginUserType,
 } from "@/app/type/type";
 
-// export default function Comment({ params }: { params: { id: string } }) {
 export default function Comment() {
-  // export default function Comment({
-  //   params,
-  // }: {
-  //   params: {
-  //     id: string;
-  //     userName: string;
-  //     userPicture: string;
-  //     authorUid: string;
-  //   };
-  // }) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const id = searchParams.get("id");
-  const userName = searchParams.get("userName");
-  const userPicture = searchParams.get("userPicture");
-  const PostAuthorUid = searchParams.get("authorUid");
+  const postAuthorUid = searchParams.get("postAuthorUid");
 
   //ログインユーザー
   const loginUserData = useAuth();
@@ -70,27 +52,18 @@ export default function Comment() {
   const [isLiked, setIsLiked] = useState<boolean | null>(null);
   // 「いいね」数の状態管理
   const [likeCount, setLikeCount] = useState<number>(0);
-  //Comment画面遷移時のPost作成者の情報
-  // const commentPostUser = useRecoilValue<CommentPostUserType>(commentPost);
   //コメントしたユーザーの情報
   const [commentUsers, setCommentUsers] = useState<loginUserType[]>([]);
   //Postの状態
   const [subPost, setSubPost] = useState<PostSecondType>({
-    // id: params.id,
     id: id,
     text: "",
     category: "日本料理",
     createdAt: "",
     updatedAt: "",
     picture: "",
-    // authorUid: params.authorUid,
-    authorUid: PostAuthorUid,
-    // authorUid: authorUid,
-    // userName: params.userName,
-    // userName: userName,
+    authorUid: postAuthorUid,
     userName: "",
-    // userPicture: params.userPicture,
-    // userPicture: userPicture,
     userPicture: "",
   });
   //コメントの状態
@@ -118,17 +91,15 @@ export default function Comment() {
   //Postに関して
   //1, ユーザーの情報が入ったstateとPostの情報が入ったstateを用意
   // → ユーザーの情報は commentPostUser にある
-  console.log(PostAuthorUid);
+  console.log("postAuthorUid", postAuthorUid);
+  console.log("id", id);
   // console.log(params.authorUid);
   // console.log(authorUid);
   //Postの情報の取得
   const postDataFromFirebase = async () => {
-    // if (commentPostUser.authorUid) {
-    if (PostAuthorUid) {
-      // if (params.authorUid) {
-      // if (authorUid) {
+    if (postAuthorUid && id) {
       //Post作成者のデータを取得する
-      const postCreateUserData = await getDoc(doc(db, "users", PostAuthorUid));
+      const postCreateUserData = await getDoc(doc(db, "users", postAuthorUid));
       // const postCreateUserData = await getDoc(
       //   doc(db, "users", params.authorUid)
       // );
@@ -136,15 +107,15 @@ export default function Comment() {
       //渡ってきたidを元にデータベースからデータを取り出す
       const docSnap = await getDoc(
         // doc(db, "users", commentPostUser.authorUid, "posts", params.id)
-        // doc(db, "users", authorUid, "posts", id)x
-        doc(db, "users", PostAuthorUid!, "posts", id!)
+        // doc(db, "users", authorUid, "posts", id)
+        // doc(db, "users", PostAuthorUid!, "posts", id!)
+        doc(db, "users", postAuthorUid, "posts", id)
         // doc(db, "users", params.authorUid, "posts", params.id)
       );
       const { text, category, createdAt, updatedAt, picture, authorUid } =
         docSnap.data() || {};
       // const { userName, userPicture } = commentPostUser;
       setSubPost({
-        // id: params.id,
         id: id,
         text,
         category,
@@ -152,12 +123,12 @@ export default function Comment() {
         updatedAt: format(updatedAt.toDate(), "yyyy/MM/dd HH:mm"),
         picture,
         authorUid,
-        // userName: params.userName,
         userName,
-        // userPicture: params.userPicture,
         userPicture,
       });
       setLoading(false);
+    } else {
+      console.log("One of the required fields is null (posts)");
     }
   };
   // console.log("ラスト4", subPost);
@@ -180,24 +151,26 @@ export default function Comment() {
   const commentsDataFromFirebase = async () => {
     // if (commentPostUser.authorUid) {
     // if (params.authorUid) {
-    if (PostAuthorUid) {
+    if (postAuthorUid && id) {
       const queryComments = query(
         collection(
           db,
           "users",
           // commentPostUser.authorUid,
           // params.authorUid,
-          PostAuthorUid!,
+          // PostAuthorUid!,
+          postAuthorUid,
           "posts",
           // params.id,
-          id!,
+          // id!,
+          id,
           "comments"
         ),
         //createdAtを基準に昇順で取得
         orderBy("createdAt")
       );
       await getDocs(queryComments).then((snapShot) => {
-        const getCommentsData: any = snapShot.docs.map((doc) => {
+        const getCommentsData: CommentPostType[] = snapShot.docs.map((doc) => {
           const { commentId, text, createdAt, commentAuthorUid } =
             doc.data() || {};
           const commentUser = commentUsers.find(
@@ -215,6 +188,8 @@ export default function Comment() {
         });
         setComments(getCommentsData);
       });
+    } else {
+      console.log("One of the required fields is null (comments)");
     }
   };
   // console.log(comments);
@@ -225,16 +200,18 @@ export default function Comment() {
     // if (!loginUserData.userUid) return;
     // if (commentPostUser.authorUid && loginUserData.userUid) {
     // if (params.authorUid && loginUserData.userUid) {
-    if (PostAuthorUid && loginUserData.userUid) {
+    if (postAuthorUid && loginUserData.userUid && id) {
       const postRef = doc(
         db,
         "users",
         // commentPostUser.authorUid,
         // params.authorUid,
-        PostAuthorUid!,
+        // PostAuthorUid!,
+        postAuthorUid,
         "posts",
         // params.id
-        id!
+        id
+        // id!
       );
       const likedUserRef = doc(postRef, "LikedUsers", loginUserData.userUid);
 
@@ -248,10 +225,12 @@ export default function Comment() {
         "users",
         // commentPostUser.authorUid,
         // params.authorUid,
-        PostAuthorUid!,
+        // PostAuthorUid!,
+        postAuthorUid,
         "posts",
         // params.id,
-        id!,
+        // id!,
+        id,
         "LikedUsers"
       );
       const unsubscribeLikedCount = onSnapshot(likedUsersRef, (snapShot) => {
@@ -262,6 +241,8 @@ export default function Comment() {
         unsubscribeLikedUser();
         unsubscribeLikedCount();
       };
+    } else {
+      console.log("One of the required fields is null (like)");
     }
     // }, [loginUserData.userUid, params.id]);
   }, [loginUserData.userUid, id]);
@@ -271,35 +252,40 @@ export default function Comment() {
   // 「いいね」ボタンのクリックイベント
   const handleClick = useCallback(async () => {
     if (!loginUserData.userUid || isLiked === null) return;
+    if (postAuthorUid && id) {
+      //「いいね」ボタン押下時のFirebaseのデータ構造の準備
+      const postRef = doc(
+        db,
+        "users",
+        // commentPostUser.authorUid,
+        // params.authorUid,
+        // PostAuthorUid!,
+        postAuthorUid,
+        "posts",
+        // params.id,
+        // id!
+        id
+      );
+      //Postに対して残すサブコレクション（LikedUsers）
+      const likedUserRef = doc(postRef, "LikedUsers", loginUserData.userUid);
+      const userSnapshot = await getDoc(
+        doc(db, "users", loginUserData.userUid)
+      );
+      const { userName, userUid, userPicture } = userSnapshot.data() || {};
 
-    //「いいね」ボタン押下時のFirebaseのデータ構造の準備
-    const postRef = doc(
-      db,
-      "users",
-      // commentPostUser.authorUid,
-      // params.authorUid,
-      PostAuthorUid!,
-      "posts",
-      // params.id,
-      id!
-    );
-    //Postに対して残すサブコレクション（LikedUsers）
-    const likedUserRef = doc(postRef, "LikedUsers", loginUserData.userUid);
-    const userSnapshot = await getDoc(doc(db, "users", loginUserData.userUid));
-    const { userName, userUid, userPicture } = userSnapshot.data() || {};
-
-    if (isLiked) {
-      //isLikeを使って、既にlikeしたか確認して、もししていたら解除する
-      await deleteDoc(likedUserRef);
-    } else {
-      //isLikeを使って、既にlikeしたか確認したあと、いいねする（重複させない）
-      await setDoc(likedUserRef, {
-        userUid,
-        userName,
-        userPicture,
-        // likedPostId: params.id,
-        likedPostId: id,
-      });
+      if (isLiked) {
+        //isLikeを使って、既にlikeしたか確認して、もししていたら解除する
+        await deleteDoc(likedUserRef);
+      } else {
+        //isLikeを使って、既にlikeしたか確認したあと、いいねする（重複させない）
+        await setDoc(likedUserRef, {
+          userUid,
+          userName,
+          userPicture,
+          // likedPostId: params.id,
+          likedPostId: id,
+        });
+      }
     }
     // }, [loginUserData.userUid, params.id, isLiked]);
   }, [loginUserData.userUid, id, isLiked]);
@@ -312,8 +298,13 @@ export default function Comment() {
     router.push("/map");
   };
 
-  const linkToCommentCreate = (id: string) => {
-    router.push(`/commentCreate/${id}`);
+  const linkToCommentCreate = (id: string, postAuthorUid: string) => {
+    // router.push(`/commentCreate/${id}`);
+    router.push(
+      // `/commentCreate/id=${id}?PostAuthorUid=${PostAuthorUid}&id=${id}`
+      `/commentCreate/params?postAuthorUid=${postAuthorUid}&id=${id}`
+    );
+    // `/comment/id=${id}?authorUid=${authorUid}&id=${id}`;
   };
 
   return (
@@ -489,7 +480,7 @@ export default function Comment() {
                             color="#4299E1"
                             onClick={() => {
                               // linkToCommentCreate(params.id);
-                              linkToCommentCreate(id!);
+                              linkToCommentCreate(id!, postAuthorUid!);
                             }}
                             cursor="pointer"
                           />

@@ -26,16 +26,8 @@ import {
 } from "firebase/firestore";
 import { db } from "@/lib/FirebaseConfig";
 import { format } from "date-fns";
-import { useSetRecoilState } from "recoil";
-import { commentPost } from "@/states/states";
 import { useAuth } from "@/useAuth/useAuth";
-import {
-  CommentPostUserType,
-  ExampleType,
-  PostPostType,
-  PostType,
-  loginUserType,
-} from "../type/type";
+import { PostSecondType, PostType, loginUserType } from "../type/type";
 
 export default function Top() {
   //画面遷移
@@ -49,19 +41,8 @@ export default function Top() {
   // console.log("top", loginUserData);
   //Postしたユーザーの情報
   const [postUsers, setPostUsers] = useState<loginUserType[]>([]);
-  //Comment画面遷移時のPost作成者の情報
-  const setCommentPostUser = useSetRecoilState(commentPost);
   //ローディング
   const [loading, setLoading] = useState<boolean>(true);
-  // // 受け渡すクエリパラメータ
-  // const example = {
-  //   id: string,
-  //   userName: string | undefined,
-  //   userPicture: string,
-  //   authorUid: string
-  //   id: 1,
-  //   name: "yakkun",
-  // };
 
   useEffect(() => {
     postUsersDataFromFirebase();
@@ -131,31 +112,19 @@ export default function Top() {
   };
   // console.log(posts);
 
-  const linkToComment = (
-    id: string,
-    userName: string,
-    userPicture: string,
-    authorUid: string
-  ) => {
-    // // 受け渡すクエリパラメータ
-    // const example: ExampleType = {
-    //   id: id,
-    //   userName: userName,
-    //   userPicture: userPicture,
-    //   authorUid: authorUid,
-    // };
-    // router.push({ pathname: `comment/${id}`, query: example }, `comment/${id}`);
+  const linkToComment = (id: string, authorUid: string) => {
     router.push(
-      `/comment/${id}?userName=${userName}&userPicture=${userPicture}&authorUid=${authorUid}`
-      // `/comment/${id}?authorUid=${authorUid}`
+      // `/comment/${id}?userName=${userName}&userPicture=${userPicture}&authorUid=${authorUid}`
+      // `/comment/id=${id}?authorUid=${authorUid}&id=${id}`
+      // `/comment/id=${id}?PostAuthorUid=${authorUid}&id=${id}`
+      `/comment/params?postAuthorUid=${authorUid}&id=${id}`
+      // `/comment/${id}?postAuthorUid=${authorUid}`
+      // `/comment/id=${id}&postAuthorUid=${authorUid}`
+      // `/comment/?postAuthorUid=${authorUid}&id=${id}`
+      // `/comment/${id}&authorUid=${authorUid}`
+      // `/comment/id=${id}&authorUid=${authorUid}`
     );
     // router.push(`/comment/${id}`);
-    // setCommentPostUser({
-    //   id: id,
-    //   userName: userName,
-    //   userPicture: userPicture,
-    //   authorUid: authorUid,
-    // });
   };
   // console.log(commentPostUser);
 
@@ -249,7 +218,7 @@ export default function Top() {
               </Flex>
             </Flex>
           ) : posts.length > 0 ? (
-            posts.map((post: any) => {
+            posts.map((post: PostSecondType) => {
               if (selectCategory === "日本料理" && post.category !== "日本料理")
                 return;
               if (selectCategory === "中国料理" && post.category !== "中国料理")
@@ -285,12 +254,7 @@ export default function Top() {
                   cursor="pointer"
                   key={post.id}
                   onClick={() => {
-                    linkToComment(
-                      post.id,
-                      post.userName,
-                      post.userPicture,
-                      post.authorUid
-                    );
+                    linkToComment(post.id!, post.authorUid!);
                   }}
                 >
                   <Flex>

@@ -24,6 +24,15 @@ export type CreatePostType = {
   userPicture: string;
 };
 
+export type CreateCommentType = {
+  commentId: string;
+  text: string;
+  createdAt: Timestamp;
+  commentAuthorUid: string;
+  userName: string;
+  userPicture: string;
+};
+
 export type ExampleType = {
   id: string;
   userName: string;
@@ -51,13 +60,13 @@ export type CommentPostUserType = {
 // };
 
 export type PostType = {
-  id: string | null;
+  id: string;
   text: string;
   category: string;
   createdAt: string;
   updatedAt: string;
   picture: string;
-  authorUid: string | null;
+  authorUid: string;
   userName: string | undefined;
   userPicture: string | undefined;
 };
@@ -100,8 +109,8 @@ export type CommentPostType = {
   text: string;
   createdAt: string;
   commentAuthorUid: string;
-  userName: string;
-  userPicture: string;
+  userName: string | undefined;
+  userPicture: string | undefined;
 };
 
 export type loginUserType = {

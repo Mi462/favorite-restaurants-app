@@ -14,7 +14,7 @@ import {
 import Header from "../../components/header/header";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCirclePlus, faLocationDot } from "@fortawesome/free-solid-svg-icons";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useRecoilValue } from "recoil";
 import { commentPost, loginUser } from "@/states/states";
 import { useState } from "react";
@@ -22,26 +22,34 @@ import { Timestamp, doc, setDoc } from "firebase/firestore";
 import { db } from "@/lib/FirebaseConfig";
 import { v4 as uuidv4 } from "uuid";
 import { useAuth } from "@/useAuth/useAuth";
-import { CommentPostType, CommentPostUserType } from "@/app/type/type";
+import {
+  CommentPostType,
+  CommentPostUserType,
+  CreateCommentType,
+} from "@/app/type/type";
 
-export default function CommentCreate({ params }: { params: { id: string } }) {
+// export default function CommentCreate({ params }: { params: { id: string,  } }) {
+export default function CommentCreate() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const id = searchParams.get("id");
+  const postAuthorUid = searchParams.get("postAuthorUid");
   //ログインユーザーの情報
   // const user = useRecoilValue(loginUser);
   const loginUserData = useAuth();
   // console.log(loginUserData);
   //Comment画面遷移時のPost作成者の情報
-  const commentPostUser = useRecoilValue<CommentPostUserType>(commentPost);
+  // const commentPostUser = useRecoilValue<CommentPostUserType>(commentPost);
   const commentData = {
     commentId: uuidv4(),
     text: "",
-    createdAt: "",
+    createdAt: Timestamp.now(),
     commentAuthorUid: "",
     userName: "",
     userPicture: "",
   };
   //コメントの内容
-  const [comment, setCommentData] = useState<CommentPostType>(commentData);
+  const [comment, setCommentData] = useState<CreateCommentType>(commentData);
 
   const createComment = async (
     id: string,
@@ -58,27 +66,32 @@ export default function CommentCreate({ params }: { params: { id: string } }) {
       return;
     }
     //Firebaseにデータを登録する
-    await setDoc(
-      doc(
-        db,
-        "users",
-        commentPostUser.authorUid,
-        "posts",
-        params.id,
-        "comments",
-        comment.commentId
-      ),
-      {
-        commentId: uuidv4(),
-        text: comment.text,
-        createdAt: Timestamp.now(),
-        commentAuthorUid: loginUserData.userUid,
-      }
-    );
-    //コメントの中を空にする
-    setCommentData(commentData);
-    //comment画面に遷移
-    router.push(`/comment/${id}`);
+    if (postAuthorUid && id) {
+      await setDoc(
+        doc(
+          db,
+          "users",
+          // commentPostUser.authorUid,
+          postAuthorUid,
+          "posts",
+          // params.id,
+          id,
+          "comments",
+          comment.commentId
+        ),
+        {
+          commentId: uuidv4(),
+          text: comment.text,
+          createdAt: Timestamp.now(),
+          commentAuthorUid: loginUserData.userUid,
+        }
+      );
+      //コメントの中を空にする
+      setCommentData(commentData);
+      //comment画面に遷移
+      // router.push(`/comment/${id}`);
+      router.push(`/comment/params?postAuthorUid=${postAuthorUid}&id=${id}`);
+    }
   };
   // console.log(comment);
 
@@ -242,7 +255,8 @@ export default function CommentCreate({ params }: { params: { id: string } }) {
                   {/* 投稿ボタン */}
                   <button
                     onClick={(e) => {
-                      createComment(params.id, e);
+                      // createComment(params.id, e);
+                      createComment(id!, e);
                     }}
                   >
                     <Box

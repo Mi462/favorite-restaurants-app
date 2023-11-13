@@ -1,16 +1,16 @@
 import { Timestamp } from "firebase/firestore";
 
-// export type CreatePostType = {
-//   id: string;
-//   text: string;
-//   category: string;
-//   createdAt: Timestamp;
-//   updatedAt: Timestamp;
-//   picture: string;
-//   authorUid: string | undefined;
-//   userName: string | undefined;
-//   userPicture: string | undefined;
-// };
+export type SignupUserDataType = {
+  userName: string;
+  password: string;
+  email: string;
+  userPicture: string;
+};
+
+export type LoginUserDataType = {
+  email: string;
+  password: string;
+};
 
 export type CreatePostType = {
   id: string;
@@ -47,18 +47,6 @@ export type CommentPostUserType = {
   authorUid: string;
 };
 
-// export type PostType = {
-//   id: string;
-//   text: string;
-//   category: string;
-//   createdAt: string;
-//   updatedAt: string;
-//   picture: string;
-//   authorUid: string;
-//   userName: string | undefined;
-//   userPicture: string | undefined;
-// };
-
 export type PostType = {
   id: string;
   text: string;
@@ -83,6 +71,18 @@ export type PostSecondType = {
   userPicture: string | undefined;
 };
 
+export type PostThirdType = {
+  id: string | null;
+  text: string;
+  category: string;
+  createdAt: string;
+  updatedAt: string;
+  picture: string;
+  authorUid: string | null;
+  userName: string | undefined;
+  userPicture: string | undefined;
+};
+
 export type PostPostType = {
   id: string;
   text: string;
@@ -94,15 +94,6 @@ export type PostPostType = {
   userName: string;
   userPicture: string;
 };
-
-// export type CommentPostType = {
-//   commentId: string;
-//   text: string;
-//   createdAt: string;
-//   commentAuthorUid: string;
-//   userName: string | undefined;
-//   userPicture: string | undefined;
-// };
 
 export type CommentPostType = {
   commentId: string;
@@ -118,4 +109,11 @@ export type loginUserType = {
   email: string;
   userPicture: string;
   userUid: string;
+};
+
+export type loginUserSecondType = {
+  userName: string | null;
+  email: string | null;
+  userPicture: string | null;
+  userUid: string | null;
 };

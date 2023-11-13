@@ -50,10 +50,6 @@ export default function Edit({ params }: { params: { id: string } }) {
   });
   //ログインユーザー
   const loginUserData = useAuth();
-  // console.log(loginUserData);
-  // const user = useRecoilValue(loginUser);
-  // console.log("edit", user);
-  // console.log(params.id);
   //Postしたユーザーの情報
   const [postUsers, setPostUsers] = useState<loginUserType[]>([]);
   //ローディング
@@ -83,7 +79,6 @@ export default function Edit({ params }: { params: { id: string } }) {
       setPostUsers(getUsersData);
     });
   };
-  // console.log("外3", postUsers);
 
   const postDataFromFirebase = async () => {
     if (loginUserData.userUid) {
@@ -112,27 +107,28 @@ export default function Edit({ params }: { params: { id: string } }) {
       setLoading(false);
     }
   };
-  // console.log("ラスト3", editPost);
 
   //再投稿ボタン押下時にFirebaseにあるデータが更新され、Top画面に遷移する関数
   const onClickEditPost = async (
     id: string,
     e: React.MouseEvent<HTMLElement>
   ) => {
-    e.preventDefault();
-    //textに何も記入されていない場合は反映されない
-    if (editPost.text === "") {
-      alert("テキストが入力されていません。");
-      return;
+    if (loginUserData.userUid) {
+      e.preventDefault();
+      //textに何も記入されていない場合は反映されない
+      if (editPost.text === "") {
+        alert("テキストが入力されていません。");
+        return;
+      }
+      //Firebaseでデータを更新する
+      await updateDoc(doc(db, "users", loginUserData.userUid, "posts", id), {
+        text: editPost.text,
+        category: editPost.category,
+        updatedAt: Timestamp.now(),
+      });
+      //Top画面に遷移する
+      router.push("/top");
     }
-    //Firebaseでデータを更新する
-    await updateDoc(doc(db, "users", loginUserData.userUid, "posts", id), {
-      text: editPost.text,
-      category: editPost.category,
-      updatedAt: Timestamp.now(),
-    });
-    //Top画面に遷移する
-    router.push("/top");
   };
 
   return (
@@ -147,9 +143,9 @@ export default function Edit({ params }: { params: { id: string } }) {
               <Wrap>
                 <WrapItem>
                   <Avatar
-                    name={loginUserData.userName}
+                    name={loginUserData.userName!}
                     size="md"
-                    src={loginUserData.userPicture}
+                    src={loginUserData.userPicture!}
                   ></Avatar>
                 </WrapItem>
               </Wrap>

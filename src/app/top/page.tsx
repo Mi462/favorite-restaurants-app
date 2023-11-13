@@ -52,9 +52,6 @@ export default function Top() {
     postsDataFromFirebase();
   }, [postUsers]);
 
-  // ログインしていなければログインページへ転送
-  // if (!useAuth()) router.replace("/");
-
   //ログインが成功しているか確認した後で、
   //1,ユーザーの情報が入った配列とPostの情報が入った配列を用意
   const postUsersDataFromFirebase = async () => {
@@ -72,7 +69,6 @@ export default function Top() {
   const postsDataFromFirebase = async () => {
     if (loginUserData.userUid) {
       //Postの情報が入った配列の取得
-      // const postsData = collectionGroup(db, "posts")
       const queryPosts = query(
         collectionGroup(db, "posts"),
         //updatedAtを基準に降順で取得
@@ -113,23 +109,16 @@ export default function Top() {
   // console.log(posts);
 
   const linkToComment = (id: string, authorUid: string) => {
-    router.push(
-      // `/comment/${id}?userName=${userName}&userPicture=${userPicture}&authorUid=${authorUid}`
-      // `/comment/id=${id}?authorUid=${authorUid}&id=${id}`
-      // `/comment/id=${id}?PostAuthorUid=${authorUid}&id=${id}`
-      `/comment/params?postAuthorUid=${authorUid}&id=${id}`
-      // `/comment/${id}?postAuthorUid=${authorUid}`
-      // `/comment/id=${id}&postAuthorUid=${authorUid}`
-      // `/comment/?postAuthorUid=${authorUid}&id=${id}`
-      // `/comment/${id}&authorUid=${authorUid}`
-      // `/comment/id=${id}&authorUid=${authorUid}`
-    );
-    // router.push(`/comment/${id}`);
+    router.push(`/comment/${id}?postAuthorUid=${authorUid}`);
   };
   // console.log(commentPostUser);
 
   const linkToCreate = () => {
     router.push("/create");
+  };
+
+  const linkToLogin = () => {
+    router.push("/");
   };
 
   //上のcategoryの内容を変更できる
@@ -149,9 +138,9 @@ export default function Top() {
               <Wrap>
                 <WrapItem>
                   <Avatar
-                    name={loginUserData.userName}
+                    name={loginUserData.userName!}
                     size="md"
-                    src={loginUserData.userPicture}
+                    src={loginUserData.userPicture!}
                   ></Avatar>
                 </WrapItem>
               </Wrap>
@@ -211,137 +200,157 @@ export default function Top() {
           {/* ユーザー情報とプルダウンリストと投稿ボタン */}
 
           {/* Postsが出るところ */}
-          {loading ? (
-            <Flex justifyContent="center" mt="100">
-              <Flex direction="column" textAlign="center">
-                <Text fontSize="3xl">読み込み中…</Text>
+          {loginUserData.userUid ? (
+            loading ? (
+              <Flex justifyContent="center" mt="100">
+                <Flex direction="column" textAlign="center">
+                  <Text fontSize="3xl">読み込み中…</Text>
+                </Flex>
               </Flex>
-            </Flex>
-          ) : posts.length > 0 ? (
-            posts.map((post: PostSecondType) => {
-              if (selectCategory === "日本料理" && post.category !== "日本料理")
-                return;
-              if (selectCategory === "中国料理" && post.category !== "中国料理")
-                return;
-              if (
-                selectCategory === "フランス料理" &&
-                post.category !== "フランス料理"
-              )
-                return;
-              if (
-                selectCategory === "イタリア料理" &&
-                post.category !== "イタリア料理"
-              )
-                return;
-              if (
-                selectCategory === "フランス料理" &&
-                post.category !== "フランス料理"
-              )
-                return;
-              if (
-                selectCategory === "エスニック料理" &&
-                post.category !== "エスニック料理"
-              )
-                return;
-              return (
-                <Box
-                  height={{ base: "200", md: "300" }}
-                  borderRadius="20"
-                  background="orange.100"
-                  border="2px"
-                  borderColor="orange.500"
-                  mt="5"
-                  cursor="pointer"
-                  key={post.id}
-                  onClick={() => {
-                    linkToComment(post.id!, post.authorUid!);
-                  }}
-                >
-                  <Flex>
-                    {/* 写真 */}
-                    <Image
-                      src={post.picture}
-                      alt="imageDataPost"
-                      width="50%"
-                      height={{ base: "170", md: "250" }}
-                      ml={{ base: "3", md: "5" }}
-                      mr={{ base: "3", md: "5" }}
-                      mt={{ base: "3", md: "5" }}
-                    />
-                    {/* 写真 */}
+            ) : posts.length > 0 ? (
+              posts.map((post: PostSecondType) => {
+                if (
+                  selectCategory === "日本料理" &&
+                  post.category !== "日本料理"
+                )
+                  return;
+                if (
+                  selectCategory === "中国料理" &&
+                  post.category !== "中国料理"
+                )
+                  return;
+                if (
+                  selectCategory === "フランス料理" &&
+                  post.category !== "フランス料理"
+                )
+                  return;
+                if (
+                  selectCategory === "イタリア料理" &&
+                  post.category !== "イタリア料理"
+                )
+                  return;
+                if (
+                  selectCategory === "フランス料理" &&
+                  post.category !== "フランス料理"
+                )
+                  return;
+                if (
+                  selectCategory === "エスニック料理" &&
+                  post.category !== "エスニック料理"
+                )
+                  return;
+                return (
+                  <Box
+                    height={{ base: "200", md: "300" }}
+                    borderRadius="20"
+                    background="orange.100"
+                    border="2px"
+                    borderColor="orange.500"
+                    mt="5"
+                    cursor="pointer"
+                    key={post.id}
+                    onClick={() => {
+                      linkToComment(post.id!, post.authorUid!);
+                    }}
+                  >
+                    <Flex>
+                      {/* 写真 */}
+                      <Image
+                        src={post.picture}
+                        alt="imageDataPost"
+                        width="50%"
+                        height={{ base: "170", md: "250" }}
+                        ml={{ base: "3", md: "5" }}
+                        mr={{ base: "3", md: "5" }}
+                        mt={{ base: "3", md: "5" }}
+                      />
+                      {/* 写真 */}
 
-                    {/* 写真横のアカウント・コメント・ボタンなど */}
-                    <Box
-                      width="50%"
-                      // width={{ base: "60%", md: "50%" }}
-                      height="250"
-                      mr={{ base: "3", md: "5" }}
-                      mt={{ base: "3", md: "5" }}
-                    >
-                      <Flex direction="column">
-                        {/* 写真横のアカウント・コメント */}
-                        <Box height="220">
-                          {/* アカウント */}
-                          <Flex
-                            alignItems="center"
-                            // m="3"
-                            m={{ base: "1", md: "3" }}
-                            justifyContent="space-between"
-                          >
-                            <Flex alignItems="center">
-                              <Wrap>
-                                <WrapItem>
-                                  <Avatar
-                                    name={post.userName}
-                                    size={{ base: "sm", md: "md" }}
-                                    src={post.userPicture}
-                                  ></Avatar>
-                                </WrapItem>
-                              </Wrap>
-                              <Text
-                                fontSize={{ base: "10", md: "lg" }}
-                                ml={{ base: "1", md: "3" }}
-                                mr={{ base: "1", md: "3" }}
-                              >
-                                {post.userName}
+                      {/* 写真横のアカウント・コメント・ボタンなど */}
+                      <Box
+                        width="50%"
+                        height="250"
+                        mr={{ base: "3", md: "5" }}
+                        mt={{ base: "3", md: "5" }}
+                      >
+                        <Flex direction="column">
+                          {/* 写真横のアカウント・コメント */}
+                          <Box height="220">
+                            {/* アカウント */}
+                            <Flex
+                              alignItems="center"
+                              // m="3"
+                              m={{ base: "1", md: "3" }}
+                              justifyContent="space-between"
+                            >
+                              <Flex alignItems="center">
+                                <Wrap>
+                                  <WrapItem>
+                                    <Avatar
+                                      name={post.userName}
+                                      size={{ base: "sm", md: "md" }}
+                                      src={post.userPicture}
+                                    ></Avatar>
+                                  </WrapItem>
+                                </Wrap>
+                                <Text
+                                  fontSize={{ base: "10", md: "lg" }}
+                                  ml={{ base: "1", md: "3" }}
+                                  mr={{ base: "1", md: "3" }}
+                                >
+                                  {post.userName}
+                                </Text>
+                              </Flex>
+                              <Text fontSize={{ base: "10", md: "md" }}>
+                                {post.updatedAt}
                               </Text>
                             </Flex>
-                            <Text fontSize={{ base: "10", md: "md" }}>
-                              {post.updatedAt}
-                            </Text>
-                          </Flex>
-                          {/* アカウント */}
+                            {/* アカウント */}
 
-                          {/* コメント */}
-                          <Box height="155">
-                            <Text
-                              mb={{ base: "1", md: "3" }}
-                              fontSize={{ base: "10", md: "md" }}
-                            >
-                              カテゴリ：{post.category}
-                            </Text>
-                            {/* <Box width="100%" height="55%" overflowY="scroll"> */}
-                            <Text fontSize={{ base: "10", md: "md" }}>
-                              {post.text}
-                            </Text>
+                            {/* コメント */}
+                            <Box height="155">
+                              <Text
+                                mb={{ base: "1", md: "3" }}
+                                fontSize={{ base: "10", md: "md" }}
+                              >
+                                カテゴリ：{post.category}
+                              </Text>
+                              <Text fontSize={{ base: "10", md: "md" }}>
+                                {post.text}
+                              </Text>
+                            </Box>
+                            {/* コメント */}
                           </Box>
-                          {/* </Box> */}
-                          {/* コメント */}
-                        </Box>
-                        {/* 写真横のアカウント・コメント */}
-                      </Flex>
-                    </Box>
-                    {/* 写真横のアカウント・コメント・ボタンなど */}
-                  </Flex>
-                </Box>
-              );
-            })
-          ) : (
-            <Flex justifyContent="center" mt="100">
-              <Flex direction="column" textAlign="center">
-                <Text fontSize="3xl">投稿は0件です</Text>
+                          {/* 写真横のアカウント・コメント */}
+                        </Flex>
+                      </Box>
+                      {/* 写真横のアカウント・コメント・ボタンなど */}
+                    </Flex>
+                  </Box>
+                );
+              })
+            ) : (
+              <Flex justifyContent="center" mt="100">
+                <Flex direction="column" textAlign="center">
+                  <Text fontSize="3xl">投稿は0件です</Text>
+                </Flex>
               </Flex>
-            </Flex>
+            )
+          ) : (
+            <div>
+              <Flex justifyContent="center" mt="100">
+                <Flex direction="column" textAlign="center">
+                  <Text fontSize="3xl">ユーザーの情報がありません</Text>
+                  <Text fontSize="3xl">ログインしなおしてください</Text>
+                  <br />
+                </Flex>
+              </Flex>
+              <Flex justifyContent="center">
+                <Button width="30" colorScheme="orange" onClick={linkToLogin}>
+                  login
+                </Button>
+              </Flex>
+            </div>
           )}
           {/* Postsが出るところ */}
         </Flex>

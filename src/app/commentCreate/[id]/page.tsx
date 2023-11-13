@@ -3,7 +3,6 @@
 import {
   Avatar,
   Box,
-  Button,
   Container,
   Flex,
   Text,
@@ -13,33 +12,26 @@ import {
 } from "@chakra-ui/react";
 import Header from "../../components/header/header";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCirclePlus, faLocationDot } from "@fortawesome/free-solid-svg-icons";
-import { useRouter, useSearchParams } from "next/navigation";
-import { useRecoilValue } from "recoil";
-import { commentPost, loginUser } from "@/states/states";
+import { faCirclePlus } from "@fortawesome/free-solid-svg-icons";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { Timestamp, doc, setDoc } from "firebase/firestore";
 import { db } from "@/lib/FirebaseConfig";
 import { v4 as uuidv4 } from "uuid";
 import { useAuth } from "@/useAuth/useAuth";
-import {
-  CommentPostType,
-  CommentPostUserType,
-  CreateCommentType,
-} from "@/app/type/type";
+import { CreateCommentType } from "@/app/type/type";
 
-// export default function CommentCreate({ params }: { params: { id: string,  } }) {
 export default function CommentCreate() {
   const router = useRouter();
+  //Post作成者の情報
   const searchParams = useSearchParams();
-  const id = searchParams.get("id");
   const postAuthorUid = searchParams.get("postAuthorUid");
+  //Postのid
+  const params = useParams();
+  const id = params.id as string;
   //ログインユーザーの情報
-  // const user = useRecoilValue(loginUser);
   const loginUserData = useAuth();
-  // console.log(loginUserData);
-  //Comment画面遷移時のPost作成者の情報
-  // const commentPostUser = useRecoilValue<CommentPostUserType>(commentPost);
+  //コメントの内容
   const commentData = {
     commentId: uuidv4(),
     text: "",
@@ -48,14 +40,15 @@ export default function CommentCreate() {
     userName: "",
     userPicture: "",
   };
-  //コメントの内容
   const [comment, setCommentData] = useState<CreateCommentType>(commentData);
 
+  //「//投稿ボタン押下時にFirebaseにデータが登録され、Top画面に遷移する関数
   const createComment = async (
     id: string,
     e: React.MouseEvent<HTMLElement, MouseEvent>
   ) => {
     e.preventDefault();
+    //コメントが入力されているかチェック
     if (comment.text === "") {
       alert(" コメントが入力されていません。");
       return;
@@ -71,10 +64,8 @@ export default function CommentCreate() {
         doc(
           db,
           "users",
-          // commentPostUser.authorUid,
           postAuthorUid,
           "posts",
-          // params.id,
           id,
           "comments",
           comment.commentId
@@ -89,11 +80,9 @@ export default function CommentCreate() {
       //コメントの中を空にする
       setCommentData(commentData);
       //comment画面に遷移
-      // router.push(`/comment/${id}`);
-      router.push(`/comment/params?postAuthorUid=${postAuthorUid}&id=${id}`);
+      router.push(`/comment/${id}?postAuthorUid=${postAuthorUid}`);
     }
   };
-  // console.log(comment);
 
   return (
     <div>
@@ -107,14 +96,13 @@ export default function CommentCreate() {
               <Wrap>
                 <WrapItem>
                   <Avatar
-                    name={loginUserData.userName}
+                    name={loginUserData.userName!}
                     size="md"
-                    src={loginUserData.userPicture}
+                    src={loginUserData.userPicture!}
                   ></Avatar>
                 </WrapItem>
               </Wrap>
               <Text
-                // fontSize="2xl"
                 ml="3"
                 mr="3"
                 fontSize={{
@@ -170,43 +158,33 @@ export default function CommentCreate() {
           {/* CommentEdit */}
           <Box
             width="100%"
-            // height="255"
             height={{ base: "230", md: "255" }}
             borderRadius="20"
             border="2px"
             borderColor="orange.500"
-            // mr="10%"
-            // mt="5"
             mt={{ base: "3", md: "5" }}
           >
             <Flex direction="column">
               {/* アカウント・Edit・ボタンなど */}
               <Box
-                // height="250"
                 height={{ base: "10", md: "210" }}
-                // m="5"
                 m={{ base: "3", md: "5" }}
               >
                 {/* アカウント・Edit */}
-                <Box
-                  // height="180"
-                  height={{ base: "170", md: "180" }}
-                >
+                <Box height={{ base: "170", md: "180" }}>
                   {/* アカウント */}
                   <Flex alignItems="center" m="1">
                     <Wrap>
                       <WrapItem>
                         <Avatar
-                          name={loginUserData.userName}
+                          name={loginUserData.userName!}
                           size="sm"
-                          src={loginUserData.userPicture}
+                          src={loginUserData.userPicture!}
                         ></Avatar>
                       </WrapItem>
                     </Wrap>
                     <Text
-                      // fontSize="lg"
                       fontSize={{ base: "10", md: "lg" }}
-                      // ml="3"
                       ml={{ base: "1", md: "3" }}
                     >
                       {loginUserData.userName}
@@ -234,7 +212,6 @@ export default function CommentCreate() {
                   {/* マップボタン */}
                   <Box
                     height="6"
-                    // height={{ base: "3", md: "6" }}
                     display="flex"
                     alignItems="center"
                     ml="1"
@@ -255,8 +232,7 @@ export default function CommentCreate() {
                   {/* 投稿ボタン */}
                   <button
                     onClick={(e) => {
-                      // createComment(params.id, e);
-                      createComment(id!, e);
+                      createComment(id, e);
                     }}
                   >
                     <Box

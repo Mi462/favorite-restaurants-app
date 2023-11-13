@@ -13,17 +13,23 @@ import {
 } from "@chakra-ui/react";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
+import {
+  Auth,
+  UserCredential,
+  createUserWithEmailAndPassword,
+  updateProfile,
+} from "firebase/auth";
 import { auth, db } from "@/lib/FirebaseConfig";
 import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
 import { doc, setDoc } from "firebase/firestore";
+import { SignupUserDataType } from "../type/type";
 
 export default function Login() {
   const router = useRouter();
   //ユーザー画像
-  const [userImage, setUserImage] = useState();
+  const [userImage, setUserImage] = useState<Blob | MediaSource | string>();
   const [createUserPictureURL, setCreateUserPictureURL] = useState<string>();
-  const [user, setUser] = useState<any>({
+  const [user, setUser] = useState<SignupUserDataType>({
     userName: "",
     password: "",
     email: "",
@@ -31,25 +37,29 @@ export default function Login() {
   });
 
   //アカウント画像登録
-  const userPictureUploadToFirebase = async (e: any) => {
-    const file = e.target.files[0];
-    // console.log(file);
-    setUserImage(file);
+  const userPictureUploadToFirebase = async (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    if (e.target.files) {
+      const file = e.target.files[0];
+      // console.log(file);
+      setUserImage(file);
 
-    //Storageにユーザー画像をアップロードする
-    const storage = getStorage();
-    const storageRef = ref(storage, "/image" + file.name);
-    await uploadBytes(storageRef, file);
+      //Storageにユーザー画像をアップロードする
+      const storage = getStorage();
+      const storageRef = ref(storage, "/image" + file.name);
+      await uploadBytes(storageRef, file);
 
-    //Storageからユーザー画像をダウンロードする
-    await getDownloadURL(ref(storage, "/image" + file.name))
-      .then((url) => {
-        // console.log(url);
-        setCreateUserPictureURL(url);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+      //Storageからユーザー画像をダウンロードする
+      await getDownloadURL(ref(storage, "/image" + file.name))
+        .then((url) => {
+          // console.log(url);
+          setCreateUserPictureURL(url);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    }
   };
 
   //Sign Up押下時の関数
@@ -69,7 +79,6 @@ export default function Login() {
     await createUserWithEmailAndPassword(auth, user.email, user.password)
       .then(async (userCredential) => {
         // Signed in 成功！
-        // console.log(userCredential.user);
         //Authenticationの方への登録
         await updateProfile(userCredential.user, {
           displayName: user.userName,
@@ -78,18 +87,17 @@ export default function Login() {
           .then(() => {
             // Profile updated!
             console.log("Profile updated!");
-            // ...
           })
           .catch((error) => {
             // An error occurred
             console.log(error);
-            // ...
           });
         //Databaseのusersコレクションへの登録
+        // const currentUser: firebase.auth.userCredential = auth.currentUser;
         const currentUser: any = auth.currentUser;
+        // const currentUser: UserCredential = auth.currentUser;
         await setDoc(doc(db, "users", currentUser.uid), {
           userName: user.userName,
-          // password: user.password,
           email: user.email,
           userPicture: createUserPictureURL,
           userUid: currentUser.uid,

@@ -8,9 +8,7 @@ import { useRouter } from "next/navigation";
 
 export default function Logout() {
   //ログインユーザーの情報
-  // const user = useRecoilValue(loginUser);
   const loginUserData = useAuth();
-  // console.log(loginUserData);
   const router = useRouter();
 
   const logOut = async () => {

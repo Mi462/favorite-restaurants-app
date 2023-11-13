@@ -1,7 +1,6 @@
 "use client";
 
-import { auth, db } from "@/lib/FirebaseConfig";
-import { loginUser } from "@/states/states";
+import { auth } from "@/lib/FirebaseConfig";
 import {
   Box,
   Button,
@@ -16,41 +15,24 @@ import {
   setPersistence,
   signInWithEmailAndPassword,
 } from "firebase/auth";
-import { doc, getDoc } from "firebase/firestore";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { useRecoilState, useResetRecoilState, useSetRecoilState } from "recoil";
+import { LoginUserDataType } from "./type/type";
 
 export default function Login() {
   const router = useRouter();
-  //ローディング
-  const [loading, setLoading] = useState<boolean>(true);
   //ログイン時に入力したときの情報
-  const [user, setUser] = useState({
+  const [user, setUser] = useState<LoginUserDataType>({
     email: "",
     password: "",
   });
-  //ログイン成功時のログイン情報
-  // const setLoginUserData = useSetRecoilState(loginUser);
 
   const handleSubmit = async () => {
     setPersistence(auth, browserSessionPersistence)
       .then(async () => {
-        // return signInWithEmailAndPassword(auth, email, password);
-
         return await signInWithEmailAndPassword(auth, user.email, user.password)
           .then(async (userCredential) => {
             //Login 成功！
-            // await auth.onAuthStateChanged((authUser) => {
-            //   if (authUser) {
-            //     setLoginUserData({
-            //       userName: authUser.displayName,
-            //       userPicture: authUser.photoURL,
-            //       email: authUser.email,
-            //       userUid: authUser.uid,
-            //     });
-            //   }
-            // });
             //Top画面へ遷移
             router.push("/top");
           })

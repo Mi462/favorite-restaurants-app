@@ -44,7 +44,6 @@ export default function myPage() {
   const [selectCategory, setSelectCategory] = useState<string>("全て");
   //ログインユーザーの情報
   const loginUserData = useAuth();
-  // const [loginUserData, setLoginUserData] = useRecoilState(loginUser);
   // console.log(loginUserData.userUid);
   //Postしたユーザーの情報
   const [postUsers, setPostUsers] = useState<loginUserType[]>([]);
@@ -111,9 +110,6 @@ export default function myPage() {
       setLoading(false);
     }
   };
-  // console.log("ラスト2", posts);
-  // console.log("ラスト2 length", posts.length);
-  // console.log(loading);
 
   const linkToEdit = (id: string) => {
     router.push(`/edit/${id}`);
@@ -123,51 +119,55 @@ export default function myPage() {
     router.push("/create");
   };
 
+  const linkToLogin = () => {
+    router.push("/");
+  };
+
   //上のcategoryの内容を変更できる
   const onChangePostCategory = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectCategory(e.target.value);
   };
 
   const clickDelete = async (id: string) => {
-    //firebaseの中のデータを削除する（バック側）
-    if (confirm("Postを削除します。よろしいですか？")) {
-      await runTransaction(db, async (transaction) => {
-        //いいねが押されている場合、LikedUsersを削除する
-        const likedUsersRef = collection(
-          db,
-          "users",
-          loginUserData.userUid,
-          "posts",
-          id,
-          "LikedUsers"
-        );
-        const likedUsersQuerySnapshot = await getDocs(likedUsersRef);
-        // const likedUsersQuerySnapshot = await transaction.get(likedUsersRef);
-        likedUsersQuerySnapshot.forEach((doc) => {
-          deleteDoc(doc.ref);
+    if (loginUserData.userUid) {
+      //firebaseの中のデータを削除する（バック側）
+      if (confirm("Postを削除します。よろしいですか？")) {
+        await runTransaction(db, async (transaction) => {
+          //いいねが押されている場合、LikedUsersを削除する
+          const likedUsersRef = collection(
+            db,
+            "users",
+            loginUserData.userUid!,
+            "posts",
+            id,
+            "LikedUsers"
+          );
+          const likedUsersQuerySnapshot = await getDocs(likedUsersRef);
+          likedUsersQuerySnapshot.forEach((doc) => {
+            deleteDoc(doc.ref);
+          });
+          //Commentがある場合、Commentを削除する
+          const commentsRef = collection(
+            db,
+            "users",
+            loginUserData.userUid!,
+            "posts",
+            id,
+            "comments"
+          );
+          const commentsQuerySnapshot = await getDocs(commentsRef);
+          commentsQuerySnapshot.forEach((doc) => {
+            deleteDoc(doc.ref);
+          });
+          //Postの削除
+          await deleteDoc(
+            doc(db, "users", loginUserData.userUid!, "posts", id)
+          );
+          //表示するための処理（フロント側）
+          const deletePost = posts.filter((post: PostType) => post.id !== id);
+          setPosts(deletePost);
         });
-        //Commentがある場合、Commentを削除する
-        const commentsRef = collection(
-          db,
-          "users",
-          loginUserData.userUid,
-          "posts",
-          id,
-          "comments"
-        );
-        const commentsQuerySnapshot = await getDocs(commentsRef);
-        commentsQuerySnapshot.forEach((doc) => {
-          deleteDoc(doc.ref);
-        });
-        //Postの削除
-        await deleteDoc(doc(db, "users", loginUserData.userUid, "posts", id));
-        // await transaction.delete(
-        //   doc(db, "users", loginUserData.userUid, "posts", id)
-        // );
-        //表示するための処理（フロント側）
-        const deletePost = posts.filter((post: PostType) => post.id !== id);
-        setPosts(deletePost);
-      });
+      }
     }
   };
 
@@ -183,9 +183,9 @@ export default function myPage() {
               <Wrap>
                 <WrapItem>
                   <Avatar
-                    name={loginUserData.userName}
+                    name={loginUserData.userName!}
                     size="md"
-                    src={loginUserData.userPicture}
+                    src={loginUserData.userPicture!}
                   ></Avatar>
                 </WrapItem>
               </Wrap>
@@ -245,8 +245,7 @@ export default function myPage() {
           {/* ユーザー情報とプルダウンリストと投稿ボタン */}
 
           {/* Postsが出るところ */}
-          {
-            // loginUserData.userUid ? (
+          {loginUserData.userUid ? (
             loading ? (
               <Flex justifyContent="center" mt="100">
                 <Flex direction="column" textAlign="center">
@@ -354,11 +353,9 @@ export default function myPage() {
                             >
                               カテゴリ：{post.category}
                             </Text>
-                            {/* <Box width="100%" height="55%" overflowY="scroll"> */}
                             <Text fontSize={{ base: "10", md: "md" }}>
                               {post.text}
                             </Text>
-                            {/* </Box> */}
                             {/* コメント */}
                           </Box>
                           {/* 写真横のアカウント・コメント */}
@@ -412,23 +409,22 @@ export default function myPage() {
                 </Flex>
               </Flex>
             )
-            // ) : (
-            //   <div>
-            //     <Flex justifyContent="center" mt="100">
-            //       <Flex direction="column" textAlign="center">
-            //         <Text fontSize="3xl">ユーザーの情報がありません</Text>
-            //         <Text fontSize="3xl">ログインしなおしてください</Text>
-            //         <br />
-            //       </Flex>
-            //     </Flex>
-            //     <Flex justifyContent="center">
-            //       <Button width="30" colorScheme="orange" onClick={linkToLogin}>
-            //         login
-            //       </Button>
-            //     </Flex>
-            //   </div>
-            // )
-          }
+          ) : (
+            <div>
+              <Flex justifyContent="center" mt="100">
+                <Flex direction="column" textAlign="center">
+                  <Text fontSize="3xl">ユーザーの情報がありません</Text>
+                  <Text fontSize="3xl">ログインしなおしてください</Text>
+                  <br />
+                </Flex>
+              </Flex>
+              <Flex justifyContent="center">
+                <Button width="30" colorScheme="orange" onClick={linkToLogin}>
+                  login
+                </Button>
+              </Flex>
+            </div>
+          )}
           {/* Postsが出るところ */}
         </Flex>
       </Container>

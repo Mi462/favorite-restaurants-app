@@ -1,10 +1,11 @@
+import { loginUserSecondType, loginUserType } from "@/app/type/type";
 import { atom } from "recoil";
-import { recoilPersist } from "recoil-persist";
+// import { recoilPersist } from "recoil-persist";
 
-const { persistAtom } = recoilPersist({
-  key: "recoil-persist",
-  storage: typeof window === "undefined" ? undefined : sessionStorage,
-});
+// const { persistAtom } = recoilPersist({
+//   key: "recoil-persist",
+//   storage: typeof window === "undefined" ? undefined : sessionStorage,
+// });
 
 export const loginUser = atom<any>({
   key: "loginUser",
@@ -16,12 +17,12 @@ export const loginUser = atom<any>({
   },
 });
 
-export const commentPost = atom<any>({
-  key: "commentPost",
-  default: {
-    userName: "",
-    userPicture: "",
-    authorUid: "",
-  },
-  effects_UNSTABLE: [persistAtom],
-});
+// export const commentPost = atom<any>({
+//   key: "commentPost",
+//   default: {
+//     userName: "",
+//     userPicture: "",
+//     authorUid: "",
+//   },
+//   effects_UNSTABLE: [persistAtom],
+// });

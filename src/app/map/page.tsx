@@ -28,9 +28,9 @@ export default function Top() {
               <Wrap>
                 <WrapItem>
                   <Avatar
-                    name={loginUserData.userName}
+                    name={loginUserData.userName!}
                     size="md"
-                    src={loginUserData.userPicture}
+                    src={loginUserData.userPicture!}
                   ></Avatar>
                 </WrapItem>
               </Wrap>

@@ -17,7 +17,7 @@ import {
   faHeart,
   faLocationDot,
 } from "@fortawesome/free-solid-svg-icons";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import {
   collection,
@@ -33,21 +33,18 @@ import {
 import { db } from "@/lib/FirebaseConfig";
 import { format } from "date-fns";
 import { useAuth } from "@/useAuth/useAuth";
-import {
-  CommentPostType,
-  PostSecondType,
-  loginUserType,
-} from "@/app/type/type";
+import { CommentPostType, PostThirdType, loginUserType } from "@/app/type/type";
 
 export default function Comment() {
   const router = useRouter();
+  //Post作成者の情報
   const searchParams = useSearchParams();
-  const id = searchParams.get("id");
-  const postAuthorUid = searchParams.get("postAuthorUid");
-
+  const postAuthorUid = searchParams.get("postAuthorUid") as string;
+  //Postのid
+  const params = useParams();
+  const id = params.id as string;
   //ログインユーザー
   const loginUserData = useAuth();
-  // console.log(loginUserData);
   // 「いいね」の状態管理
   const [isLiked, setIsLiked] = useState<boolean | null>(null);
   // 「いいね」数の状態管理
@@ -55,7 +52,7 @@ export default function Comment() {
   //コメントしたユーザーの情報
   const [commentUsers, setCommentUsers] = useState<loginUserType[]>([]);
   //Postの状態
-  const [subPost, setSubPost] = useState<PostSecondType>({
+  const [subPost, setSubPost] = useState<PostThirdType>({
     id: id,
     text: "",
     category: "日本料理",
@@ -70,8 +67,6 @@ export default function Comment() {
   const [comments, setComments] = useState<CommentPostType[]>([]);
   //ローディング
   const [loading, setLoading] = useState<boolean>(true);
-
-  // console.log(commentPostUser.authorUid);
 
   //Postの取得用useEffect
   useEffect(() => {
@@ -91,30 +86,19 @@ export default function Comment() {
   //Postに関して
   //1, ユーザーの情報が入ったstateとPostの情報が入ったstateを用意
   // → ユーザーの情報は commentPostUser にある
-  console.log("postAuthorUid", postAuthorUid);
-  console.log("id", id);
-  // console.log(params.authorUid);
-  // console.log(authorUid);
+
   //Postの情報の取得
   const postDataFromFirebase = async () => {
     if (postAuthorUid && id) {
       //Post作成者のデータを取得する
       const postCreateUserData = await getDoc(doc(db, "users", postAuthorUid));
-      // const postCreateUserData = await getDoc(
-      //   doc(db, "users", params.authorUid)
-      // );
       const { userName, userPicture } = postCreateUserData.data() || {};
       //渡ってきたidを元にデータベースからデータを取り出す
       const docSnap = await getDoc(
-        // doc(db, "users", commentPostUser.authorUid, "posts", params.id)
-        // doc(db, "users", authorUid, "posts", id)
-        // doc(db, "users", PostAuthorUid!, "posts", id!)
         doc(db, "users", postAuthorUid, "posts", id)
-        // doc(db, "users", params.authorUid, "posts", params.id)
       );
       const { text, category, createdAt, updatedAt, picture, authorUid } =
         docSnap.data() || {};
-      // const { userName, userPicture } = commentPostUser;
       setSubPost({
         id: id,
         text,
@@ -149,23 +133,9 @@ export default function Comment() {
 
   //コメントの取得
   const commentsDataFromFirebase = async () => {
-    // if (commentPostUser.authorUid) {
-    // if (params.authorUid) {
     if (postAuthorUid && id) {
       const queryComments = query(
-        collection(
-          db,
-          "users",
-          // commentPostUser.authorUid,
-          // params.authorUid,
-          // PostAuthorUid!,
-          postAuthorUid,
-          "posts",
-          // params.id,
-          // id!,
-          id,
-          "comments"
-        ),
+        collection(db, "users", postAuthorUid, "posts", id, "comments"),
         //createdAtを基準に昇順で取得
         orderBy("createdAt")
       );
@@ -197,22 +167,8 @@ export default function Comment() {
   //この投稿に対して既にlikeしたかどうかを判別する
   //いいね機能
   useEffect(() => {
-    // if (!loginUserData.userUid) return;
-    // if (commentPostUser.authorUid && loginUserData.userUid) {
-    // if (params.authorUid && loginUserData.userUid) {
     if (postAuthorUid && loginUserData.userUid && id) {
-      const postRef = doc(
-        db,
-        "users",
-        // commentPostUser.authorUid,
-        // params.authorUid,
-        // PostAuthorUid!,
-        postAuthorUid,
-        "posts",
-        // params.id
-        id
-        // id!
-      );
+      const postRef = doc(db, "users", postAuthorUid, "posts", id);
       const likedUserRef = doc(postRef, "LikedUsers", loginUserData.userUid);
 
       const unsubscribeLikedUser = onSnapshot(likedUserRef, (doc) => {
@@ -223,13 +179,8 @@ export default function Comment() {
       const likedUsersRef = collection(
         db,
         "users",
-        // commentPostUser.authorUid,
-        // params.authorUid,
-        // PostAuthorUid!,
         postAuthorUid,
         "posts",
-        // params.id,
-        // id!,
         id,
         "LikedUsers"
       );
@@ -244,7 +195,6 @@ export default function Comment() {
     } else {
       console.log("One of the required fields is null (like)");
     }
-    // }, [loginUserData.userUid, params.id]);
   }, [loginUserData.userUid, id]);
 
   // console.log(isLiked);
@@ -254,18 +204,7 @@ export default function Comment() {
     if (!loginUserData.userUid || isLiked === null) return;
     if (postAuthorUid && id) {
       //「いいね」ボタン押下時のFirebaseのデータ構造の準備
-      const postRef = doc(
-        db,
-        "users",
-        // commentPostUser.authorUid,
-        // params.authorUid,
-        // PostAuthorUid!,
-        postAuthorUid,
-        "posts",
-        // params.id,
-        // id!
-        id
-      );
+      const postRef = doc(db, "users", postAuthorUid, "posts", id);
       //Postに対して残すサブコレクション（LikedUsers）
       const likedUserRef = doc(postRef, "LikedUsers", loginUserData.userUid);
       const userSnapshot = await getDoc(
@@ -282,12 +221,10 @@ export default function Comment() {
           userUid,
           userName,
           userPicture,
-          // likedPostId: params.id,
           likedPostId: id,
         });
       }
     }
-    // }, [loginUserData.userUid, params.id, isLiked]);
   }, [loginUserData.userUid, id, isLiked]);
 
   // 「いいね」機能のためのレンダリング
@@ -299,12 +236,7 @@ export default function Comment() {
   };
 
   const linkToCommentCreate = (id: string, postAuthorUid: string) => {
-    // router.push(`/commentCreate/${id}`);
-    router.push(
-      // `/commentCreate/id=${id}?PostAuthorUid=${PostAuthorUid}&id=${id}`
-      `/commentCreate/params?postAuthorUid=${postAuthorUid}&id=${id}`
-    );
-    // `/comment/id=${id}?authorUid=${authorUid}&id=${id}`;
+    router.push(`/commentCreate/${id}?postAuthorUid=${postAuthorUid}`);
   };
 
   return (
@@ -319,9 +251,9 @@ export default function Comment() {
               <Wrap>
                 <WrapItem>
                   <Avatar
-                    name={loginUserData.userName}
+                    name={loginUserData.userName!}
                     size="md"
-                    src={loginUserData.userPicture}
+                    src={loginUserData.userPicture!}
                   ></Avatar>
                 </WrapItem>
               </Wrap>
@@ -387,7 +319,6 @@ export default function Comment() {
                 </Flex>
               ) : (
                 <Box
-                  // height="300"
                   height={{ base: "200", md: "300" }}
                   borderRadius="20"
                   background="orange.200"
@@ -450,7 +381,6 @@ export default function Comment() {
 
                           {/* コメント */}
                           <Text
-                            // mb="3"
                             mb={{ base: "1", md: "3" }}
                             fontSize={{ base: "10", md: "md" }}
                           >
@@ -479,15 +409,13 @@ export default function Comment() {
                             size="lg"
                             color="#4299E1"
                             onClick={() => {
-                              // linkToCommentCreate(params.id);
-                              linkToCommentCreate(id!, postAuthorUid!);
+                              linkToCommentCreate(id, postAuthorUid);
                             }}
                             cursor="pointer"
                           />
                           {/* 返信ボタン */}
 
                           {/* いいねボタン */}
-                          {/* <button onClick={handleClick}> */}
                           <Flex alignItems="center">
                             <FontAwesomeIcon
                               icon={faHeart}
@@ -500,7 +428,6 @@ export default function Comment() {
                               {likeCount}
                             </Text>
                           </Flex>
-                          {/* </button> */}
                           {/* いいねボタン */}
 
                           {/* マップボタン */}
@@ -528,14 +455,12 @@ export default function Comment() {
                 return (
                   <Box
                     width="95%"
-                    // height="200"
                     height={{ base: "130", md: "200" }}
                     borderRadius="20"
                     background="orange.100"
                     border="2px"
                     borderColor="orange.500"
                     mt="5"
-                    // ml="5"
                     ml={{ base: "3", md: "5" }}
                     key={comment.commentId}
                   >
@@ -543,41 +468,31 @@ export default function Comment() {
                       {/* 写真横のアカウント・コメント・ボタンなど */}
                       <Box
                         width="100%"
-                        // height="190"
                         height={{ base: "100", md: "160" }}
-                        // mr="5"
                         mr={{ base: "3", md: "5" }}
-                        // ml="5"
                         ml={{ base: "3", md: "5" }}
                         mt={{ base: "3", md: "5" }}
-                        // bg="green"
                       >
                         <Flex direction="column">
                           {/* 写真横のアカウント・コメント */}
-                          {/* <Box height="160" bg="yellow"> */}
+
                           {/* アカウント */}
                           <Flex
                             alignItems="center"
                             justifyContent="space-between"
                             mb="1"
-                            // bg="pink"
                           >
                             <Flex alignItems="center">
                               <Wrap>
                                 <WrapItem>
                                   <Avatar
                                     name={comment.userName}
-                                    // size="md"
                                     size={{ base: "sm", md: "md" }}
                                     src={comment.userPicture}
                                   ></Avatar>
                                 </WrapItem>
                               </Wrap>
-                              <Text
-                                // fontSize="lg"
-                                fontSize={{ base: "10", md: "lg" }}
-                                ml="3"
-                              >
+                              <Text fontSize={{ base: "10", md: "lg" }} ml="3">
                                 {comment.userName}
                               </Text>
                             </Flex>
@@ -592,7 +507,7 @@ export default function Comment() {
                             {comment.text}
                           </Text>
                           {/* コメント */}
-                          {/* </Box> */}
+
                           {/* 写真横のアカウント・コメント */}
                         </Flex>
                       </Box>

@@ -40,8 +40,7 @@ export default function Create() {
   const [selectCategory, setSelectCategory] = useState<string>("日本料理");
   //ログインユーザー
   const loginUserData = useAuth();
-  // console.log(loginUserData);
-
+  //投稿内容
   const postData = {
     id: uuidv4(),
     text: "",
@@ -53,13 +52,12 @@ export default function Create() {
     userName: "",
     userPicture: "",
   };
-
-  //投稿内容
   const [post, setPost] = useState<CreatePostType>(postData);
 
   //投稿ボタン押下時にFirebaseにデータが登録され、Top画面に遷移する関数
   const createPost = async (e: React.MouseEvent<HTMLElement, MouseEvent>) => {
     e.preventDefault();
+    //ユーザーデータのチェック
     if (!loginUserData.userUid) {
       alert(
         "ユーザーのデータがありません。ログインページから入りなおしてください。"
@@ -76,7 +74,6 @@ export default function Create() {
       alert("入力できる文字数は40までです。");
       return;
     }
-    // console.log(post.text);
     //画像がセットされていない場合は反映されない
     if (image === undefined) {
       alert("画像が選択されていません。");
@@ -94,12 +91,10 @@ export default function Create() {
     });
     //textの中身を空にする
     setPost(postData);
-    // console.log(post);
-
     //Top画面に遷移する
     router.push("/top");
   };
-  // console.log(post);
+
   //categoryの内容を変更できる関数
   const onChangePostCategory = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectCategory(e.target.value);
@@ -111,7 +106,6 @@ export default function Create() {
   ) => {
     if (e.target.files) {
       const file = e.target.files[0];
-      // console.log(file);
       setImage(file);
 
       //Storageに画像をアップロードする
@@ -119,7 +113,7 @@ export default function Create() {
       const storageRef = ref(storage, "/image" + file.name);
       await uploadBytes(storageRef, file)
         .then((snapshot) => {
-          // console.log("Uploaded a blob or file!");
+          console.log("Uploaded a blob or file!");
         })
         .catch((error) => {
           console.log(error);
@@ -128,7 +122,6 @@ export default function Create() {
       //Storageから画像をダウンロードする
       await getDownloadURL(ref(storage, "/image" + file.name))
         .then((url) => {
-          // console.log(url);
           setCreateObjectURL(url);
         })
         .catch((error) => {
@@ -136,8 +129,6 @@ export default function Create() {
         });
     }
   };
-
-  // console.log(image);
 
   return (
     <div>
@@ -151,9 +142,9 @@ export default function Create() {
               <Wrap>
                 <WrapItem>
                   <Avatar
-                    name={loginUserData.userName}
+                    name={loginUserData.userName!}
                     size="md"
-                    src={loginUserData.userPicture}
+                    src={loginUserData.userPicture!}
                   ></Avatar>
                 </WrapItem>
               </Wrap>
@@ -282,14 +273,13 @@ export default function Create() {
                       <Wrap>
                         <WrapItem>
                           <Avatar
-                            name={loginUserData.userName}
+                            name={loginUserData.userName!}
                             size={{ base: "sm", md: "md" }}
-                            src={loginUserData.userPicture}
+                            src={loginUserData.userPicture!}
                           ></Avatar>
                         </WrapItem>
                       </Wrap>
                       <Text
-                        // fontSize="lg"
                         fontSize={{ base: "10", md: "lg" }}
                         ml={{ base: "1", md: "3" }}
                       >

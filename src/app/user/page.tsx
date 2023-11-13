@@ -3,6 +3,7 @@
 import {
   Avatar,
   Box,
+  Button,
   Container,
   Flex,
   Input,
@@ -151,6 +152,10 @@ export default function Top() {
     }
   };
 
+  const linkToLogin = () => {
+    router.push("/");
+  };
+
   return (
     <div>
       <Header />
@@ -163,9 +168,9 @@ export default function Top() {
               <Wrap>
                 <WrapItem>
                   <Avatar
-                    name={loginUserData.userName}
+                    name={loginUserData.userName!}
                     size="md"
-                    src={loginUserData.userPicture}
+                    src={loginUserData.userPicture!}
                   ></Avatar>
                 </WrapItem>
               </Wrap>
@@ -221,8 +226,7 @@ export default function Top() {
           </Flex>
           {/* ユーザー情報とプルダウンリストと投稿ボタン */}
           <Box width="100%" height="100%" mb="5">
-            {
-              // loginUserData.userUid ? (
+            {loginUserData.userUid ? (
               loading ? (
                 <Flex justifyContent="center" mt="100">
                   <Flex direction="column" textAlign="center">
@@ -240,12 +244,7 @@ export default function Top() {
                 >
                   <Flex>
                     {/* アカウント画像の編集 */}
-                    <Box
-                      width="25%"
-                      // height="180"
-                      height={{ base: "130", md: "180" }}
-                      m="1"
-                    >
+                    <Box width="25%" height={{ base: "130", md: "180" }} m="1">
                       <Wrap display="flex" justifyContent="center">
                         <WrapItem>
                           {userImage === undefined ? (
@@ -297,12 +296,10 @@ export default function Top() {
                       mt="1"
                       mr="3"
                       width="85%"
-                      // height="180"
                       height={{ base: "130", md: "180" }}
                     >
                       {/* ユーザー名編集 */}
                       <Text
-                        // mt="3"
                         mt={{ base: "1", md: "3" }}
                         fontSize={{ base: "10", md: "md" }}
                       >
@@ -325,7 +322,6 @@ export default function Top() {
 
                       {/* ユーザーのメール */}
                       <Text fontSize={{ base: "10", md: "md" }}>メール</Text>
-                      {/* <Text>{loginUserData.email}</Text> */}
                       <Text fontSize={{ base: "10", md: "md" }}>
                         {editUser.email}
                       </Text>
@@ -352,23 +348,22 @@ export default function Top() {
                   </Flex>
                 </Box>
               )
-              // ) : (
-              //   <div>
-              //     <Flex justifyContent="center" mt="100">
-              //       <Flex direction="column" textAlign="center">
-              //         <Text fontSize="3xl">ユーザーの情報がありません</Text>
-              //         <Text fontSize="3xl">ログインしなおしてください</Text>
-              //         <br />
-              //       </Flex>
-              //     </Flex>
-              //     <Flex justifyContent="center">
-              //       <Button width="30" colorScheme="orange" onClick={linkToLogin}>
-              //         login
-              //       </Button>
-              //     </Flex>
-              //   </div>
-              // )
-            }
+            ) : (
+              <div>
+                <Flex justifyContent="center" mt="100">
+                  <Flex direction="column" textAlign="center">
+                    <Text fontSize="3xl">ユーザーの情報がありません</Text>
+                    <Text fontSize="3xl">ログインしなおしてください</Text>
+                    <br />
+                  </Flex>
+                </Flex>
+                <Flex justifyContent="center">
+                  <Button width="30" colorScheme="orange" onClick={linkToLogin}>
+                    login
+                  </Button>
+                </Flex>
+              </div>
+            )}
             {/* 囲いの中 */}
           </Box>
         </Flex>

@@ -88,74 +88,33 @@ export default function CommentCreate() {
     <div>
       <Header />
       <Container maxW="1000" mb="16">
-        {/* ユーザー情報とプルダウンリストと投稿ボタン */}
         <Flex direction="column">
-          <Flex alignItems="center" justifyContent="space-between">
-            {/* ユーザー情報 */}
-            <Box display="flex" alignItems="center" p="3">
-              <Wrap>
-                <WrapItem>
-                  <Avatar
-                    name={loginUserData.userName!}
-                    size="md"
-                    src={loginUserData.userPicture!}
-                  ></Avatar>
-                </WrapItem>
-              </Wrap>
-              <Text
-                ml="3"
-                mr="3"
-                fontSize={{
-                  base: "md",
-                  md: "2xl",
-                }}
-                bg={{ base: "red.200", md: "green.200" }}
-              >
-                {loginUserData.userName}
-              </Text>
-            </Box>
-            {/* ユーザー情報 */}
-            {/* プルダウンリストと投稿ボタン */}
-            <Box display="flex" alignItems="center" p="3">
-              {/* 上のプルダウンリスト */}
-              <Box mt="3" width="50%" display="flex" mr="3">
-                {/* <Select
-                  name="status"
-                  borderColor="orange.500"
-                  value={selectCategory}
-                  onChange={(e) => onChangePostCategory(e)}
-                >
-                  <option value="全て">全て</option>
-                  <option value="日本料理">日本料理</option>
-                  <option value="中国料理">中国料理</option>
-                  <option value="フランス料理">フランス料理</option>
-                  <option value="イタリア料理">イタリア料理</option>
-                  <option value="エスニック料理">エスニック料理</option>
-                </Select> */}
-              </Box>
-              {/* 上のプルダウンリスト */}
-              {/* 投稿ボタン */}
-              <Box mt="3" width="20%">
-                {/* <Button
-                  onClick={linkToCreate}
-                  borderRadius="50"
-                  // pl="10"
-                  pl={{ base: "3", md: "10" }}
-                  pr={{ base: "3", md: "10" }}
-                >
-                  <Flex alignItems="center">
-                    <FontAwesomeIcon icon={faPlus} size="lg" color="#fe9611" />
-                    <Text ml="5">投稿</Text>
-                  </Flex>
-                </Button> */}
-              </Box>
-              {/* 投稿ボタン */}
-            </Box>
-            {/* プルダウンリストと投稿ボタン */}
-          </Flex>
-          {/* ユーザー情報とプルダウンリストと投稿ボタン */}
+          {/* ユーザー情報 */}
+          <Box display="flex" alignItems="center" p="3">
+            <Wrap>
+              <WrapItem>
+                <Avatar
+                  name={loginUserData.userName!}
+                  size="md"
+                  src={loginUserData.userPicture!}
+                ></Avatar>
+              </WrapItem>
+            </Wrap>
+            <Text
+              ml="3"
+              mr="3"
+              fontSize={{
+                base: "md",
+                md: "2xl",
+              }}
+              // bg={{ base: "red.200", md: "green.200" }}
+            >
+              {loginUserData.userName}
+            </Text>
+          </Box>
+          {/* ユーザー情報 */}
 
-          {/* CommentEdit */}
+          {/* CommentCreate */}
           <Box
             width="100%"
             height={{ base: "230", md: "255" }}
@@ -165,12 +124,12 @@ export default function CommentCreate() {
             mt={{ base: "3", md: "5" }}
           >
             <Flex direction="column">
-              {/* アカウント・Edit・ボタンなど */}
+              {/* アカウント・コメントボタンなど */}
               <Box
                 height={{ base: "10", md: "210" }}
                 m={{ base: "3", md: "5" }}
               >
-                {/* アカウント・Edit */}
+                {/* アカウント・Comment欄 */}
                 <Box height={{ base: "170", md: "180" }}>
                   {/* アカウント */}
                   <Flex alignItems="center" m="1">
@@ -192,7 +151,7 @@ export default function CommentCreate() {
                   </Flex>
                   {/* アカウント */}
 
-                  {/* コメント */}
+                  {/* Comment欄 */}
                   <Textarea
                     placeholder="会話をしよう！"
                     resize="none"
@@ -204,32 +163,12 @@ export default function CommentCreate() {
                       setCommentData({ ...comment, text: e.target.value })
                     }
                   />
-                  {/* コメント */}
+                  {/* Comment欄 */}
                 </Box>
-                {/* 写真横のアカウント・コメント */}
+                {/* アカウント・Comment欄 */}
 
-                <Flex alignItems="center" justifyContent="space-between">
-                  {/* マップボタン */}
-                  <Box
-                    height="6"
-                    display="flex"
-                    alignItems="center"
-                    ml="1"
-                    mr="1"
-                    mt="1"
-                  >
-                    {/* <FontAwesomeIcon
-                      icon={faLocationDot}
-                      size="lg"
-                      color="#4299E1"
-                    />
-                    <Text ml="1" fontSize={{ base: "10", md: "lg" }}>
-                      場所を挿入
-                    </Text> */}
-                  </Box>
-                  {/* マップボタン */}
-
-                  {/* 投稿ボタン */}
+                {/* コメントボタン */}
+                <Flex alignItems="center" justifyContent="end">
                   <button
                     onClick={(e) => {
                       createComment(id, e);
@@ -253,13 +192,13 @@ export default function CommentCreate() {
                       </Text>
                     </Box>
                   </button>
-                  {/* 投稿ボタン */}
                 </Flex>
+                {/* コメントボタン */}
               </Box>
-              {/* 写真横のアカウント・コメント・ボタンなど */}
+              {/* アカウント・コメントボタンなど */}
             </Flex>
           </Box>
-          {/* Create */}
+          {/* CommentCreate */}
         </Flex>
       </Container>
     </div>

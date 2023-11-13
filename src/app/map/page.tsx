@@ -47,42 +47,6 @@ export default function Top() {
               </Text>
             </Box>
             {/* ユーザー情報 */}
-            {/* プルダウンリストと投稿ボタン */}
-            <Box display="flex" alignItems="center" p="3">
-              {/* 上のプルダウンリスト */}
-              <Box mt="3" width="50%" display="flex" mr="3">
-                {/* <Select
-                  name="status"
-                  borderColor="orange.500"
-                  value={selectCategory}
-                  onChange={(e) => onChangePostCategory(e)}
-                >
-                  <option value="全て">全て</option>
-                  <option value="日本料理">日本料理</option>
-                  <option value="中国料理">中国料理</option>
-                  <option value="フランス料理">フランス料理</option>
-                  <option value="イタリア料理">イタリア料理</option>
-                  <option value="エスニック料理">エスニック料理</option>
-                </Select> */}
-              </Box>
-              {/* 上のプルダウンリスト */}
-              {/* 投稿ボタン */}
-              <Box mt="3" width="20%">
-                {/* <Button
-                  // onClick={linkToCreate}
-                  borderRadius="50"
-                  pl="10"
-                  pr="10"
-                >
-                  <Flex alignItems="center">
-                    <FontAwesomeIcon icon={faPlus} size="lg" color="#fe9611" />
-                    <Text ml="5">投稿</Text>
-                  </Flex>
-                </Button> */}
-              </Box>
-              {/* 投稿ボタン */}
-            </Box>
-            {/* プルダウンリストと投稿ボタン */}
           </Flex>
           {/* ユーザー情報とプルダウンリストと投稿ボタン */}
           <Box width="100%" height="100%" mb="5">

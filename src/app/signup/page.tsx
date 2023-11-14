@@ -94,8 +94,10 @@ export default function Login() {
           });
         //Databaseのusersコレクションへの登録
         // const currentUser: firebase.auth.userCredential = auth.currentUser;
-        const currentUser: any = auth.currentUser;
-        // const currentUser: UserCredential = auth.currentUser;
+        // const currentUser: auth.User | null = auth.currentUser;
+        const currentUser: any | null = auth.currentUser;
+        // const currentUser: firebase.auth.User | null = auth.currentUser;
+        // const currentUser: UserCredential | null = auth.currentUser;
         await setDoc(doc(db, "users", currentUser.uid), {
           userName: user.userName,
           email: user.email,

@@ -23,7 +23,7 @@ import { CreateCommentType } from "@/app/type/type";
 
 export default function CommentCreate() {
   const router = useRouter();
-  //Post作成者の情報
+  //Post作成者のuid
   const searchParams = useSearchParams();
   const postAuthorUid = searchParams.get("postAuthorUid");
   //Postのid

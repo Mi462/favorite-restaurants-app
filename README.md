@@ -1,34 +1,35 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+## Favorite Restaurants App
 
-## Getting Started
+「Favorite Restaurants App」は、飲食店の写真とその店の感想を投稿できるアプリです。このアプリを使ってお気に入りの飲食店を他のユーザーと共有することで、あなたの好きな飲食店が増えるでしょう。普段通っている飲食店以外でお気に入りのお店を見つけたいけど、どのように調べたらいいかわからない時に役立つアプリです。
 
-First, run the development server:
+## ターゲットユーザー
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-```
+- 飲食店で頻繁に飲食をされる方：　自分のおすすめの飲食店を写真とテキストを用いて共有することで、同じような方と交流できるプラットフォームとして利用できます。
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- 飲食店で飲食しだした方：　気分転換で飲食店巡りをしだしたけれどどこを巡ればいいのかわからないという方が、このアプリを利用することでお気に入りの飲食店を見つけられます。
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- 最近できた新しい飲食店またはメニューを知りたい方：　このアプリに投稿された食べ物やお店を閲覧することで、流行の飲食店またはメニューを知ることができます。
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+## URL
 
-## Learn More
+ブラウザで～を開くと表示されます。
 
-To learn more about Next.js, take a look at the following resources:
+## テスト用アカウント
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Email: sample@gmail.com
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+password: 123456
 
-## Deploy on Vercel
+## 機能
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- 認証機能（新規登録、サインイン、ログアウト）
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+- 投稿機能（投稿、編集、削除）
+
+- コメント機能（投稿）
+
+- 絞り込み機能
+
+- いいね機能
+
+- ユーザー編集機能（名前、ユーザー画像）

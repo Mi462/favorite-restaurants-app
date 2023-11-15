@@ -19,7 +19,7 @@ import { Timestamp, doc, setDoc } from "firebase/firestore";
 import { db } from "@/lib/FirebaseConfig";
 import { v4 as uuidv4 } from "uuid";
 import { useAuth } from "@/useAuth/useAuth";
-import { CreateCommentType } from "@/app/type/type";
+import { CreateCommentPostType } from "@/app/type/type";
 
 export default function CommentCreate() {
   const router = useRouter();
@@ -40,7 +40,8 @@ export default function CommentCreate() {
     userName: "",
     userPicture: "",
   };
-  const [comment, setCommentData] = useState<CreateCommentType>(commentData);
+  const [comment, setCommentData] =
+    useState<CreateCommentPostType>(commentData);
 
   //「//投稿ボタン押下時にFirebaseにデータが登録され、Top画面に遷移する関数
   const createComment = async (

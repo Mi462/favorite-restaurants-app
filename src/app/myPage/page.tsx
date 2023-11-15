@@ -33,7 +33,7 @@ import {
 import { db } from "@/lib/FirebaseConfig";
 import { format } from "date-fns";
 import { useAuth } from "@/useAuth/useAuth";
-import { PostType, loginUserType } from "../type/type";
+import { PostType, LoginUserType } from "../type/type";
 
 export default function myPage() {
   //画面遷移
@@ -44,11 +44,12 @@ export default function myPage() {
   const [selectCategory, setSelectCategory] = useState<string>("全て");
   //ログインユーザーの情報
   const loginUserData = useAuth();
-  // console.log(loginUserData.userUid);
   //Postしたユーザーの情報
-  const [postUsers, setPostUsers] = useState<loginUserType[]>([]);
+  const [postUsers, setPostUsers] = useState<LoginUserType[]>([]);
   //ローディング
   const [loading, setLoading] = useState<boolean>(true);
+  //ログインユーザーのuid
+  const loginUserUid = sessionStorage.getItem("uid");
 
   useEffect(() => {
     postUsersDataFromFirebase();
@@ -63,19 +64,18 @@ export default function myPage() {
   const postUsersDataFromFirebase = async () => {
     const q = collection(db, "users");
     await getDocs(q).then((snapShot) => {
-      const getUsersData: loginUserType[] = snapShot.docs.map((doc) => {
+      const getUsersData: LoginUserType[] = snapShot.docs.map((doc) => {
         const { userPicture, userName, userUid, email } = doc.data();
         return { userPicture, userName, userUid, email };
       });
       setPostUsers(getUsersData);
     });
   };
-  // console.log("外2", postUsers);
 
   //Postの内容を取得する関数
   const postsDataFromFirebase = async () => {
-    if (loginUserData.userUid) {
-      const postsData = collection(db, "users", loginUserData.userUid, "posts");
+    if (loginUserUid) {
+      const postsData = collection(db, "users", loginUserUid, "posts");
       //Updateを基準に降順で取得
       const q = query(postsData, orderBy("updatedAt", "desc"));
       await getDocs(q).then((snapShot) => {
@@ -90,7 +90,7 @@ export default function myPage() {
             authorUid,
           } = doc.data();
           const postUser = postUsers.find(
-            (p: loginUserType) => p.userUid === authorUid
+            (p: LoginUserType) => p.userUid === authorUid
           );
           const { userName, userPicture } = postUser || {};
           return {
@@ -129,7 +129,7 @@ export default function myPage() {
   };
 
   const clickDelete = async (id: string) => {
-    if (loginUserData.userUid) {
+    if (loginUserUid) {
       //firebaseの中のデータを削除する（バック側）
       if (confirm("Postを削除します。よろしいですか？")) {
         await runTransaction(db, async (transaction) => {
@@ -137,7 +137,7 @@ export default function myPage() {
           const likedUsersRef = collection(
             db,
             "users",
-            loginUserData.userUid!,
+            loginUserUid,
             "posts",
             id,
             "LikedUsers"
@@ -150,7 +150,7 @@ export default function myPage() {
           const commentsRef = collection(
             db,
             "users",
-            loginUserData.userUid!,
+            loginUserUid,
             "posts",
             id,
             "comments"
@@ -160,9 +160,7 @@ export default function myPage() {
             deleteDoc(doc.ref);
           });
           //Postの削除
-          await deleteDoc(
-            doc(db, "users", loginUserData.userUid!, "posts", id)
-          );
+          await deleteDoc(doc(db, "users", loginUserUid, "posts", id));
           //表示するための処理（フロント側）
           const deletePost = posts.filter((post: PostType) => post.id !== id);
           setPosts(deletePost);
@@ -245,7 +243,7 @@ export default function myPage() {
           {/* ユーザー情報とプルダウンリストと投稿ボタン */}
 
           {/* Postsが出るところ */}
-          {loginUserData.userUid ? (
+          {loginUserUid ? (
             loading ? (
               <Flex justifyContent="center" mt="100">
                 <Flex direction="column" textAlign="center">

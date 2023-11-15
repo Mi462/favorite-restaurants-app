@@ -15,7 +15,7 @@ import {
 import Header from "../components/header/header";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
-import { useParams, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import {
   collection,
@@ -27,25 +27,23 @@ import {
 import { db } from "@/lib/FirebaseConfig";
 import { format } from "date-fns";
 import { useAuth } from "@/useAuth/useAuth";
-import { PostSecondType, PostType, loginUserType } from "../type/type";
+import { ShowPostType, PostType, LoginUserType } from "../type/type";
 
 export default function Top() {
   //画面遷移
   const router = useRouter();
-  //Post
-  const [posts, setPosts] = useState<PostType[]>([]);
   //上のプルダウンの状態
   const [selectCategory, setSelectCategory] = useState<string>("全て");
+  //Post
+  const [posts, setPosts] = useState<PostType[]>([]);
   //ログインユーザーの情報
   const loginUserData = useAuth();
-  // console.log("top", loginUserData);
-  //Postしたユーザーの情報
-  const [postUsers, setPostUsers] = useState<loginUserType[]>([]);
   //ローディング
   const [loading, setLoading] = useState<boolean>(true);
+  //Postしたユーザーの情報
+  const [postUsers, setPostUsers] = useState<LoginUserType[]>([]);
   //ログインユーザーのuid
-  // const params = useParams();
-  // const loginUserUid = params.uid as string;
+  const loginUserUid = sessionStorage.getItem("uid");
 
   useEffect(() => {
     postUsersDataFromFirebase();
@@ -61,7 +59,7 @@ export default function Top() {
     //ユーザーの情報が入った配列の取得
     const q = collection(db, "users");
     await getDocs(q).then((snapShot) => {
-      const getUsersData: loginUserType[] = snapShot.docs.map((doc) => {
+      const getUsersData: LoginUserType[] = snapShot.docs.map((doc) => {
         const { userPicture, userName, userUid, email } = doc.data();
         return { userPicture, userName, userUid, email };
       });
@@ -70,7 +68,7 @@ export default function Top() {
   };
 
   const postsDataFromFirebase = async () => {
-    if (loginUserData.userUid) {
+    if (loginUserUid) {
       //Postの情報が入った配列の取得
       const queryPosts = query(
         collectionGroup(db, "posts"),
@@ -89,7 +87,7 @@ export default function Top() {
             authorUid,
           } = doc.data() || {};
           const postUser = postUsers.find(
-            (p: loginUserType) => p.userUid === authorUid
+            (p: LoginUserType) => p.userUid === authorUid
           );
           const { userName, userPicture } = postUser || {};
           return {
@@ -109,12 +107,10 @@ export default function Top() {
       setLoading(false);
     }
   };
-  console.log(loading);
 
   const linkToComment = (id: string, authorUid: string) => {
     router.push(`/comment/${id}?postAuthorUid=${authorUid}`);
   };
-  // console.log(commentPostUser);
 
   const linkToCreate = () => {
     router.push("/create");
@@ -203,8 +199,7 @@ export default function Top() {
           {/* ユーザー情報とプルダウンリストと投稿ボタン */}
 
           {/* Postsが出るところ */}
-          {loginUserData.userUid ? (
-            // {loginUserUid ? (
+          {loginUserUid ? (
             loading ? (
               <Flex justifyContent="center" mt="100">
                 <Flex direction="column" textAlign="center">
@@ -212,7 +207,7 @@ export default function Top() {
                 </Flex>
               </Flex>
             ) : posts.length > 0 ? (
-              posts.map((post: PostSecondType) => {
+              posts.map((post: ShowPostType) => {
                 if (
                   selectCategory === "日本料理" &&
                   post.category !== "日本料理"

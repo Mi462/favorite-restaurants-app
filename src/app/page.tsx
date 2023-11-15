@@ -33,14 +33,15 @@ export default function Login() {
         return await signInWithEmailAndPassword(auth, user.email, user.password)
           .then(async (userCredential) => {
             //Login 成功！
-            console.log(userCredential.user.uid);
+            sessionStorage.setItem("uid", userCredential.user.uid);
+            // const uid = sessionStorage.getItem("uid");
+            // console.log(uid);
             //Top画面へ遷移
             router.push("/top");
-            // router.push(`/top/${userCredential.user.uid}`);
           })
           .catch((error) => {
             const errorCode = error.code;
-            const errorMessage = error.message;
+            // const errorMessage = error.message;
             // console.log(errorCode);
             // console.log(errorMessage);
             switch (errorCode) {

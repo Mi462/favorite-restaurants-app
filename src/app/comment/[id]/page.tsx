@@ -33,7 +33,7 @@ import {
 import { db } from "@/lib/FirebaseConfig";
 import { format } from "date-fns";
 import { useAuth } from "@/useAuth/useAuth";
-import { CommentPostType, PostThirdType, loginUserType } from "@/app/type/type";
+import { CommentPostType, ShowPostType, LoginUserType } from "@/app/type/type";
 
 export default function Comment() {
   const router = useRouter();
@@ -45,14 +45,16 @@ export default function Comment() {
   const id = params.id as string;
   //ログインユーザー
   const loginUserData = useAuth();
+  //ログインユーザーのuid
+  const loginUserUid = sessionStorage.getItem("uid");
   // 「いいね」の状態管理
   const [isLiked, setIsLiked] = useState<boolean | null>(null);
   // 「いいね」数の状態管理
   const [likeCount, setLikeCount] = useState<number>(0);
   //コメントしたユーザーの情報
-  const [commentUsers, setCommentUsers] = useState<loginUserType[]>([]);
+  const [commentUsers, setCommentUsers] = useState<LoginUserType[]>([]);
   //Postの状態
-  const [subPost, setSubPost] = useState<PostThirdType>({
+  const [subPost, setSubPost] = useState<ShowPostType>({
     id: id,
     text: "",
     category: "日本料理",
@@ -115,7 +117,6 @@ export default function Comment() {
       console.log("One of the required fields is null (posts)");
     }
   };
-  // console.log("ラスト4", subPost);
 
   //コメントに関して
   //1, ユーザーの情報が入った配列とコメントの情報が入った配列を用意
@@ -123,7 +124,7 @@ export default function Comment() {
   const commentUsersDataFromFirebase = async () => {
     const q = collection(db, "users");
     await getDocs(q).then((snapShot) => {
-      const getCommentUsersData: loginUserType[] = snapShot.docs.map((doc) => {
+      const getCommentUsersData: LoginUserType[] = snapShot.docs.map((doc) => {
         const { userPicture, userName, userUid, email } = doc.data();
         return { userPicture, userName, userUid, email };
       });
@@ -144,7 +145,7 @@ export default function Comment() {
           const { commentId, text, createdAt, commentAuthorUid } =
             doc.data() || {};
           const commentUser = commentUsers.find(
-            (p: loginUserType) => p.userUid === commentAuthorUid
+            (p: LoginUserType) => p.userUid === commentAuthorUid
           );
           const { userName, userPicture } = commentUser || {};
           return {
@@ -162,14 +163,14 @@ export default function Comment() {
       console.log("One of the required fields is null (comments)");
     }
   };
-  // console.log(comments);
 
   //この投稿に対して既にlikeしたかどうかを判別する
   //いいね機能
   useEffect(() => {
-    if (postAuthorUid && loginUserData.userUid && id) {
+    if (postAuthorUid && loginUserUid && id) {
       const postRef = doc(db, "users", postAuthorUid, "posts", id);
-      const likedUserRef = doc(postRef, "LikedUsers", loginUserData.userUid);
+      // const likedUserRef = doc(postRef, "LikedUsers", loginUserData.userUid);
+      const likedUserRef = doc(postRef, "LikedUsers", loginUserUid);
 
       const unsubscribeLikedUser = onSnapshot(likedUserRef, (doc) => {
         setIsLiked(doc.exists());
@@ -195,20 +196,20 @@ export default function Comment() {
     } else {
       console.log("One of the required fields is null (like)");
     }
-  }, [loginUserData.userUid, id]);
-
-  // console.log(isLiked);
+  }, [loginUserUid, id]);
 
   // 「いいね」ボタンのクリックイベント
   const handleClick = useCallback(async () => {
-    if (!loginUserData.userUid || isLiked === null) return;
+    if (!loginUserUid || isLiked === null) return;
     if (postAuthorUid && id) {
       //「いいね」ボタン押下時のFirebaseのデータ構造の準備
       const postRef = doc(db, "users", postAuthorUid, "posts", id);
       //Postに対して残すサブコレクション（LikedUsers）
-      const likedUserRef = doc(postRef, "LikedUsers", loginUserData.userUid);
+      // const likedUserRef = doc(postRef, "LikedUsers", loginUserData.userUid);
+      const likedUserRef = doc(postRef, "LikedUsers", loginUserUid);
       const userSnapshot = await getDoc(
-        doc(db, "users", loginUserData.userUid)
+        // doc(db, "users", loginUserData.userUid)
+        doc(db, "users", loginUserUid)
       );
       const { userName, userUid, userPicture } = userSnapshot.data() || {};
 
@@ -225,10 +226,10 @@ export default function Comment() {
         });
       }
     }
-  }, [loginUserData.userUid, id, isLiked]);
+  }, [loginUserUid, id, isLiked]);
 
   // 「いいね」機能のためのレンダリング
-  if (!loginUserData.userUid) return null;
+  if (!loginUserUid) return null;
   if (isLiked === null) return null;
 
   const linkToMap = () => {
@@ -275,7 +276,7 @@ export default function Comment() {
               {loading ? (
                 <Flex justifyContent="center" mt="100">
                   <Flex direction="column" textAlign="center">
-                    <Text fontSize="3xl">読み込み中…</Text>
+                    <Text fontSize="3xl">Postsを読み込み中…</Text>
                   </Flex>
                 </Flex>
               ) : (
@@ -411,71 +412,82 @@ export default function Comment() {
               {/* Posts */}
 
               {/* Comments */}
-              {comments.map((comment: CommentPostType) => {
-                return (
-                  <Box
-                    width="95%"
-                    height={{ base: "130", md: "200" }}
-                    borderRadius="20"
-                    background="orange.100"
-                    border="2px"
-                    borderColor="orange.500"
-                    mt="5"
-                    ml={{ base: "3", md: "5" }}
-                    key={comment.commentId}
-                  >
-                    <Flex>
-                      {/* 写真横のアカウント・コメント・ボタンなど */}
-                      <Box
-                        width="100%"
-                        height={{ base: "100", md: "160" }}
-                        mr={{ base: "3", md: "5" }}
-                        ml={{ base: "3", md: "5" }}
-                        mt={{ base: "3", md: "5" }}
-                      >
-                        <Flex direction="column">
-                          {/* 写真横のアカウント・コメント */}
+              {loading ? (
+                <Flex justifyContent="center" mt="100">
+                  <Flex direction="column" textAlign="center">
+                    <Text fontSize="3xl">Commentsを読み込み中…</Text>
+                  </Flex>
+                </Flex>
+              ) : (
+                comments.map((comment: CommentPostType) => {
+                  return (
+                    <Box
+                      width="95%"
+                      height={{ base: "130", md: "200" }}
+                      borderRadius="20"
+                      background="orange.100"
+                      border="2px"
+                      borderColor="orange.500"
+                      mt="5"
+                      ml={{ base: "3", md: "5" }}
+                      key={comment.commentId}
+                    >
+                      <Flex>
+                        {/* 写真横のアカウント・コメント・ボタンなど */}
+                        <Box
+                          width="100%"
+                          height={{ base: "100", md: "160" }}
+                          mr={{ base: "3", md: "5" }}
+                          ml={{ base: "3", md: "5" }}
+                          mt={{ base: "3", md: "5" }}
+                        >
+                          <Flex direction="column">
+                            {/* 写真横のアカウント・コメント */}
 
-                          {/* アカウント */}
-                          <Flex
-                            alignItems="center"
-                            justifyContent="space-between"
-                            mb="1"
-                          >
-                            <Flex alignItems="center">
-                              <Wrap>
-                                <WrapItem>
-                                  <Avatar
-                                    name={comment.userName}
-                                    size={{ base: "sm", md: "md" }}
-                                    src={comment.userPicture}
-                                  ></Avatar>
-                                </WrapItem>
-                              </Wrap>
-                              <Text fontSize={{ base: "10", md: "lg" }} ml="3">
-                                {comment.userName}
+                            {/* アカウント */}
+                            <Flex
+                              alignItems="center"
+                              justifyContent="space-between"
+                              mb="1"
+                            >
+                              <Flex alignItems="center">
+                                <Wrap>
+                                  <WrapItem>
+                                    <Avatar
+                                      name={comment.userName}
+                                      size={{ base: "sm", md: "md" }}
+                                      src={comment.userPicture}
+                                    ></Avatar>
+                                  </WrapItem>
+                                </Wrap>
+                                <Text
+                                  fontSize={{ base: "10", md: "lg" }}
+                                  ml="3"
+                                >
+                                  {comment.userName}
+                                </Text>
+                              </Flex>
+                              <Text fontSize={{ base: "10", md: "lg" }}>
+                                {comment.createdAt}
                               </Text>
                             </Flex>
+                            {/* アカウント */}
+
+                            {/* コメント */}
                             <Text fontSize={{ base: "10", md: "lg" }}>
-                              {comment.createdAt}
+                              {comment.text}
                             </Text>
+                            {/* コメント */}
+
+                            {/* 写真横のアカウント・コメント */}
                           </Flex>
-                          {/* アカウント */}
-
-                          {/* コメント */}
-                          <Text fontSize={{ base: "10", md: "lg" }}>
-                            {comment.text}
-                          </Text>
-                          {/* コメント */}
-
-                          {/* 写真横のアカウント・コメント */}
-                        </Flex>
-                      </Box>
-                      {/* 写真横のアカウント・コメント・ボタンなど */}
-                    </Flex>
-                  </Box>
-                );
-              })}
+                        </Box>
+                        {/* 写真横のアカウント・コメント・ボタンなど */}
+                      </Flex>
+                    </Box>
+                  );
+                })
+              )}
 
               {/* Comments */}
             </Flex>

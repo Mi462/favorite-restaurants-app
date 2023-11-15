@@ -14,8 +14,7 @@ import {
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import {
-  Auth,
-  UserCredential,
+  User,
   createUserWithEmailAndPassword,
   updateProfile,
 } from "firebase/auth";
@@ -79,33 +78,31 @@ export default function Login() {
     await createUserWithEmailAndPassword(auth, user.email, user.password)
       .then(async (userCredential) => {
         // Signed in 成功！
-        //Authenticationの方への登録
-        await updateProfile(userCredential.user, {
-          displayName: user.userName,
-          photoURL: createUserPictureURL,
-        })
-          .then(() => {
-            // Profile updated!
-            console.log("Profile updated!");
+        const currentUser: User | null = auth.currentUser;
+        if (currentUser) {
+          //Authenticationの方への登録
+          await updateProfile(userCredential.user, {
+            displayName: user.userName,
+            photoURL: createUserPictureURL,
           })
-          .catch((error) => {
-            // An error occurred
-            console.log(error);
+            .then(() => {
+              // Profile updated!
+              console.log("Profile updated!");
+            })
+            .catch((error) => {
+              // An error occurred
+              console.log(error);
+            });
+          //Databaseのusersコレクションへの登録
+          await setDoc(doc(db, "users", currentUser.uid), {
+            userName: user.userName,
+            email: user.email,
+            userPicture: createUserPictureURL,
+            userUid: currentUser.uid,
           });
-        //Databaseのusersコレクションへの登録
-        // const currentUser: firebase.auth.userCredential = auth.currentUser;
-        // const currentUser: auth.User | null = auth.currentUser;
-        const currentUser: any | null = auth.currentUser;
-        // const currentUser: firebase.auth.User | null = auth.currentUser;
-        // const currentUser: UserCredential | null = auth.currentUser;
-        await setDoc(doc(db, "users", currentUser.uid), {
-          userName: user.userName,
-          email: user.email,
-          userPicture: createUserPictureURL,
-          userUid: currentUser.uid,
-        });
-        //Loginページに遷移
-        router.push("/");
+          //Loginページに遷移
+          router.push("/");
+        }
       })
       .catch((error) => {
         // console.log(error.code);

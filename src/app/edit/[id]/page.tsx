@@ -31,7 +31,7 @@ import {
 import { db } from "@/lib/FirebaseConfig";
 import { format } from "date-fns";
 import { useAuth } from "@/useAuth/useAuth";
-import { PostType, loginUserType } from "@/app/type/type";
+import { PostType, LoginUserType } from "@/app/type/type";
 
 export default function Edit({ params }: { params: { id: string } }) {
   //画面遷移用
@@ -51,7 +51,7 @@ export default function Edit({ params }: { params: { id: string } }) {
   //ログインユーザー
   const loginUserData = useAuth();
   //Postしたユーザーの情報
-  const [postUsers, setPostUsers] = useState<loginUserType[]>([]);
+  const [postUsers, setPostUsers] = useState<LoginUserType[]>([]);
   //ローディング
   const [loading, setLoading] = useState<boolean>(true);
 
@@ -63,16 +63,12 @@ export default function Edit({ params }: { params: { id: string } }) {
     postDataFromFirebase();
   }, [postUsers]);
 
-  useEffect(() => {
-    console.log(postUsers);
-  }, [postUsers]);
-
   //1, ユーザーの情報が入った配列とPostの情報が入った配列を用意
   //ユーザーの情報が入った配列の取得
   const postUsersDataFromFirebase = async () => {
     const q = collection(db, "users");
     await getDocs(q).then((snapShot) => {
-      const getUsersData: loginUserType[] = snapShot.docs.map((doc) => {
+      const getUsersData: LoginUserType[] = snapShot.docs.map((doc) => {
         const { userPicture, userName, userUid, email } = doc.data();
         return { userPicture, userName, userUid, email };
       });
@@ -89,7 +85,7 @@ export default function Edit({ params }: { params: { id: string } }) {
       const { text, category, createdAt, updatedAt, picture, authorUid } =
         docSnap.data() || {};
       const postUser = postUsers.find(
-        (p: loginUserType) => p.userUid === authorUid
+        (p: LoginUserType) => p.userUid === authorUid
       );
       const { userName, userPicture } = postUser || {};
       //取り出したデータをsetEditTodoに設定する

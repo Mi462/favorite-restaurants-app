@@ -21,7 +21,7 @@ import { auth, db } from "@/lib/FirebaseConfig";
 import { Timestamp, doc, getDoc, updateDoc } from "firebase/firestore";
 import { useAuth } from "@/useAuth/useAuth";
 import { updateProfile } from "firebase/auth";
-import { loginUserType } from "../type/type";
+import { LoginUserType } from "../type/type";
 
 export default function Top() {
   const router = useRouter();
@@ -31,9 +31,10 @@ export default function Top() {
   const [loading, setLoading] = useState<boolean>(true);
   //ログインユーザーの情報
   const loginUserData = useAuth();
-  // console.log(loginUserData);
+  //ログインユーザーのuid
+  const loginUserUid = sessionStorage.getItem("uid");
   //編集後のログインユーザーの情報
-  const [editUser, setEditUser] = useState<loginUserType>({
+  const [editUser, setEditUser] = useState<LoginUserType>({
     userName: "",
     userPicture: "",
     email: "",
@@ -46,8 +47,8 @@ export default function Top() {
 
   //ログインユーザーの情報を取得
   const loginUserDataFromFirebase = async () => {
-    if (loginUserData.userUid) {
-      const docSnap = await getDoc(doc(db, "users", loginUserData.userUid));
+    if (loginUserUid) {
+      const docSnap = await getDoc(doc(db, "users", loginUserUid));
       const { userName, userPicture, email, userUid } = docSnap.data() || {};
       setEditUser({
         userName,
@@ -58,7 +59,6 @@ export default function Top() {
       setLoading(false);
     }
   };
-  // console.log(loading);
 
   //「更新」ボタン押下時に動く関数
   const editLoginUser = async (e: React.MouseEvent<HTMLElement>) => {
@@ -187,7 +187,7 @@ export default function Top() {
           {/* ユーザー情報 */}
 
           <Box width="100%" height="100%" mb="5">
-            {loginUserData.userUid ? (
+            {loginUserUid ? (
               loading ? (
                 <Flex justifyContent="center" mt="100">
                   <Flex direction="column" textAlign="center">

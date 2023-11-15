@@ -10,6 +10,10 @@
 
 - 最近できた新しい飲食店またはメニューを知りたい方：　このアプリに投稿された食べ物やお店を閲覧することで、流行の飲食店またはメニューを知ることができます。
 
+## デモ動画
+
+  [【Favorite Restaurante App】説明動画 - コピー.zip](https://github.com/Mi462/favorite-restaurants-app/files/13365964/Favorite.Restaurante.App.-.zip)
+
 ## URL
 
 ブラウザで～を開くと表示されます。

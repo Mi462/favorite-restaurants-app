@@ -48,13 +48,13 @@ password: 123456
 
 - next: "13.4.19"
 
-- @chakra-ui/next-js: "^2.1.5",
+- @chakra-ui/next-js: "2.1.5"
   
-- @chakra-ui/react: "^2.8.1",
+- @chakra-ui/react: "2.8.1"
 
 ### バックエンド
 
-- firebase: "^10.3.1",
+- firebase: "10.3.1"
 
 ## 今後の実装予定機能
 

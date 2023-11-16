@@ -192,7 +192,6 @@ export default function myPage() {
                   base: "md",
                   md: "2xl",
                 }}
-                // bg={{ base: "sred.200", md: "green.200" }}
                 ml="3"
                 mr="3"
               >

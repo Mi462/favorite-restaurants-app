@@ -153,7 +153,6 @@ export default function Create() {
                 base: "md",
                 md: "2xl",
               }}
-              // bg={{ base: "red.200", md: "green.200" }}
             >
               {loginUserData.userName}
             </Text>
@@ -279,27 +278,7 @@ export default function Create() {
                   </Box>
                   {/* 写真横のアカウント・コメント */}
 
-                  <Flex alignItems="center" justifyContent="space-between">
-                    {/* マップボタン */}
-                    <Box
-                      height="6"
-                      display="flex"
-                      alignItems="center"
-                      ml="1"
-                      mr="1"
-                      mt={{ base: "1", md: "3" }}
-                    >
-                      <FontAwesomeIcon
-                        icon={faLocationDot}
-                        size="lg"
-                        color="#4299E1"
-                      />
-                      <Text ml="1" fontSize={{ base: "10", md: "lg" }}>
-                        場所を挿入
-                      </Text>
-                    </Box>
-                    {/* マップボタン */}
-
+                  <Flex alignItems="center" justifyContent="end">
                     {/* 投稿ボタン */}
                     <button onClick={createPost}>
                       <Box

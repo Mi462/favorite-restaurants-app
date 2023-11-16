@@ -34,8 +34,6 @@ export default function Login() {
           .then(async (userCredential) => {
             //Login 成功！
             sessionStorage.setItem("uid", userCredential.user.uid);
-            // const uid = sessionStorage.getItem("uid");
-            // console.log(uid);
             //Top画面へ遷移
             router.push("/top");
           })

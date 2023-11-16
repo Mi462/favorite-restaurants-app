@@ -12,11 +12,7 @@ import {
 } from "@chakra-ui/react";
 import Header from "../../components/header/header";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faComment,
-  faHeart,
-  faLocationDot,
-} from "@fortawesome/free-solid-svg-icons";
+import { faComment, faHeart } from "@fortawesome/free-solid-svg-icons";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import {
@@ -169,7 +165,6 @@ export default function Comment() {
   useEffect(() => {
     if (postAuthorUid && loginUserUid && id) {
       const postRef = doc(db, "users", postAuthorUid, "posts", id);
-      // const likedUserRef = doc(postRef, "LikedUsers", loginUserData.userUid);
       const likedUserRef = doc(postRef, "LikedUsers", loginUserUid);
 
       const unsubscribeLikedUser = onSnapshot(likedUserRef, (doc) => {
@@ -205,12 +200,8 @@ export default function Comment() {
       //「いいね」ボタン押下時のFirebaseのデータ構造の準備
       const postRef = doc(db, "users", postAuthorUid, "posts", id);
       //Postに対して残すサブコレクション（LikedUsers）
-      // const likedUserRef = doc(postRef, "LikedUsers", loginUserData.userUid);
       const likedUserRef = doc(postRef, "LikedUsers", loginUserUid);
-      const userSnapshot = await getDoc(
-        // doc(db, "users", loginUserData.userUid)
-        doc(db, "users", loginUserUid)
-      );
+      const userSnapshot = await getDoc(doc(db, "users", loginUserUid));
       const { userName, userUid, userPicture } = userSnapshot.data() || {};
 
       if (isLiked) {
@@ -231,10 +222,6 @@ export default function Comment() {
   // 「いいね」機能のためのレンダリング
   if (!loginUserUid) return null;
   if (isLiked === null) return null;
-
-  const linkToMap = () => {
-    router.push("/map");
-  };
 
   const linkToCommentCreate = (id: string, postAuthorUid: string) => {
     router.push(`/commentCreate/${id}?postAuthorUid=${postAuthorUid}`);
@@ -365,18 +352,6 @@ export default function Comment() {
                           mr="1"
                           mt="1"
                         >
-                          {/* 返信ボタン */}
-                          <FontAwesomeIcon
-                            icon={faComment}
-                            size="lg"
-                            color="#4299E1"
-                            onClick={() => {
-                              linkToCommentCreate(id, postAuthorUid);
-                            }}
-                            cursor="pointer"
-                          />
-                          {/* 返信ボタン */}
-
                           {/* いいねボタン */}
                           <Flex alignItems="center">
                             <FontAwesomeIcon
@@ -392,15 +367,17 @@ export default function Comment() {
                           </Flex>
                           {/* いいねボタン */}
 
-                          {/* マップボタン */}
+                          {/* 返信ボタン */}
                           <FontAwesomeIcon
-                            icon={faLocationDot}
+                            icon={faComment}
                             size="lg"
                             color="#4299E1"
-                            onClick={linkToMap}
+                            onClick={() => {
+                              linkToCommentCreate(id, postAuthorUid);
+                            }}
                             cursor="pointer"
                           />
-                          {/* マップボタン */}
+                          {/* 返信ボタン */}
                         </Box>
                         {/* ボタン */}
                       </Flex>

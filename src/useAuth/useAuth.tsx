@@ -1,5 +1,3 @@
-"use client";
-
 import { ControlLoginUserType } from "@/app/type/type";
 import { auth } from "@/lib/FirebaseConfig";
 import { loginUser } from "@/states/states";

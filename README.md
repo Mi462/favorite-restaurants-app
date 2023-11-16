@@ -42,19 +42,19 @@ password: 123456
 
 ### フロントエンド
 
-- typescript: "5.2.2"
+- Typescript: "v5.2.2"
 
-- react: "18.2.0"
+- React: "v18.2.0"
 
-- next: "13.4.19"
+- Next.js: "v13.4.19"
 
-- @chakra-ui/next-js: "2.1.5"
+- @chakra-ui/next-js: "v2.1.5"
   
-- @chakra-ui/react: "2.8.1"
+- @chakra-ui/react: "v2.8.1"
 
 ### バックエンド
 
-- firebase: "10.3.1"
+- Firebase: "v10.3.1"
 
 ## 今後の実装予定機能
 

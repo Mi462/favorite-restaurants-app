@@ -35,7 +35,7 @@ import { format } from "date-fns";
 import { useAuth } from "@/useAuth/useAuth";
 import { PostType, LoginUserType } from "../type/type";
 
-export default function myPage() {
+export default function MyPage() {
   //画面遷移
   const router = useRouter();
   //状態

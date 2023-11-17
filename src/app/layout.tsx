@@ -1,5 +1,8 @@
+<<<<<<< HEAD
 // "use client";
 
+=======
+>>>>>>> 8a7cb24a02542d370aaaab3b3790d7404770bb96
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { Providers } from "./providers";

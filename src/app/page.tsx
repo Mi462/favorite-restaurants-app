@@ -33,7 +33,7 @@ export default function Login() {
         return await signInWithEmailAndPassword(auth, user.email, user.password)
           .then(async (userCredential) => {
             //Login 成功！
-            sessionStorage.setItem("uid", userCredential.user.uid);
+            // sessionStorage.setItem("uid", userCredential.user.uid);
             //Top画面へ遷移
             router.push("/top");
           })

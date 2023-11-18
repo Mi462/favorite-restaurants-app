@@ -86,6 +86,6 @@ password: 123456
 
 ## 今後の実装予定機能
 
-- Google Maps Platformを利用して飲食店の位置を記録する
+- Google Maps Platformを利用して飲食店の位置を記録する予定です。
 
-- 初回ログイン時にreact-confettiを使用して紙吹雪を出す
+- 初回ログイン時にreact-confettiを使用して紙吹雪を出す予定です。

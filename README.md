@@ -15,32 +15,32 @@
   - ログイン画面
     <br>
     サインアップで画像・名前・email・passwordを登録します。その後、emailとpasswordを使用してログインします。
-  <img src="https://github.com/Mi462/favorite-restaurants-app/assets/123140215/dd1105bc-db4b-4dbc-9f72-46c1a8edb765" width="500px">
+  <img src="https://github.com/Mi462/favorite-restaurants-app/assets/123140215/f8ced3d2-bce1-46b1-9dec-5012f45f43f7" width="500px">
 
   - ホーム画面
     <br>
     アプリ利用者がおすすめしたい飲食店の画像やその感想のリストを表示します。ヘッダー下のユーザーアカウントの右横に絞り込み機能があるため、飲食店のジャンルごとに表示することができます。
-  <img src="https://github.com/Mi462/favorite-restaurants-app/assets/123140215/7507c74a-607c-4fed-a909-4190cd81a670" width="500px">
+  <img src="https://github.com/Mi462/favorite-restaurants-app/assets/123140215/3f26be6f-d09f-428b-85fb-f168809b5ee3" width="500px">
 
   - コメント画面
     <br>
     いいね機能とコメント作成機能があります。1つの記事に対してユーザー同士でコメントを通して会話ができます。またいいねの数でおすすめ度がわかります。
- <img src="https://github.com/Mi462/favorite-restaurants-app/assets/123140215/74020cc7-990f-4abc-9145-efbe7a8da0cf" width="500px">
+ <img src="https://github.com/Mi462/favorite-restaurants-app/assets/123140215/5cb83330-f7bb-4fa1-90ad-b61109e0352e" width="500px">
 
   - マイページ画面
     <br>
     ログインユーザーが今まで作成した記事を編集・削除することができます。ヘッダー下のユーザーアカウントの右横に絞り込み機能があるため、飲食店のジャンルごとに表示することができます。
- <img src="https://github.com/Mi462/favorite-restaurants-app/assets/123140215/1713f1d3-84bc-483f-9fa5-f97e2748b8b7" width="500px">
+ <img src="https://github.com/Mi462/favorite-restaurants-app/assets/123140215/b31306b5-973f-4f6b-8e01-d1209390bec1" width="500px">
 
   - 投稿画面
     <br>
     おすすめの飲食店の画像・飲食店のジャンル・飲食店に関する文章などを投稿することができます。なお文章は40文字まで入力することが可能です。
- <img src="https://github.com/Mi462/favorite-restaurants-app/assets/123140215/62d5b137-b7c2-47fd-bdd4-57f958a254da" width="500px">
+ <img src="https://github.com/Mi462/favorite-restaurants-app/assets/123140215/29d23627-e92c-4f09-9299-fd264583ebe4" width="500px">
 
   - ユーザー編集画面
     <br>
     ユーザーの画像と名前を変更することが可能です。なお名前は7文字まで入力することが可能です。
- <img src="https://github.com/Mi462/favorite-restaurants-app/assets/123140215/b730a0d7-59b6-4533-b251-11d639ca5516" width="500px">
+ <img src="https://github.com/Mi462/favorite-restaurants-app/assets/123140215/19ec5029-a51f-4ef5-8d13-cd52c8d3d3f1" width="500px">
 
 ## URL
 

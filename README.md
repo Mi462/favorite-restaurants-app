@@ -44,7 +44,7 @@
 
 ## URL
 
-作成中のため、まだデプロイができていない状態です。
+ブラウザで https://favorite-restaurants-app.vercel.app を開くと表示されます。
 
 ## テスト用アカウント
 

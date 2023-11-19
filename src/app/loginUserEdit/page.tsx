@@ -23,7 +23,7 @@ import { useAuth } from "@/useAuth/useAuth";
 import { updateProfile } from "firebase/auth";
 import { LoginUserType } from "../type/type";
 
-export default function User() {
+export default function LoginUserEdit() {
   const router = useRouter();
   const [userImage, setUserImage] = useState<Blob | MediaSource | string>();
   const [editUserPictureURL, setEditUserPictureURL] = useState<string>();
@@ -32,7 +32,7 @@ export default function User() {
   //ログインユーザーの情報
   const loginUserData = useAuth();
   //ログインユーザーのuid
-  const loginUserUid = sessionStorage.getItem("uid");
+  // const loginUserUid = sessionStorage.getItem("uid");
   //編集後のログインユーザーの情報
   const [editUser, setEditUser] = useState<LoginUserType>({
     userName: "",
@@ -47,8 +47,10 @@ export default function User() {
 
   //ログインユーザーの情報を取得
   const loginUserDataFromFirebase = async () => {
-    if (loginUserUid) {
-      const docSnap = await getDoc(doc(db, "users", loginUserUid));
+    // if (loginUserUid) {
+    if (loginUserData.userUid) {
+      // const docSnap = await getDoc(doc(db, "users", loginUserUid));
+      const docSnap = await getDoc(doc(db, "users", loginUserData.userUid));
       const { userName, userPicture, email, userUid } = docSnap.data() || {};
       setEditUser({
         userName,
@@ -187,7 +189,8 @@ export default function User() {
           {/* ユーザー情報 */}
 
           <Box width="100%" height="100%" mb="5">
-            {loginUserUid ? (
+            {
+              // loginUserUid ? (
               loading ? (
                 <Flex justifyContent="center" mt="100">
                   <Flex direction="column" textAlign="center">
@@ -306,22 +309,23 @@ export default function User() {
                   </Flex>
                 </Box>
               )
-            ) : (
-              <div>
-                <Flex justifyContent="center" mt="100">
-                  <Flex direction="column" textAlign="center">
-                    <Text fontSize="3xl">ユーザーの情報がありません</Text>
-                    <Text fontSize="3xl">ログインしなおしてください</Text>
-                    <br />
-                  </Flex>
-                </Flex>
-                <Flex justifyContent="center">
-                  <Button width="30" colorScheme="orange" onClick={linkToLogin}>
-                    login
-                  </Button>
-                </Flex>
-              </div>
-            )}
+              // ) : (
+              //   <div>
+              //     <Flex justifyContent="center" mt="100">
+              //       <Flex direction="column" textAlign="center">
+              //         <Text fontSize="3xl">ユーザーの情報がありません</Text>
+              //         <Text fontSize="3xl">ログインしなおしてください</Text>
+              //         <br />
+              //       </Flex>
+              //     </Flex>
+              //     <Flex justifyContent="center">
+              //       <Button width="30" colorScheme="orange" onClick={linkToLogin}>
+              //         login
+              //       </Button>
+              //     </Flex>
+              //   </div>
+              // )
+            }
             {/* 囲いの中 */}
           </Box>
         </Flex>

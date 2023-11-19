@@ -32,5 +32,8 @@
     "recoil": "^0.7.7",
     "typescript": "5.2.2",
     "uuidv4": "^6.2.13"
+  },
+  "devDependencies": {
+    "encoding": "^0.1.13"
   }
 }

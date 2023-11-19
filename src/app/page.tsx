@@ -28,60 +28,60 @@ export default function Login() {
   });
 
   const handleSubmit = async () => {
-    setPersistence(auth, browserSessionPersistence)
-      .then(async () => {
-        return await signInWithEmailAndPassword(auth, user.email, user.password)
-          .then(async (userCredential) => {
-            //Login 成功！
-            // sessionStorage.setItem("uid", userCredential.user.uid);
-            //Top画面へ遷移
-            router.push("/top");
-          })
-          .catch((error) => {
-            const errorCode = error.code;
-            // const errorMessage = error.message;
-            // console.log(errorCode);
-            // console.log(errorMessage);
-            switch (errorCode) {
-              case "auth/wrong-password":
-                alert("パスワードが正しくありません。");
-                break;
-              case "auth/weak-password":
-                alert("パスワードが短すぎます。6文字以上を入力してください。");
-                break;
-              case "auth/invalid-email":
-                alert("メールアドレスが正しくありません。");
-                break;
-              case "auth/user-not-found":
-                alert("このユーザーは存在しません。");
-                break;
-              case "auth/user-disabled":
-                alert("ユーザーが無効になっています。");
-                break;
-              case "auth/too-many-requests":
-                alert(
-                  "ログイン試行が何度も失敗したため、このアカウントへのアクセスは一時的に無効になっています。数分後に再度お試しください。"
-                );
-                break;
-              case "auth/network-request-failed":
-                alert(
-                  "通信がエラーになったのか、またはタイムアウトになりました。通信環境がいい所で再度やり直してください。"
-                );
-                break;
-              default:
-                alert(
-                  "ログインに失敗しました。通信環境がいい所で再度やり直してください。"
-                );
-            }
-          });
+    // setPersistence(auth, browserSessionPersistence)
+    // .then(async () => {
+    return await signInWithEmailAndPassword(auth, user.email, user.password)
+      .then(async (userCredential) => {
+        //Login 成功！
+        // sessionStorage.setItem("uid", userCredential.user.uid);
+        //Top画面へ遷移
+        router.push("/top");
       })
       .catch((error) => {
-        // Handle Errors here.
         const errorCode = error.code;
-        const errorMessage = error.message;
-        console.log(errorCode);
-        console.log(errorMessage);
+        // const errorMessage = error.message;
+        // console.log(errorCode);
+        // console.log(errorMessage);
+        switch (errorCode) {
+          case "auth/wrong-password":
+            alert("パスワードが正しくありません。");
+            break;
+          case "auth/weak-password":
+            alert("パスワードが短すぎます。6文字以上を入力してください。");
+            break;
+          case "auth/invalid-email":
+            alert("メールアドレスが正しくありません。");
+            break;
+          case "auth/user-not-found":
+            alert("このユーザーは存在しません。");
+            break;
+          case "auth/user-disabled":
+            alert("ユーザーが無効になっています。");
+            break;
+          case "auth/too-many-requests":
+            alert(
+              "ログイン試行が何度も失敗したため、このアカウントへのアクセスは一時的に無効になっています。数分後に再度お試しください。"
+            );
+            break;
+          case "auth/network-request-failed":
+            alert(
+              "通信がエラーになったのか、またはタイムアウトになりました。通信環境がいい所で再度やり直してください。"
+            );
+            break;
+          default:
+            alert(
+              "ログインに失敗しました。通信環境がいい所で再度やり直してください。"
+            );
+        }
       });
+    // })
+    // .catch((error) => {
+    //   // Handle Errors here.
+    //   const errorCode = error.code;
+    //   const errorMessage = error.message;
+    //   console.log(errorCode);
+    //   console.log(errorMessage);
+    // });
   };
 
   return (

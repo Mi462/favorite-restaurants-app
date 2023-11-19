@@ -55,7 +55,7 @@ export default function Header() {
             <MenuList>
               <MenuItem
                 as="a"
-                href="/user"
+                href="/loginUserEdit"
                 icon={
                   <FontAwesomeIcon icon={faUser} size="lg" color="#fe9611" />
                 }

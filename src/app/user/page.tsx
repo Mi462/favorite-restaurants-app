@@ -11,7 +11,7 @@ import {
   Wrap,
   WrapItem,
 } from "@chakra-ui/react";
-import Header from "../components/header/header";
+import Header from "../components/header/page";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faRotateRight } from "@fortawesome/free-solid-svg-icons";
 import { useRouter } from "next/navigation";
@@ -23,7 +23,7 @@ import { useAuth } from "@/useAuth/useAuth";
 import { updateProfile } from "firebase/auth";
 import { LoginUserType } from "../type/type";
 
-export default function Top() {
+export default function User() {
   const router = useRouter();
   const [userImage, setUserImage] = useState<Blob | MediaSource | string>();
   const [editUserPictureURL, setEditUserPictureURL] = useState<string>();

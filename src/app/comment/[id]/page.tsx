@@ -10,7 +10,7 @@ import {
   Image,
   Container,
 } from "@chakra-ui/react";
-import Header from "../../components/header/header";
+import Header from "../../components/header/page";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faComment, faHeart } from "@fortawesome/free-solid-svg-icons";
 import { useParams, useRouter, useSearchParams } from "next/navigation";

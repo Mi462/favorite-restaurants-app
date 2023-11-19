@@ -12,7 +12,7 @@ import {
   Image,
   Container,
 } from "@chakra-ui/react";
-import Header from "../components/header/header";
+import Header from "../components/header/page";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faPenToSquare,
@@ -50,7 +50,6 @@ export default function MyPage() {
   const [loading, setLoading] = useState<boolean>(true);
   //ログインユーザーのuid
   // const loginUserUid = sessionStorage.getItem("uid");
-  //確認のために記述
 
   useEffect(() => {
     postUsersDataFromFirebase();

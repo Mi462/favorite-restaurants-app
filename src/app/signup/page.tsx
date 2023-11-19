@@ -23,7 +23,7 @@ import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
 import { doc, setDoc } from "firebase/firestore";
 import { SignupUserDataType } from "../type/type";
 
-export default function Login() {
+export default function Signup() {
   const router = useRouter();
   //ユーザー画像
   const [userImage, setUserImage] = useState<Blob | MediaSource | string>();

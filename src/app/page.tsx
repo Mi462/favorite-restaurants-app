@@ -10,11 +10,7 @@ import {
   Link,
   Text,
 } from "@chakra-ui/react";
-import {
-  browserSessionPersistence,
-  setPersistence,
-  signInWithEmailAndPassword,
-} from "firebase/auth";
+import { signInWithEmailAndPassword } from "firebase/auth";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { LoginUserDataType } from "./type/type";
@@ -28,12 +24,9 @@ export default function Login() {
   });
 
   const handleSubmit = async () => {
-    // setPersistence(auth, browserSessionPersistence)
-    // .then(async () => {
     return await signInWithEmailAndPassword(auth, user.email, user.password)
       .then(async (userCredential) => {
         //Login 成功！
-        // sessionStorage.setItem("uid", userCredential.user.uid);
         //Top画面へ遷移
         router.push("/top");
       })
@@ -74,14 +67,6 @@ export default function Login() {
             );
         }
       });
-    // })
-    // .catch((error) => {
-    //   // Handle Errors here.
-    //   const errorCode = error.code;
-    //   const errorMessage = error.message;
-    //   console.log(errorCode);
-    //   console.log(errorMessage);
-    // });
   };
 
   return (

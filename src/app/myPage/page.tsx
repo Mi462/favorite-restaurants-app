@@ -50,6 +50,7 @@ export default function MyPage() {
   const [loading, setLoading] = useState<boolean>(true);
   //ログインユーザーのuid
   // const loginUserUid = sessionStorage.getItem("uid");
+  //確認のために記述
 
   useEffect(() => {
     postUsersDataFromFirebase();

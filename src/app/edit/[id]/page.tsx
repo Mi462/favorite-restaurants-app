@@ -14,10 +14,7 @@ import {
 } from "@chakra-ui/react";
 import Header from "../../components/header/header";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faLocationDot,
-  faRotateRight,
-} from "@fortawesome/free-solid-svg-icons";
+import { faRotateRight } from "@fortawesome/free-solid-svg-icons";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import {
@@ -148,7 +145,6 @@ export default function Edit({ params }: { params: { id: string } }) {
                 base: "md",
                 md: "2xl",
               }}
-              // bg={{ base: "red.200", md: "green.200" }}
               ml="3"
               mr="3"
             >
@@ -251,26 +247,7 @@ export default function Edit({ params }: { params: { id: string } }) {
                     </Box>
                     {/* 写真横のアカウント・コメント */}
 
-                    <Flex alignItems="center" justifyContent="space-between">
-                      {/* マップボタン */}
-                      <Box
-                        height="6"
-                        display="flex"
-                        alignItems="center"
-                        ml="1"
-                        mr="1"
-                      >
-                        <FontAwesomeIcon
-                          icon={faLocationDot}
-                          size="lg"
-                          color="#4299E1"
-                        />
-                        <Text ml="1" fontSize={{ base: "10", md: "lg" }}>
-                          ミスド
-                        </Text>
-                      </Box>
-                      {/* マップボタン */}
-
+                    <Flex alignItems="center" justifyContent="end">
                       {/* 投稿ボタン */}
                       <button onClick={(e) => onClickEditPost(params.id, e)}>
                         <Box

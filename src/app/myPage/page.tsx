@@ -35,7 +35,7 @@ import { format } from "date-fns";
 import { useAuth } from "@/useAuth/useAuth";
 import { PostType, LoginUserType } from "../type/type";
 
-export default function myPage() {
+export default function MyPage() {
   //画面遷移
   const router = useRouter();
   //状態
@@ -49,7 +49,7 @@ export default function myPage() {
   //ローディング
   const [loading, setLoading] = useState<boolean>(true);
   //ログインユーザーのuid
-  const loginUserUid = sessionStorage.getItem("uid");
+  // const loginUserUid = sessionStorage.getItem("uid");
 
   useEffect(() => {
     postUsersDataFromFirebase();
@@ -74,8 +74,10 @@ export default function myPage() {
 
   //Postの内容を取得する関数
   const postsDataFromFirebase = async () => {
-    if (loginUserUid) {
-      const postsData = collection(db, "users", loginUserUid, "posts");
+    // if (loginUserUid) {
+    if (loginUserData.userUid) {
+      // const postsData = collection(db, "users", loginUserUid, "posts");
+      const postsData = collection(db, "users", loginUserData.userUid, "posts");
       //Updateを基準に降順で取得
       const q = query(postsData, orderBy("updatedAt", "desc"));
       await getDocs(q).then((snapShot) => {
@@ -129,7 +131,8 @@ export default function myPage() {
   };
 
   const clickDelete = async (id: string) => {
-    if (loginUserUid) {
+    // if (loginUserUid) {
+    if (loginUserData.userUid) {
       //firebaseの中のデータを削除する（バック側）
       if (confirm("Postを削除します。よろしいですか？")) {
         await runTransaction(db, async (transaction) => {
@@ -137,7 +140,8 @@ export default function myPage() {
           const likedUsersRef = collection(
             db,
             "users",
-            loginUserUid,
+            // loginUserUid,
+            loginUserData.userUid!,
             "posts",
             id,
             "LikedUsers"
@@ -150,7 +154,8 @@ export default function myPage() {
           const commentsRef = collection(
             db,
             "users",
-            loginUserUid,
+            // loginUserUid,
+            loginUserData.userUid!,
             "posts",
             id,
             "comments"
@@ -160,7 +165,10 @@ export default function myPage() {
             deleteDoc(doc.ref);
           });
           //Postの削除
-          await deleteDoc(doc(db, "users", loginUserUid, "posts", id));
+          // await deleteDoc(doc(db, "users", loginUserUid, "posts", id));
+          await deleteDoc(
+            doc(db, "users", loginUserData.userUid!, "posts", id)
+          );
           //表示するための処理（フロント側）
           const deletePost = posts.filter((post: PostType) => post.id !== id);
           setPosts(deletePost);
@@ -192,7 +200,6 @@ export default function myPage() {
                   base: "md",
                   md: "2xl",
                 }}
-                // bg={{ base: "sred.200", md: "green.200" }}
                 ml="3"
                 mr="3"
               >
@@ -243,7 +250,8 @@ export default function myPage() {
           {/* ユーザー情報とプルダウンリストと投稿ボタン */}
 
           {/* Postsが出るところ */}
-          {loginUserUid ? (
+          {
+            // loginUserUid ? (
             loading ? (
               <Flex justifyContent="center" mt="100">
                 <Flex direction="column" textAlign="center">
@@ -407,22 +415,23 @@ export default function myPage() {
                 </Flex>
               </Flex>
             )
-          ) : (
-            <div>
-              <Flex justifyContent="center" mt="100">
-                <Flex direction="column" textAlign="center">
-                  <Text fontSize="3xl">ユーザーの情報がありません</Text>
-                  <Text fontSize="3xl">ログインしなおしてください</Text>
-                  <br />
-                </Flex>
-              </Flex>
-              <Flex justifyContent="center">
-                <Button width="30" colorScheme="orange" onClick={linkToLogin}>
-                  login
-                </Button>
-              </Flex>
-            </div>
-          )}
+            // ) : (
+            //   <div>
+            //     <Flex justifyContent="center" mt="100">
+            //       <Flex direction="column" textAlign="center">
+            //         <Text fontSize="3xl">ユーザーの情報がありません</Text>
+            //         <Text fontSize="3xl">ログインしなおしてください</Text>
+            //         <br />
+            //       </Flex>
+            //     </Flex>
+            //     <Flex justifyContent="center">
+            //       <Button width="30" colorScheme="orange" onClick={linkToLogin}>
+            //         login
+            //       </Button>
+            //     </Flex>
+            //   </div>
+            // )
+          }
           {/* Postsが出るところ */}
         </Flex>
       </Container>

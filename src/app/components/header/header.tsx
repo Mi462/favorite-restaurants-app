@@ -14,7 +14,6 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faFolder,
   faHouse,
-  faLocationDot,
   faPlus,
   faUser,
 } from "@fortawesome/free-solid-svg-icons";
@@ -80,19 +79,6 @@ export default function Header() {
                 }
               >
                 ホーム
-              </MenuItem>
-              <MenuItem
-                as="a"
-                href="/map"
-                icon={
-                  <FontAwesomeIcon
-                    icon={faLocationDot}
-                    size="lg"
-                    color="#fe9611"
-                  />
-                }
-              >
-                マップ
               </MenuItem>
               <MenuItem
                 as="a"

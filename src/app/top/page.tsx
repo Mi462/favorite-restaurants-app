@@ -43,7 +43,7 @@ export default function Top() {
   //Postしたユーザーの情報
   const [postUsers, setPostUsers] = useState<LoginUserType[]>([]);
   //ログインユーザーのuid
-  const loginUserUid = sessionStorage.getItem("uid");
+  // const loginUserUid = sessionStorage.getItem("uid");
 
   useEffect(() => {
     postUsersDataFromFirebase();
@@ -68,7 +68,8 @@ export default function Top() {
   };
 
   const postsDataFromFirebase = async () => {
-    if (loginUserUid) {
+    // if (loginUserUid) {
+    if (loginUserData.userUid) {
       //Postの情報が入った配列の取得
       const queryPosts = query(
         collectionGroup(db, "posts"),
@@ -150,7 +151,6 @@ export default function Top() {
                   base: "md",
                   md: "2xl",
                 }}
-                // bg={{ base: "red.200", md: "green.200" }}
               >
                 {loginUserData.userName}
               </Text>
@@ -199,7 +199,8 @@ export default function Top() {
           {/* ユーザー情報とプルダウンリストと投稿ボタン */}
 
           {/* Postsが出るところ */}
-          {loginUserUid ? (
+          {
+            // loginUserUid ? (
             loading ? (
               <Flex justifyContent="center" mt="100">
                 <Flex direction="column" textAlign="center">
@@ -335,22 +336,23 @@ export default function Top() {
                 </Flex>
               </Flex>
             )
-          ) : (
-            <div>
-              <Flex justifyContent="center" mt="100">
-                <Flex direction="column" textAlign="center">
-                  <Text fontSize="3xl">ユーザーの情報がありません</Text>
-                  <Text fontSize="3xl">ログインしなおしてください</Text>
-                  <br />
-                </Flex>
-              </Flex>
-              <Flex justifyContent="center">
-                <Button width="30" colorScheme="orange" onClick={linkToLogin}>
-                  login
-                </Button>
-              </Flex>
-            </div>
-          )}
+            // ) : (
+            //   <div>
+            //     <Flex justifyContent="center" mt="100">
+            //       <Flex direction="column" textAlign="center">
+            //         <Text fontSize="3xl">ユーザーの情報がありません</Text>
+            //         <Text fontSize="3xl">ログインしなおしてください</Text>
+            //         <br />
+            //       </Flex>
+            //     </Flex>
+            //     <Flex justifyContent="center">
+            //       <Button width="30" colorScheme="orange" onClick={linkToLogin}>
+            //         login
+            //       </Button>
+            //     </Flex>
+            //   </div>
+            // )
+          }
           {/* Postsが出るところ */}
         </Flex>
       </Container>

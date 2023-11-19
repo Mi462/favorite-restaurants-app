@@ -108,7 +108,6 @@ export default function CommentCreate() {
                 base: "md",
                 md: "2xl",
               }}
-              // bg={{ base: "red.200", md: "green.200" }}
             >
               {loginUserData.userName}
             </Text>

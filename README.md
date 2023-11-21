@@ -37,7 +37,7 @@
     おすすめの飲食店の画像・飲食店のジャンル・飲食店に関する文章などを投稿することができます。なお文章は40文字まで入力することが可能です。
  <img src="https://github.com/Mi462/favorite-restaurants-app/assets/123140215/29d23627-e92c-4f09-9299-fd264583ebe4" width="500px">
 
-  - ユーザー編集画面
+  - ユーザー設定画面
     <br>
     ユーザーの画像と名前を変更することが可能です。なお名前は7文字まで入力することが可能です。
  <img src="https://github.com/Mi462/favorite-restaurants-app/assets/123140215/19ec5029-a51f-4ef5-8d13-cd52c8d3d3f1" width="500px">

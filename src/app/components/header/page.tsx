@@ -55,12 +55,12 @@ export default function Header() {
             <MenuList>
               <MenuItem
                 as="a"
-                href="/loginUserEdit"
+                href="/top"
                 icon={
-                  <FontAwesomeIcon icon={faUser} size="lg" color="#fe9611" />
+                  <FontAwesomeIcon icon={faHouse} size="lg" color="#fe9611" />
                 }
               >
-                ユーザー
+                ホーム
               </MenuItem>
               <MenuItem
                 as="a"
@@ -73,21 +73,21 @@ export default function Header() {
               </MenuItem>
               <MenuItem
                 as="a"
-                href="/top"
-                icon={
-                  <FontAwesomeIcon icon={faHouse} size="lg" color="#fe9611" />
-                }
-              >
-                ホーム
-              </MenuItem>
-              <MenuItem
-                as="a"
                 href="/create"
                 icon={
                   <FontAwesomeIcon icon={faPlus} size="lg" color="#fe9611" />
                 }
               >
                 投稿
+              </MenuItem>
+              <MenuItem
+                as="a"
+                href="/loginUserEdit"
+                icon={
+                  <FontAwesomeIcon icon={faUser} size="lg" color="#fe9611" />
+                }
+              >
+                ユーザー設定
               </MenuItem>
             </MenuList>
           </Menu>
